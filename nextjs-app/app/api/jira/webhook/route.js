@@ -42,8 +42,9 @@ export async function POST(request) {
           source = row.source;
           actor = row.actor;
         }
-        // Consume the record
-        await query('DELETE FROM action_sources WHERE ticket_key = $1', [issueKey]);
+        // Retain the record for 20 seconds to allow subsequent events (like parent association)
+        // to also be correctly attributed to the bot and filtered out.
+        // It will be cleaned up automatically by the created_at TTL query above.
       }
     } catch (dbErr) {
       console.warn('[Jira Webhook Source Check] Failed to lookup action source:', dbErr.message);

@@ -207,6 +207,11 @@ export async function POST(request) {
 
               changelogItems.forEach(item => {
                 const fieldName = item.field;
+                
+                // Only alert on meaningful, user-facing fields
+                const allowedFields = ['status', 'assignee', 'summary', 'description', 'duedate', 'priority', 'labels'];
+                if (!allowedFields.includes(fieldName)) return;
+
                 let fromVal = (item.fromString || 'ไม่ระบุ').replace(/[\r\n]+/g, ' ').trim();
                 let toVal = (item.toString || 'ไม่ระบุ').replace(/[\r\n]+/g, ' ').trim();
 

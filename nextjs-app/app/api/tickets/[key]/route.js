@@ -12,6 +12,7 @@ export async function PUT(request, { params }) {
     
     // Get logged-in user from session
     let userName = actorName || 'ผู้ใช้งานผ่านแดชบอร์ด';
+    let userRole = 'ไม่ระบุบทบาท';
     try {
       const cookieStore = await cookies();
       const token = cookieStore.get('session')?.value;
@@ -19,6 +20,7 @@ export async function PUT(request, { params }) {
         const user = parseSessionToken(token);
         if (user) {
           userName = user.name || user.username;
+          userRole = user.role;
         }
       }
     } catch (cookieErr) {
@@ -31,7 +33,7 @@ export async function PUT(request, { params }) {
         `INSERT INTO action_sources (ticket_key, source, actor)
          VALUES ($1, $2, $3)
          ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
-        [key, 'เว็บ Dashboard', userName]
+        [key, 'เว็บ Dashboard', `${userName} (${userRole})`]
       );
     } catch (dbErr) {
       console.error('[Cache Update] Failed to record action source:', dbErr.message);

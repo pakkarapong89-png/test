@@ -51,13 +51,11 @@ export async function POST(request, { params }) {
     // Fetch ticket summary first to enrich the message
     const summary = await getJiraIssueSummary(key) || 'ไม่สามารถดึงชื่อหัวข้องานได้';
 
-    // Record action source
-    try {
       await query(
         `INSERT INTO action_sources (ticket_key, source, actor)
          VALUES ($1, $2, $3)
          ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
-        [key, 'เว็บ Dashboard', userName]
+        [key, 'เว็บ Dashboard', `${userName} (${userRole})`]
       );
     } catch (dbErr) {
       console.error('[Transition Cache] Failed to record action source:', dbErr.message);

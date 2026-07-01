@@ -2,6 +2,10 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 
+// Simple in-memory cache to speed up Jira lookups and prevent duplicate HTTP requests
+const issueTypesCache = new Map(); // projectKey -> issueTypes list
+const userCache = new Map();       // userName -> user details object
+
 const TEAM_FILE = path.join(process.cwd(), 'data', 'team_members.json');
 
 function getCredentials() {
@@ -315,15 +319,26 @@ export async function fetchJiraTicketByKey(key) {
  */
 export async function getIssueTypeId(projectKey, requestedType) {
   const { JIRA_DOMAIN, credentials } = getCredentials();
-  const url = `https://${JIRA_DOMAIN}/rest/api/3/project/${projectKey}`;
+  
+  let issueTypes = issueTypesCache.get(projectKey);
 
-  try {
-    const response = await axios.get(url, {
-      headers: { Authorization: `Basic ${credentials}`, Accept: 'application/json' },
-    });
-    const issueTypes = response.data.issueTypes;
+  if (!issueTypes) {
+    const url = `https://${JIRA_DOMAIN}/rest/api/3/project/${projectKey}`;
+    try {
+      const response = await axios.get(url, {
+        headers: { Authorization: `Basic ${credentials}`, Accept: 'application/json' },
+      });
+      issueTypes = response.data.issueTypes;
+      if (issueTypes) {
+        issueTypesCache.set(projectKey, issueTypes);
+      }
+    } catch (err) {
+      console.error(`Failed to fetch issue types for project ${projectKey}:`, err.message);
+    }
+  }
+
+  if (issueTypes) {
     let match;
-
     if (requestedType === 'Sub-task') {
       match = issueTypes.find((it) => it.subtask === true);
     } else if (requestedType === 'Epic') {
@@ -334,8 +349,6 @@ export async function getIssueTypeId(projectKey, requestedType) {
     }
 
     if (match) return match.id;
-  } catch (err) {
-    console.error(`Failed to fetch issue types for project ${projectKey}:`, err.message);
   }
   return requestedType === 'Sub-task' ? '10003' : '10001';
 }
@@ -399,15 +412,20 @@ export async function searchJiraIssueBySummary(summary) {
 /**
  * Find Jira User details by name (with nickname resolution from team_members.json)
  */
-export async function findJiraUser(query) {
+export async function findJiraUser(queryName) {
   const { JIRA_DOMAIN, credentials } = getCredentials();
 
-  let searchQuery = query;
+  const cacheKey = queryName.trim().toLowerCase();
+  if (userCache.has(cacheKey)) {
+    return userCache.get(cacheKey);
+  }
+
+  let searchQuery = queryName;
   if (fs.existsSync(TEAM_FILE)) {
     try {
       const team = JSON.parse(fs.readFileSync(TEAM_FILE, 'utf8'));
       const found = team.find(
-        (m) => m.nickname && m.nickname.trim().toLowerCase() === query.trim().toLowerCase()
+        (m) => m.nickname && m.nickname.trim().toLowerCase() === queryName.trim().toLowerCase()
       );
       if (found && found.jiraDisplayName) {
         searchQuery = found.jiraDisplayName;
@@ -441,7 +459,9 @@ export async function findJiraUser(query) {
         emailAddress = 'pakkarapong.g@ku.th';
       }
 
-      return { accountId: users[0].accountId, emailAddress, displayName: users[0].displayName };
+      const result = { accountId: users[0].accountId, emailAddress, displayName: users[0].displayName };
+      userCache.set(cacheKey, result);
+      return result;
     }
   } catch (err) {
     console.error('Error searching for Jira user:', err.message);

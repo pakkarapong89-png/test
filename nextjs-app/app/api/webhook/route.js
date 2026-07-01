@@ -398,17 +398,45 @@ export async function POST(request) {
         let resolvedParentKey = issue.parentKey ? issue.parentKey.trim().toUpperCase() : null;
 
         if (!resolvedParentKey && issue.parentSummary) {
-          const found = await searchJiraIssueBySummary(issue.parentSummary);
-          if (found) {
-            resolvedParentKey = found.key;
-          } else {
-            issue.parentUnresolved = true;
+          try {
+            const dbFound = await query(
+              'SELECT key FROM tickets WHERE LOWER(TRIM(summary)) = $1 ORDER BY created DESC LIMIT 1',
+              [issue.parentSummary.trim().toLowerCase()]
+            );
+            if (dbFound.rows.length > 0) {
+              resolvedParentKey = dbFound.rows[0].key;
+            }
+          } catch (dbErr) {
+            console.warn('[Webhook Parent Search Local] DB query failed:', dbErr.message);
+          }
+
+          if (!resolvedParentKey) {
+            const found = await searchJiraIssueBySummary(issue.parentSummary);
+            if (found) {
+              resolvedParentKey = found.key;
+            } else {
+              issue.parentUnresolved = true;
+            }
           }
         }
 
         if (resolvedParentKey) {
           issue.parentKey = resolvedParentKey;
-          const parentType = await getJiraIssueType(resolvedParentKey);
+          
+          let parentType = null;
+          try {
+            const dbParent = await query('SELECT issuetype FROM tickets WHERE key = $1', [resolvedParentKey]);
+            if (dbParent.rows.length > 0) {
+              parentType = dbParent.rows[0].issuetype;
+            }
+          } catch (dbErr) {
+            console.warn('[Webhook Parent Type Local] DB query failed:', dbErr.message);
+          }
+
+          if (!parentType) {
+            parentType = await getJiraIssueType(resolvedParentKey);
+          }
+
           if (parentType === 'Epic') issue.issuetype = 'Task';
           else if (parentType === 'Project') issue.issuetype = 'Epic';
         }
@@ -439,7 +467,21 @@ export async function POST(request) {
                         `• 👤 *ผู้รับผิดชอบ:* *${issue.assigneeName || 'ยังไม่มีผู้รับผิดชอบ'}*\n`;
         
         if (issue.parentKey) {
-          const parentSummary = await getJiraIssueSummary(issue.parentKey);
+          let parentSummary = issue.parentSummary || null;
+          if (!parentSummary) {
+            try {
+              const dbParentSummary = await query('SELECT summary FROM tickets WHERE key = $1', [issue.parentKey]);
+              if (dbParentSummary.rows.length > 0) {
+                parentSummary = dbParentSummary.rows[0].summary;
+              }
+            } catch (dbErr) {
+              console.warn('[Webhook Parent Summary Local] DB query failed:', dbErr.message);
+            }
+
+            if (!parentSummary) {
+              parentSummary = await getJiraIssueSummary(issue.parentKey);
+            }
+          }
           const parentText = parentSummary ? `[${issue.parentKey}] ${parentSummary}` : issue.parentKey;
           responseText += `• 🔗 *เชื่อมโยงงานแม่:* *${parentText}*\n`;
         }

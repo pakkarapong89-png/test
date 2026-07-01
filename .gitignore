@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.production
+.env*.local
+node_modules/
+.next/
+.vercel/
+.vercel/project.json
+.DS_Store
+Thumbs.db

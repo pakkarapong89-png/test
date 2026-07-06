@@ -139,7 +139,10 @@ export async function parseMessageWithGemini(messageText, senderName) {
     generationConfig,
   };
 
-  const response = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
+  const response = await axios.post(url, payload, {
+    headers: { 'Content-Type': 'application/json' },
+    timeout: 3000,
+  });
   const jsonText = response.data.candidates[0].content.parts[0].text;
   return JSON.parse(jsonText.trim());
 }
@@ -163,6 +166,7 @@ export async function parseMessageWithOpenAI(messageText, senderName) {
 
   const response = await axios.post(url, payload, {
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    timeout: 3000,
   });
 
   return JSON.parse(response.data.choices[0].message.content.trim());
@@ -187,6 +191,7 @@ export async function parseMessageWithGroq(messageText, senderName) {
 
   const response = await axios.post(url, payload, {
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    timeout: 3000,
   });
 
   return JSON.parse(response.data.choices[0].message.content.trim());

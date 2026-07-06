@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+  @page { size: A4; margin: 20mm 18mm; }
+  body {
+    font-family: 'Sarabun', 'Segoe UI', sans-serif;
+    color: #1a1a2e;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+  h1, h2, h3 { page-break-after: avoid; }
+  table, pre { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+<div style="text-align:center;padding:40px 0 30px 0;border-bottom:3px solid #0969da;margin-bottom:30px;">
+  <h1 style="font-size:28px;color:#0d1b2a;margin:0 0 8px 0;">📘 คู่มือการตั้งค่าระบบ taskyapp Bot & Dashboard</h1>
+  <p style="font-size:16px;color:#555;margin:4px 0;">ฉบับสมบูรณ์ สำหรับการนำระบบไปใช้งานจริงในบริษัท</p>
+</div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">🤖 คู่มือการตั้งค่าและใช้งาน Google Chat Bot (taskyapp) — ฉบับละเอียดที่สุด</h1>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">คู่มือนี้จะพาคุณตั้งค่าระบบบอทของ <strong>taskyapp</strong> ตั้งแต่ขั้นตอนแรกสุด (ระดับศูนย์) จนกระทั่งบอทสามารถทำงาน ตอบกลับ และซิงค์งานกับ Jira Cloud ได้อย่างสมบูรณ์</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">📑 สารบัญ</h2>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong><a href="#-ความเข้าใจก่อนเริ่ม-บอททำงานอย่างไร" style="color:#0969da;text-decoration:none;font-weight:600;">ความเข้าใจก่อนเริ่ม: บอททำงานอย่างไร?</a></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong><a href="#ส่วนที่-1-การสร้างและ-deploy-webhook-บน-google-apps-script" style="color:#0969da;text-decoration:none;font-weight:600;">ส่วนที่ 1: การสร้างและ Deploy Webhook บน Google Apps Script</a></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong><a href="#ส่วนที่-2-การเปิดใช้และตั้งค่า-google-chat-api-บน-google-cloud-console" style="color:#0969da;text-decoration:none;font-weight:600;">ส่วนที่ 2: การเปิดใช้และตั้งค่า Google Chat API บน Google Cloud Console</a></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong><a href="#ส่วนที่-3-การเชื่อมต่อ-jira-webhook-กลับมายังห้องแชท" style="color:#0969da;text-decoration:none;font-weight:600;">ส่วนที่ 3: การเชื่อมต่อ Jira Webhook กลับมายังห้องแชท</a></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong><a href="#ส่วนที่-4-คู่มือการพิมพ์คำสั่งสั่งงานบอท-ภาษาไทย--nlp" style="color:#0969da;text-decoration:none;font-weight:600;">ส่วนที่ 4: คู่มือการพิมพ์คำสั่งสั่งงานบอท (ภาษาไทย & NLP)</a></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">6.</strong><a href="#ส่วนที่-5-การแก้ปัญหาเกี่ยวกับบอท-troubleshooting" style="color:#0969da;text-decoration:none;font-weight:600;">ส่วนที่ 5: การแก้ปัญหาเกี่ยวกับบอท (Troubleshooting)</a></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">💡 ความเข้าใจก่อนเริ่ม: บอททำงานอย่างไร?</h2>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">บอท <strong>taskyapp</strong> เชื่อมโยงระบบ 3 ตัวเข้าด้วยกันผ่านลำดับการรับส่งข้อมูลดังนี้:</p>
+<div style="height:8px;"></div>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>[ผู้ใช้พิมพ์คำสั่งใน Google Chat] 
+       │
+       ▼
+[Google Apps Script (onMessage)] ──(ส่งต่อคำสั่ง HTTPS POST)──► [Next.js Webhook (/api/webhook)]
+                                                                       │
+                                                                 (ใช้ Gemini AI ประมวลผล)
+                                                                       │
+[Google Chat Room] ◄──(ตอบกลับข้อความ)── [Next.js ส่งข้อความกลับ] ◄───┘
+       ▲
+       │
+(แจ้งเตือนเมื่อเกิดความเคลื่อนไหว)
+       │
+[Jira Webhook (/api/jira/webhook)] ◄──(ส่งข้อมูลเมื่อตั๋วเปลี่ยน)── [Jira Cloud (บอร์ดงาน)]</code></pre>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">🛠️ ส่วนที่ 1: การสร้างและ Deploy Webhook บน Google Apps Script</h2>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">ในส่วนนี้เราจะสร้างตัวรับสัญญาณจาก Google Chat เพื่อส่งต่อมาที่เว็บ Next.js ของเรา</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.1 สร้างโปรเจกต์ Apps Script</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้าไปที่เว็บ 👉 <a href="https://script.google.com/" style="color:#0969da;text-decoration:none;font-weight:600;">Google Apps Script</a> (ล็อกอินด้วยบัญชี Google ขององค์กรหรือบัญชีที่คุณใช้ใน Google Chat)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>คลิกปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">New project</code></strong> (โครงการใหม่) ด้านบนซ้าย</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>เปลี่ยนชื่อโครงการจาก "Untitled project" เป็น <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp Bot Bridge</code></strong> (คลิกที่ชื่อเพื่อเปลี่ยน)</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.2 วางโค้ดเชื่อมต่อ Webhook</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ในช่องเขียนโค้ด ให้ลบฟังก์ชัน <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">myFunction()</code> เดิมออกทั้งหมด</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>คัดลอกโค้ดด้านล่างนี้ไปวางแทนที่:</div>
+<div style="height:8px;"></div>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>function onMessage(event) {
+  // ⚠️ สำคัญมาก: แก้ไข URL ด้านล่างเป็น URL เว็บ Vercel ของคุณเอง (ต้องลงท้ายด้วย /api/webhook)
+  var url = "https://[ลิงก์เว็บของคุณ]/api/webhook";
+  
+  var payload = {
+    message: {
+      text: event.message.text,
+      sender: {
+        displayName: event.user.displayName
+      },
+      space: {
+        name: event.space.name
+      }
+    }
+  };
+  
+  var options = {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+  
+  try {
+    var response = UrlFetchApp.fetch(url, options);
+    var result = JSON.parse(response.getContentText());
+    
+    return {
+      text: result.text || "⚠️ บอทได้รับคำสั่งแล้วแต่ไม่สามารถประมวลผลคำตอบได้"
+    };
+  } catch (error) {
+    return {
+      text: "⚠️ เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ Next.js: " + error.message
+    };
+  }
+}</code></pre>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong><strong>แก้ไขโค้ดบรรทัดที่ 3:</strong> เปลี่ยน <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">"https://[ลิงก์เว็บของคุณ]/api/webhook"</code> เป็นลิงก์เว็บจริงของคุณที่ Deploy บน Vercel เช่น:</div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">var url = "https://taskyapp-demo.vercel.app/api/webhook";</code></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>กดปุ่ม 💾 <strong>Save Project</strong> (รูปแผ่นดิสก์ด้านบน)</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.3 Deploy เพื่อรับ ID</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>คลิกปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Deploy</code></strong> (การใช้งานจริง) ที่มุมขวาบน -> เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">New deployment</code></strong> (การใช้งานจริงรายการใหม่)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>คลิกไอคอนฟันเฟือง ⚙️ ข้างข้อความ "Select type" -> เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Add-on</code></strong> (ส่วนเสริม) -> จะได้หน้าต่างที่มีประเภทย่อยเป็น <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Google Chat App</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>ใส่รายละเอียดช่อง Description ว่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Bridge for taskyapp</code></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>กดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Deploy</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>ระบบจะแสดงหน้าต่างยืนยันความสำเร็จ ให้คัดลอกค่า <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Deployment ID</code></strong> (จะมีลักษณะเป็นรหัสยาวๆ) เอาไว้ใน Notepad</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">🌐 ส่วนที่ 2: การเปิดใช้และตั้งค่า Google Chat API บน Google Cloud Console</h2>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">ส่วนนี้เป็นการลงทะเบียนเพื่อให้ระบบของ Google Chat รู้จักกับบอทของเราและลิงก์เข้ากับ Apps Script</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">2.1 เข้าสู่ Google Cloud Console</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้าไปที่ 👉 <a href="https://console.cloud.google.com/" style="color:#0969da;text-decoration:none;font-weight:600;">Google Cloud Console</a></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>หากยังไม่มี Project ให้กดสร้าง Project ใหม่ โดยตั้งชื่อว่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-project</code></div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">2.2 เปิดใช้งาน Google Chat API</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>มองหาช่องค้นหาด้านบนสุดของหน้า Cloud Console</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>พิมพ์คำว่า <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Google Chat API</code></strong> แล้วกดค้นหา</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>คลิกเข้าหน้า Google Chat API แล้วกดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Enable</code></strong> (เปิดใช้งาน)</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">2.3 ตั้งค่า Configuration ของบอท</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">เมื่อเปิดใช้งานแล้ว ให้คลิกแท็บ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Configuration</code></strong> (การตั้งค่า) ทางด้านซ้าย และกรอกข้อมูลตามตารางนี้:</p>
+<div style="height:8px;"></div>
+<table style="border-collapse:collapse;width:100%;margin:16px 0;"><thead><tr><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ช่องป้อนข้อมูล</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ค่าที่ต้องกรอก</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">คำอธิบาย</th></tr></thead><tbody><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>App name</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ชื่อที่จะปรากฏในห้องแชท Google Chat</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Avatar URL</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">(เว้นว่างไว้ หรือใส่ URL รูปภาพโลโก้ของคุณ)</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">รูปโปรไฟล์ของบอท</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Description</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">บอทอัจฉริยะสำหรับจัดการงาน Jira</code></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">คำอธิบายการทำงานของบอท</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Functionality</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ติ๊กเลือก <strong>[x] Receive 1:1 messages</strong> และ <strong>[x] Join spaces and group conversations</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">อนุญาตให้คุยแบบตัวต่อตัวและดึงเข้าห้องกลุ่มได้</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Connection settings</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Apps Script project</code></strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">เชื่อมโยงบอทเข้ากับสคริปต์ที่เราเขียน</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Deployment ID</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>วาง Deployment ID</strong> ที่คัดลอกมาจากส่วนที่ 1.3</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">รหัสประจำตัวของ Apps Script</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Visibility</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">เลือก <strong>Everyone in your organization</strong> (ทุกคนในองค์กรของคุณ) หรือเลือกจำกัดเฉพาะคุณ</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">สิทธิ์การเข้าถึงตัวบอท</td></tr></tbody></table>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เลื่อนลงล่างสุดแล้วกดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Save</code></strong> (บันทึก)</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">2.4 เชิญบอทเข้าห้องแชท</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เปิดแอป <strong>Google Chat</strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>เลือกห้องกลุ่ม (Space) หรือเปิดห้องคุยแบบ 1:1 ที่ต้องการใช้งานบอท</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>หากอยู่ในห้องกลุ่ม ให้กดปุ่มหัวข้อห้อง -> เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Apps & integrations</code></strong> (แอปและการผสานรวม)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Add apps</code></strong> (เพิ่มแอป) -> พิมพ์ค้นหาบอทชื่อ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Add</code></strong> เพื่อเพิ่มบอทเข้ามาในห้อง</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">🔗 ส่วนที่ 3: การเชื่อมต่อ Jira Webhook กลับมายังห้องแชท</h2>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">ขั้นตอนนี้จะทำเพื่อให้เมื่อเราทำการแก้ไขข้อมูลบนบอร์ด Jira ตัวบอร์ดจะยิงสัญญาณกลับมาแจ้งเตือนที่ห้อง Google Chat ทันที</div>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ไปที่หน้าบอร์ด <strong>Jira Cloud</strong> ของคุณ</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>คลิกปุ่มฟันเฟือง <strong>⚙️ Settings</strong> ที่มุมขวาบน -> เลือกเมนู <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">System</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>เลื่อนแถบเมนูด้านซ้ายลงไปข้างล่างสุด หาหัวข้อ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Webhooks</code></strong> (อยู่ใต้เมนู Advanced)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>คลิกปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create a Webhook</code></strong> (สร้าง Webhook) ด้านขวาบน</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>กรอกข้อมูลการตั้งค่า:</div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - <strong>Name</strong>: <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp Notifier</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - <strong>Status</strong>: เลือก <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Enabled</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - <strong>URL</strong>: กรอกลิงก์เว็บ Vercel ของคุณตามด้วย <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">/api/jira/webhook</code> เช่น</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">     <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">https://taskyapp-demo.vercel.app/api/jira/webhook</code></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">6.</strong>เลื่อนลงมาที่หัวข้อ <strong>Events</strong> มองหาหมวด <strong>Issue</strong> และติ๊กเลือกเหตุการณ์ดังนี้:</div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - [x] <strong>created</strong> (ทำงานเมื่อมีการสร้างตั๋วงานใหม่)</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - [x] <strong>updated</strong> (ทำงานเมื่อมีการเปลี่ยนสถานะ ย้ายบอร์ด หรือเปลี่ยนชื่อผู้รับผิดชอบ)</p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">7.</strong>เลื่อนลงไปด้านล่างสุด แล้วกดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create</code></strong> (สร้าง)</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">💬 ส่วนที่ 4: คู่มือการพิมพ์คำสั่งสั่งงานบอท (ภาษาไทย & NLP)</h2>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">บอทตัวนี้มีสมองกล AI (Google Gemini) ในตัว คุณสามารถพิมพ์คุยภาษาไทยอย่างเป็นธรรมชาติได้โดยไม่ต้องพิมพ์คำสั่งตายตัว แต่ต้องขึ้นต้นด้วย <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp</code></strong> ทุกครั้ง</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">4.1 การตั้งค่าชื่อเล่นของทีม (ก่อนเริ่มใช้คำสั่งมอบหมายงาน)</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">เพื่อให้บอทรู้ว่า "สมชาย" คือบัญชีผู้ใช้ใดใน Jira ก่อนสั่งงานให้ผู้ใช้ล็อกอินหน้า Dashboard ของเว็บ ไปที่แท็บ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Team</code></strong> และแอดข้อมูล <strong>ชื่อเล่น (Nickname)</strong> ลิงก์เข้ากับ <strong>ชื่อจริงบน Jira</strong> เสียก่อน</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">4.2 คำสั่งพื้นฐานที่บอทเข้าใจทันที:</h3>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1️⃣ คำสั่งสร้างงานใหม่ (Create Issue)</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>รูปแบบทั่วไป:</strong> พิมพ์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp สร้างงาน [ชื่อหัวข้อ] [รายละเอียดเพิ่มเติม]</code></div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ตัวอย่างประโยคธรรมชาติ:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp สร้างงานหลัก ออกแบบหน้าเว็บใหม่ มอบหมายให้ dev1 ความสำคัญ สูง</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp ช่วยสร้างงาน แก้ไขบั๊กปุ่มล็อกอินกดไม่ได้ กำหนดส่ง 2026-07-20</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp สร้างงานย่อย เขียนเอกสารคู่มือ พ่อคือ KAN-12</code> (สำหรับผูกงานย่อยเข้ากับตั๋วหลัก)</p>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">2️⃣ คำสั่งสร้างหลายงานพร้อมกัน (Bulk Create)</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">ใช้คำว่า <strong>"และ"</strong> หรือ <strong>"and"</strong> เพื่อแบ่งตั๋วงาน</p>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ตัวอย่างประโยคธรรมชาติ:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp ช่วยสร้าง ออกแบบหน้าลงทะเบียน มอบหมายให้ dev1 และ สร้างปุ่มเชื่อม Facebook มอบหมายให้ dev2</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  <strong>(บอทจะสร้างงานขึ้นมา 2 ตั๋วใน Jira พร้อมกันทันที)</strong></p>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">3️⃣ คำสั่งแก้ไขงาน (Update Issue)</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">บอทจะรู้เองว่าต้องไปแก้ไขตั๋วชิ้นไหนจากรหัสตั๋ว เช่น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">KAN-5</code></p>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ตัวอย่างประโยคธรรมชาติ:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp แก้ไขงาน KAN-5 เปลี่ยนกำหนดส่งเป็นวันที่ 2026-08-01</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp แก้ KAN-8 มอบงานนี้ให้ dev2 และเปลี่ยนความสำคัญเป็น ต่ำ</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp อัปเดตตั๋ว KAN-12 รายละเอียดคือ พัฒนาระบบ API รองรับการชำระเงิน</code></p>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">4️⃣ คำสั่งเปลี่ยนสถานะงาน (Transition Issue)</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ตัวอย่างประโยคธรรมชาติ:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp เปลี่ยนสถานะ KAN-5 เป็น done</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp ย้าย KAN-6 ไปเป็น in progress</code></p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  - <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp แก้ไข KAN-10 เปลี่ยนเป็น to do</code></p>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">5️⃣ คำสั่งดูรายละเอียดและค้นหางาน (View & Search)</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ดูงานชิ้นเจาะจง:</strong> <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp ดู KAN-5</code></div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ค้นหางานที่มีคำค้นหา:</strong> <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp ค้นหาคำว่า บั๊กล็อกอิน</code></div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>ดูภาพรวมสถิติโครงการ:</strong> <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp สรุป</code></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">🔧 ส่วนที่ 5: การแก้ปัญหาเกี่ยวกับบอท (Troubleshooting)</h2>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: พิมพ์หาบอทแล้วบอทเงียบ ไม่มีข้อความตอบกลับใดๆ</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong><strong>ตรวจสอบความถูกต้องใน Google Cloud Platform:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - มั่นใจว่าคุณใส่ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Deployment ID</code></strong> ในหน้า Configuration ถูกต้องและไม่มีเว้นวรรค</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - ตรวจสอบว่าใน Apps Script ได้กดบันทึกและกด <strong>Deploy</strong> เรียบร้อยแล้ว</p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong><strong>ตรวจสอบปัญหาเว็บ Vercel ค้าง (Cold Start / Serverless Timeout):</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - บางครั้งการรันบอทครั้งแรกหลังจากเว็บไม่มีกิจกรรมมานาน อาจใช้เวลาประมวลผลนานเกิน 10 วินาทีจนเกิด Timeout</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - <strong>วิธีแก้:</strong> ลองเปิดเว็บหน้า Dashboard ของคุณผ่านเบราว์เซอร์เพื่อให้ระบบตื่นตัว จากนั้นทดลองพิมพ์หาบอทใหม่อีกครั้ง</p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong><strong>ตรวจสอบ Apps Script Executions:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - เปิดหน้า Apps Script -> คลิกสัญลักษณ์ 📊 <strong>Executions</strong> (การเรียกใช้) ด้านซ้าย</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">   - ดูว่าการทำงานมีสถานะขึ้นว่า <strong>Failed</strong> (ล้มเหลว) หรือไม่ หากมีให้คลิกเข้าไปอ่าน Error Message</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: บอทตอบว่า "⚠️ เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ Next.js: ..."</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>สาเหตุ:</strong> ตัว Apps Script ยิง HTTP ไปหาเซิร์ฟเวอร์เว็บไม่ได้ หรือเว็บปลายทางตอบกลับมาเป็น Error 500</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>วิธีแก้ไข:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  1. นำ URL ที่เขียนในบรรทัดที่ 3 ของ Apps Script มาเช็กความถูกต้อง ต้องเขียนในรูปแบบ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">https://[โดเมนของคุณ].vercel.app/api/webhook</code> เท่านั้น</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  2. ลองทดสอบเปิดเบราว์เซอร์ไปที่ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">https://[โดเมนของคุณ].vercel.app/api/health</code> เพื่อเช็กสถานะการเชื่อมต่อฐานข้อมูลและตัวแปรระบบว่าพร้อมใช้งานหรือไม่</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: บอทตอบกลับว่าสร้างงานสำเร็จ แต่ไม่มีงานปรากฏขึ้นในระบบ Jira</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>สาเหตุ:</strong> การตั้งค่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">JIRA_API_TOKEN</code> หรือ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">JIRA_PROJECT_KEY</code> ในตัวแปรระบบ (.env) บน Vercel ไม่ถูกต้อง</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>วิธีแก้ไข:</strong></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  1. ตรวจสอบให้แน่ใจว่าอีเมลและ Token ของ Jira ถูกต้อง</p>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">  2. รหัสโครงการ (Project Key) ต้องเป็นตัวพิมพ์ใหญ่ตรงเป๊ะ เช่น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">KAN</code> ไม่ใช่ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">kan</code> หรือ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Kan</code></p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: มีข้อความแจ้งเตือนความเคลื่อนไหวแจ้งเข้ามาซ้ำ 2 รอบในห้องแชท</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>คำอธิบาย:</strong> ระบบบอทเวอร์ชันก่อนหน้านี้แจ้งเตือนทุกครั้งที่มีการอัปเดตฟิลด์ใดๆ บน Jira (ซึ่งเวลาเราลากตั๋วเปลี่ยนสถานะ Jira จะแก้ไขตำแหน่งลำดับ หรือ Rank ทำให้แจ้งเตือนเด้งซ้ำ)</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span><strong>สถานะ:</strong> ✅ <strong>ได้รับการแก้ไขเรียบร้อยแล้ว</strong> โดยบอทเวอร์ชันล่าสุดจะปิดการแจ้งเตือนเรื่องตำแหน่งลำดับภายในบอร์ด และจะส่งแจ้งเตือนเฉพาะกรณีที่สถานะ ผู้รับผิดชอบ หรือชื่อหัวข้องานเปลี่ยนไปจริงเท่านั้น</div>
+<div style="height:8px;"></div>
+
+<div style="text-align:center;margin-top:40px;padding-top:20px;border-top:2px solid #e8e8e8;">
+  <p style="font-size:12px;color:#999;">— จบคู่มือ —</p>
+</div>
+</body>
+</html>

@@ -258,19 +258,17 @@ export async function POST(request) {
 
         try {
           // Record action source
-          try {
-            await query(
-              `INSERT INTO action_sources (ticket_key, source, actor)
-               VALUES ($1, $2, $3)
-               ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
-              [targetKey, process.env.BOT_NAME || 'taskyapp', senderName]
-            );
-          } catch (dbErr) {
+          query(
+            `INSERT INTO action_sources (ticket_key, source, actor)
+             VALUES ($1, $2, $3)
+             ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
+            [targetKey, process.env.BOT_NAME || 'taskyapp', senderName]
+          ).catch(dbErr => {
             console.error('[Bot Update Cache] Failed to record action source:', dbErr.message);
-          }
+          });
 
           await updateJiraIssue(targetKey, issue);
-          await addActivityLog(senderName, 'Chatbot', 'update', targetKey, `แก้ไขข้อมูลงานผ่าน Chatbot`);
+          addActivityLog(senderName, 'Chatbot', 'update', targetKey, `แก้ไขข้อมูลงานผ่าน Chatbot`).catch(() => {});
 
           responseText += `⚙️ *[${targetKey}] แก้ไขข้อมูลสำเร็จ*\n`;
           if (issue.summary) responseText += `• 📝 *หัวข้องาน:* *${issue.summary}*\n`;
@@ -361,19 +359,17 @@ export async function POST(request) {
           }
 
           // Record action source
-          try {
-            await query(
-              `INSERT INTO action_sources (ticket_key, source, actor)
-               VALUES ($1, $2, $3)
-               ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
-              [targetKey, process.env.BOT_NAME || 'taskyapp', senderName]
-            );
-          } catch (dbErr) {
+          query(
+            `INSERT INTO action_sources (ticket_key, source, actor)
+             VALUES ($1, $2, $3)
+             ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
+            [targetKey, process.env.BOT_NAME || 'taskyapp', senderName]
+          ).catch(dbErr => {
             console.error('[Bot Transition Cache] Failed to record action source:', dbErr.message);
-          }
+          });
 
           await transitionIssue(targetKey, match.id);
-          await addActivityLog(senderName, 'Chatbot', 'transition', targetKey, `เปลี่ยนสถานะเป็น "${match.name}" ผ่าน Chatbot`);
+          addActivityLog(senderName, 'Chatbot', 'transition', targetKey, `เปลี่ยนสถานะเป็น "${match.name}" ผ่าน Chatbot`).catch(() => {});
 
           responseText += `🔄 *[${targetKey}] เปลี่ยนสถานะสำเร็จ*\n` +
                           `• ⚙️ *สถานะใหม่:* *${match.name}*\n` +
@@ -451,19 +447,17 @@ export async function POST(request) {
         
         // Record action source
         if (jiraResult && jiraResult.key) {
-          try {
-            await query(
-              `INSERT INTO action_sources (ticket_key, source, actor)
-               VALUES ($1, $2, $3)
-               ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
-              [jiraResult.key, process.env.BOT_NAME || 'taskyapp', senderName]
-            );
-          } catch (dbErr) {
+          query(
+            `INSERT INTO action_sources (ticket_key, source, actor)
+             VALUES ($1, $2, $3)
+             ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
+            [jiraResult.key, process.env.BOT_NAME || 'taskyapp', senderName]
+          ).catch(dbErr => {
             console.error('[Bot Create Cache] Failed to record action source:', dbErr.message);
-          }
+          });
         }
 
-        await addActivityLog(senderName, 'Chatbot', 'create', jiraResult.key, `สร้างงานใหม่ผ่าน Chatbot: "${issue.summary}" (${issue.issuetype})`);
+        addActivityLog(senderName, 'Chatbot', 'create', jiraResult.key, `สร้างงานใหม่ผ่าน Chatbot: "${issue.summary}" (${issue.issuetype})`).catch(() => {});
 
         responseText += `📌 *[${jiraResult.key}] สร้างงานใหม่สำเร็จ*\n` +
                         `• 📝 *หัวข้องาน:* *${issue.summary}*\n` +

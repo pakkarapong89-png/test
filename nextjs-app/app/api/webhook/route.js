@@ -42,10 +42,6 @@ function getGuideText() {
 
 function buildChatResponse(text) {
   return NextResponse.json({
-    text,
-    actionResponse: {
-      type: 'NEW_MESSAGE',
-    },
     hostAppDataAction: {
       chatDataAction: {
         createMessageAction: {

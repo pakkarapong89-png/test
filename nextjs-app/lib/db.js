@@ -7,6 +7,7 @@ const connectionString = process.env.DATABASE_URL;
 
 let pool = null;
 let initialized = false;
+let dbDisabled = false; // Flag to disable DB if connection or init fails
 
 if (connectionString) {
   pool = new Pool({
@@ -17,13 +18,17 @@ if (connectionString) {
   });
 } else {
   console.warn('⚠️ DATABASE_URL is not set. Database features will fallback to local file system or memory.');
+  dbDisabled = true;
 }
 
 export async function query(text, params) {
-  if (!pool) {
-    throw new Error('Database is not initialized. Please set DATABASE_URL environment variable.');
+  if (!pool || dbDisabled) {
+    throw new Error('Database is disabled or not initialized.');
   }
   await initDb();
+  if (dbDisabled) {
+    throw new Error('Database was disabled during initialization.');
+  }
   return pool.query(text, params);
 }
 
@@ -31,7 +36,7 @@ export async function query(text, params) {
 let initPromise = null;
 
 export async function initDb() {
-  if (!pool) return;
+  if (!pool || dbDisabled) return;
   if (initialized) return;
   if (initPromise) return initPromise;
 
@@ -39,6 +44,9 @@ export async function initDb() {
   initPromise = (async () => {
     try {
       console.log('🔄 [DATABASE] Initializing tables if they do not exist...');
+      
+      // Perform a quick query to test connection first
+      await pool.query('SELECT 1');
 
       // 1. Create tables
       await pool.query(`
@@ -234,7 +242,8 @@ export async function initDb() {
 
       initialized = true;
     } catch (err) {
-      console.error('❌ [DATABASE] Initialization failed:', err.message);
+      console.error('❌ [DATABASE] Initialization failed. Disabling database features:', err.message);
+      dbDisabled = true;
       initPromise = null; // reset to allow retrying
     }
   })();
@@ -243,5 +252,5 @@ export async function initDb() {
 }
 
 export function isDbConnected() {
-  return pool !== null;
+  return pool !== null && !dbDisabled && initialized;
 }

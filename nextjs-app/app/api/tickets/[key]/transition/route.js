@@ -51,6 +51,7 @@ export async function POST(request, { params }) {
     // Fetch ticket summary first to enrich the message
     const summary = await getJiraIssueSummary(key) || 'ไม่สามารถดึงชื่อหัวข้องานได้';
 
+    try {
       await query(
         `INSERT INTO action_sources (ticket_key, source, actor)
          VALUES ($1, $2, $3)

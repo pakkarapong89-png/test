@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+  @page { size: A4; margin: 20mm 18mm; }
+  body {
+    font-family: 'Sarabun', 'Segoe UI', sans-serif;
+    color: #1a1a2e;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+  h1, h2, h3 { page-break-after: avoid; }
+  table, pre { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+<div style="text-align:center;padding:40px 0 30px 0;border-bottom:3px solid #0969da;margin-bottom:30px;">
+  <h1 style="font-size:28px;color:#0d1b2a;margin:0 0 8px 0;">📘 คู่มือการตั้งค่าระบบ taskyapp Bot & Dashboard</h1>
+  <p style="font-size:16px;color:#555;margin:4px 0;">ฉบับสมบูรณ์ สำหรับการนำระบบไปใช้งานจริงในบริษัท</p>
+</div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">คู่มือการติดตั้งและใช้งาน taskyapp Bot & Dashboard</h1>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">สำหรับผู้ดูแลระบบ (IT Admin / Developer)</h3>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #0969da;background:#ddf4ff;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0;font-size:13px;color:#24292f;"><strong>ℹ️ NOTE</strong><br/>คู่มือฉบับนี้ครอบคลุมทุกขั้นตอนตั้งแต่รับไฟล์โค้ดจนถึงเปิดใช้งานจริงในองค์กร ใช้เวลาทั้งหมดประมาณ <strong>30–45 นาที</strong></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">🗺️ ภาพรวมขั้นตอนทั้งหมด</h2>
+<div style="height:8px;"></div>
+<table style="border-collapse:collapse;width:100%;margin:16px 0;"><thead><tr><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ลำดับ</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">หัวข้อ</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">เวลา</th></tr></thead><tbody><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 0</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">รับไฟล์โค้ดและอัปโหลดขึ้น GitHub</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">5 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 1</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">เตรียม API Keys จากทุกบริการ</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">10 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 2</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">รันสคริปต์ตั้งค่าฐานข้อมูลอัตโนมัติ</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">2 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 3</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">Deploy แอปขึ้น Vercel</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">10 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 4</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ตรวจสอบระบบและซิงค์ข้อมูลครั้งแรก</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">2 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 5</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ตั้งค่า Google Chat Bot</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">10 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 6</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ตั้งค่า Jira Webhook</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">5 นาที</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 7</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">คู่มือการใช้งานสำหรับพนักงาน</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">(ส่วนอ้างอิง)</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ขั้นตอนที่ 8</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">การแก้ไขปัญหาที่พบบ่อย</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">(ส่วนอ้างอิง)</td></tr></tbody></table>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">📁 ขั้นตอนที่ 0: รับไฟล์โค้ดและอัปโหลดขึ้น GitHub</h1>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #8250df;background:#fbefff;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0;font-size:13px;color:#24292f;"><strong>❗ IMPORTANT</strong><br/>ขั้นตอนนี้ทำเพียงครั้งเดียว Vercel จะ Deploy อัตโนมัติทุกครั้งที่มีการแก้ไขโค้ดในอนาคต</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">0.1 สิ่งที่ได้รับมา</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">คุณจะได้รับโฟลเดอร์ชื่อ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-handoff</code></strong> ซึ่งมีโครงสร้างดังนี้:</p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>taskyapp-handoff/
+├── 📄 complete_setup_guide.pdf   ← คู่มือนี้
+├── 🪟 setup.bat                  ← สคริปต์ตั้งค่า (Windows)
+├── 🐧 setup.sh                   ← สคริปต์ตั้งค่า (Mac/Linux)
+└── 📁 nextjs-app/                ← โค้ดแอปพลิเคชันทั้งหมด
+    ├── 📄 README.md
+    ├── 📄 .env.example            ← ตัวอย่างตัวแปรที่ต้องกรอก
+    └── ... (source code)</code></pre>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">0.2 สร้าง GitHub Repository ใหม่</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้า 👉 <strong>https://github.com</strong> แล้วล็อกอิน (หรือสมัครฟรีถ้ายังไม่มีบัญชี)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>คลิกปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">+</code></strong> มุมขวาบน → เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">New repository</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>ตั้งชื่อ Repository เช่น <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Private</code></strong> (แนะนำ) → กดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create repository</code></strong></div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">0.3 อัปโหลดโค้ดขึ้น GitHub (วิธีง่าย — ผ่านเว็บ ไม่ต้องใช้ Terminal)</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>หลังสร้าง Repo เสร็จ คลิกลิงก์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">uploading an existing file</code></strong> ที่หน้า Repo</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>เปิดโฟลเดอร์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-handoff/nextjs-app</code></strong> ในเครื่องของคุณ</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>เลือกไฟล์และโฟลเดอร์ <strong>ทั้งหมด</strong> ในนั้น แล้ว <strong>ลากวางลงในหน้า GitHub</strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>เลื่อนลงล่าง กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Commit changes</code></strong> (สีเขียว)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>รอสักครู่จนอัปโหลดเสร็จ</div>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">💡 <strong>ทางเลือก (ถ้าถนัด Terminal):</strong> เปิด Terminal ในโฟลเดอร์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-handoff</code> แล้วพิมพ์:</div>
+<div style="border-left:4px solid #d0d7de;padding-left:16px;color:#57606a;margin:12px 0;"><pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>git remote set-url origin https://github.com/[ชื่อบัญชี]/[ชื่อ repo].git
+git push -u origin main</code></pre></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">🔑 ขั้นตอนที่ 1: เตรียม API Keys (เก็บไว้ใน Notepad ก่อน)</h1>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #1a7f37;background:#dafbe1;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0;font-size:13px;color:#24292f;"><strong>💡 TIP</strong><br/>เปิด Notepad หรือ Notepad++ เตรียมไว้ แล้วคัดลอกค่าที่ได้จากแต่ละบริการลงไป จะได้ไม่หาย</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.1 DATABASE_URL — ลิงก์เชื่อมต่อฐานข้อมูล Supabase</h3>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้า 👉 <strong>https://supabase.com</strong> → สมัคร/ล็อกอิน (ฟรี)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">New project</code></strong> → ตั้งชื่อโครงการ → ตั้งรหัสผ่านฐานข้อมูล → เลือก Region: <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Southeast Asia (Singapore)</code></strong> → กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create new project</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>รอสัก 1 นาทีให้โครงการสร้างเสร็จ</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>กดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Connect</code></strong> (สีเขียว บริเวณด้านบนสุด)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Transaction pooler</code></strong> → ประเภท <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">URI</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">6.</strong>คัดลอกลิงก์ที่ขึ้นต้นด้วย <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">postgresql://...</code></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">7.</strong>แก้ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">[YOUR-PASSWORD]</code> ในลิงก์เป็นรหัสผ่านที่ตั้งไว้ → บันทึกลง Notepad</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.2 ข้อมูล Jira Cloud (4 ค่า)</h3>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ล็อกอิน Jira Cloud ขององค์กร</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>สร้าง API Token ที่ 👉 <strong>https://id.atlassian.com/manage-profile/security/api-tokens</strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create API token</code></strong> → ตั้งชื่อว่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-connector</code> → คัดลอก Token บันทึกลง Notepad</div>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">บันทึกค่าทั้ง 4 ลง Notepad:</p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>JIRA_DOMAIN      = your-company.atlassian.net
+JIRA_EMAIL       = อีเมลของคุณที่ใช้ใน Jira
+JIRA_API_TOKEN   = (Token ที่เพิ่งคัดลอกมา)
+JIRA_PROJECT_KEY = รหัสย่อโครงการ เช่น KAN หรือ DEV</code></pre>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">💡 หา <strong>Project Key</strong> ได้จาก Jira → เลือกโครงการ → ดูตัวย่อที่ปรากฏหน้า Issue เช่น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">KAN-1</code> → Key คือ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">KAN</code></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.3 GOOGLE_CHAT_WEBHOOK_URL — ลิงก์ส่งการแจ้งเตือน</h3>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เปิด <strong>Google Chat</strong> → คลิกเข้าห้องกลุ่ม (Space) ที่ต้องการรับการแจ้งเตือน</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>คลิกที่ชื่อห้องด้านบนสุด → เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Apps & integrations</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Webhooks</code></strong> → <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Add webhook</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>ตั้งชื่อว่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp Notifier</code> → กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Save</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>คัดลอก URL ที่ได้ → บันทึกลง Notepad</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">1.4 GEMINI_API_KEY — รหัส AI</h3>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้า 👉 <strong>https://aistudio.google.com/apikey</strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create API Key</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>คัดลอก Key (ขึ้นต้นด้วย <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">AIzaSy...</code>) → บันทึกลง Notepad</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">⚡ ขั้นตอนที่ 2: รันสคริปต์ตั้งค่าฐานข้อมูล (อัตโนมัติ)</h1>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #8250df;background:#fbefff;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0;font-size:13px;color:#24292f;"><strong>❗ IMPORTANT</strong><br/>ขั้นตอนนี้จะสร้างตารางฐานข้อมูลและรหัสผ่านสำหรับ Login Dashboard ให้อัตโนมัติ</div>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สำหรับ Windows:</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เปิดโฟลเดอร์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-handoff</code></strong> (โฟลเดอร์นอกสุด)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>ดับเบิ้ลคลิกไฟล์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">setup.bat</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>กรอกข้อมูลตามที่สคริปต์ถาม (ใช้ข้อมูลที่เก็บไว้ใน Notepad)</div>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สำหรับ Mac/Linux:</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เปิด Terminal ในโฟลเดอร์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-handoff</code></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>พิมพ์: <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">./setup.sh</code> แล้วกด Enter</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>กรอกข้อมูลตามที่สคริปต์ถาม</div>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สคริปต์จะสร้างให้อัตโนมัติ:</strong></p>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>✅ ตารางฐานข้อมูลทั้งหมด 7 ตาราง</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>✅ รหัส <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">SESSION_SECRET</code> และ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">CRON_SECRET</code> (เก็บค่านี้ไว้ด้วย!)</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>✅ บัญชีผู้ดูแลระบบ (Admin) สำหรับ Login Dashboard</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>✅ ไฟล์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">.env</code> พร้อมค่าทั้งหมดสำหรับนำไปใส่ใน Vercel</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">🚀 ขั้นตอนที่ 3: Deploy แอปขึ้น Vercel</h1>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">3.1 สร้างโปรเจกต์ใน Vercel</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้า 👉 <strong>https://vercel.com</strong> → ล็อกอินด้วย GitHub Account</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Add New</code></strong> → <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Project</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>เลือก Repository <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code></strong> ที่สร้างไว้ → กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Import</code></strong></div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">3.2 ตั้งค่า Root Directory ⚠️ สำคัญมาก</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ในหน้า Configure Project ให้มองหาช่อง <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Root Directory</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Edit</code></strong> → พิมพ์ว่า <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">nextjs-app</code></strong> → กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">✓</code></strong></div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">3.3 กรอก Environment Variables</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เลื่อนลงมาที่ส่วน <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Environment Variables</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>เปิดไฟล์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">.env</code></strong> ที่ได้จาก setup.bat ด้วย Notepad</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong><strong>กด Ctrl+A</strong> เพื่อเลือกทั้งหมด → <strong>Ctrl+C</strong> คัดลอก</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>คลิกช่องแรก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Key</code></strong> ในหน้า Vercel → <strong>Ctrl+V</strong> วาง</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>Vercel จะกรอก Environment Variables ทั้งหมดให้อัตโนมัติใน 1 วินาที ✅</div>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #8250df;background:#fbefff;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0;font-size:13px;color:#24292f;"><strong>❗ IMPORTANT</strong><br/>ถ้ายังไม่มีไฟล์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">.env</code> จากสคริปต์ ให้กรอกทีละบรรทัดตามตัวอย่างในไฟล์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">.env.example</code></strong></div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">3.4 Deploy</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>กดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Deploy</code></strong> (สีดำ)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>รอประมาณ <strong>1–2 นาที</strong> จนขึ้นว่า Congratulations!</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong><strong>จดลิงก์เว็บที่ได้ไว้</strong> เช่น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">https://taskyapp-xxx.vercel.app</code></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">🏥 ขั้นตอนที่ 4: ตรวจสอบระบบและซิงค์ข้อมูลครั้งแรก</h1>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">4.1 ตรวจสอบว่าระบบพร้อมทำงาน</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">เปิดเบราว์เซอร์ไปที่:</p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>https://[ลิงก์เว็บของคุณ]/api/health</code></pre>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">ระบบจะแสดงผลรายงานเป็นภาษาไทย:</p>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>✅ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">"overall": "ready"</code> → ระบบพร้อมใช้งานทุกส่วน</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>⚠️ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">"overall": "needs_attention"</code> → มีบางส่วนที่ต้องตรวจสอบ (อ่านรายละเอียดในผลลัพธ์)</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">4.2 ดึงข้อมูลจาก Jira เข้าระบบครั้งแรก</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">เปิดเบราว์เซอร์ไปที่:</p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>https://[ลิงก์เว็บของคุณ]/api/cron/sync-tickets?secret=[CRON_SECRET]</code></pre>
+<div style="border-left:4px solid #d0d7de;padding:12px 16px;margin:12px 0;background:#f8f9fa;color:#57606a;font-size:13px;border-radius:0 6px 6px 0;">💡 หาค่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">CRON_SECRET</code> ได้จากไฟล์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">.env</code> หรือใน Vercel → Settings → Environment Variables</div>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">ผลลัพธ์ที่ถูกต้อง:</p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>{"success": true, "message": "Synchronized 10 tickets successfully.", "count": 10}</code></pre>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">หลังจากนั้น <strong>รีเฟรชหน้า Dashboard</strong> ข้อมูลตั๋วงานทั้งหมดจาก Jira จะแสดงขึ้นมาครับ</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">🤖 ขั้นตอนที่ 5: ตั้งค่า Google Chat Bot</h1>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">5.1 เปิดใช้งาน Google Chat API</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เข้า 👉 <strong>https://console.cloud.google.com</strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>ล็อกอินด้วยอีเมลองค์กร → เลือกโครงการของคุณ</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>ค้นหา <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Google Chat API</code></strong> ในช่องค้นหาด้านบน → กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Enable</code></strong></div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">5.2 กำหนดค่าบอท</h3>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>คลิกเมนูซ้าย <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Configuration</code></strong> แล้วกรอกข้อมูล:</div>
+<div style="height:8px;"></div>
+<table style="border-collapse:collapse;width:100%;margin:16px 0;"><thead><tr><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ช่อง</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ค่าที่กรอก</th></tr></thead><tbody><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>App name</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code> <strong>(ชื่อนี้จะแสดงในแชท — เปลี่ยนเป็นชื่ออื่นได้)</strong></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Interactive features</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">เปิดเป็นสีฟ้า ✅</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Receive 1:1 messages</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ติ๊กถูก ✅</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Join spaces and group conversations</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ติ๊กถูก ✅</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Connection settings</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">เลือก <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">HTTP Endpoint URL</code></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>URL</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">https://[ลิงก์เว็บ Vercel]/api/webhook</code></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Visibility</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Everyone in your organization</code></td></tr></tbody></table>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>กดปุ่ม <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Save</code></strong> ด้านล่างสุด</div>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">5.3 เพิ่มบอทเข้าใช้งาน</h3>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีที่ 1 — คุยส่วนตัว (DM):</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>เปิด Google Chat → กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">+</code></strong> ด้านซ้าย → <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Find apps</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>พิมพ์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code></strong> → เลือกบอท → เริ่มพิมพ์คำสั่งได้เลย (ไม่ต้อง @)</div>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีที่ 2 — ดึงเข้าห้องกลุ่ม (Space):</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>คลิกเข้าห้องแชทกลุ่ม → คลิกชื่อห้องด้านบน</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>เลือก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Manage members</code></strong> → <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">+ Add people & apps</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>พิมพ์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp</code></strong> → กดเพิ่ม</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>บอทจะส่งข้อความต้อนรับพร้อมคู่มือสั่งงานให้ทันที</div>
+<div style="height:8px;"></div>
+<div style="border-left:4px solid #8250df;background:#fbefff;padding:12px 16px;margin:12px 0;border-radius:0 6px 6px 0;font-size:13px;color:#24292f;"><strong>❗ IMPORTANT</strong><br/><strong>ในห้องกลุ่ม</strong> ต้องพิมพ์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp</code></strong> นำหน้าคำสั่งเสมอ เช่น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp ดูงานค้างทั้งหมด</code></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">⚙️ ขั้นตอนที่ 6: ตั้งค่า Jira Webhook (รับการแจ้งเตือนแบบ Real-time)</h1>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ล็อกอิน Jira ด้วยสิทธิ์ Admin → คลิกไอคอนเฟือง <strong>Settings ⚙️</strong> → <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">System</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>เมนูซ้าย เลื่อนลงล่างสุด → คลิก <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Webhooks</code></strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create a Webhook</code></strong> มุมขวาบน</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">4.</strong>กรอกข้อมูล:</div>
+<div style="height:8px;"></div>
+<table style="border-collapse:collapse;width:100%;margin:16px 0;"><thead><tr><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ช่อง</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">ค่าที่กรอก</th></tr></thead><tbody><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Name</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">taskyapp-jira-notifier</code></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Status</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Enabled</code></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>URL</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">https://[ลิงก์เว็บ Vercel]/api/jira/webhook</code></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>JQL</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">project = [PROJECT_KEY]</code> เช่น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">project = KAN</code></td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;"><strong>Events → Issue</strong></td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ติ๊กทั้ง 3: <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">created</code>, <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">updated</code>, <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">deleted</code></td></tr></tbody></table>
+<div style="height:8px;"></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">5.</strong>กด <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Create</code></strong> ด้านล่าง</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">💬 ขั้นตอนที่ 7: คู่มือการใช้งานสำหรับพนักงาน</h1>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">วิธีเรียกบอท</h3>
+<div style="height:8px;"></div>
+<table style="border-collapse:collapse;width:100%;margin:16px 0;"><thead><tr><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">สถานการณ์</th><th style="padding:8px 12px;background:#e8f0fe;font-weight:600;text-align:left;border:1px solid #d0d7de;font-size:13px;">วิธีพิมพ์</th></tr></thead><tbody><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ในห้องกลุ่ม (Space)</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">ต้องมี <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp</code> นำหน้าทุกครั้ง</td></tr><tr><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">คุยส่วนตัว (DM)</td><td style="padding:8px 12px;border:1px solid #d0d7de;font-size:13px;">พิมพ์ตรงได้เลย ไม่ต้อง @</td></tr></tbody></table>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">ตัวอย่างคำสั่งทั้งหมด</h3>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>📌 สร้างงานใหม่:</strong></p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>@taskyapp สร้าง epic ระบบ Login พนักงาน
+@taskyapp ช่วยสร้างระบบรายงานยอดขาย
+@taskyapp สร้าง job เขียนหน้า Login ในงาน KAN-1
+@taskyapp เพิ่มจ๊อบ ทดสอบระบบ ใน KAN-2</code></pre>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>📌 แก้ไขงาน:</strong></p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>@taskyapp แก้ไขวันกำหนดส่งของ KAN-1 เป็น 31/07/69
+@taskyapp เปลี่ยนผู้รับผิดชอบ KAN-2 เป็น สมชาย</code></pre>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>📌 เปลี่ยนสถานะงาน:</strong></p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>@taskyapp ปิดงาน KAN-1
+@taskyapp ย้าย KAN-2 ไป In Progress
+@taskyapp เปลี่ยน KAN-3 เป็น Done</code></pre>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>📌 ดูงาน:</strong></p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>@taskyapp ดูงานค้างทั้งหมด
+@taskyapp งานที่ยังไม่เสร็จมีอะไรบ้าง</code></pre>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>📌 ทดสอบระบบ:</strong></p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>@taskyapp ping</code></pre>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">บอทจะตอบ 🏓 Pong! แสดงว่าระบบทำงานปกติ</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">การเข้าใช้งาน Dashboard</h3>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>เปิดเบราว์เซอร์ → เข้าลิงก์ Vercel ของคุณ</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>ล็อกอินด้วยบัญชี Admin ที่สร้างตอนรัน setup.bat</div>
+<div style="margin:5px 0 5px 32px;font-size:14px;line-height:1.7;color:#24292f;position:relative;"><span style="position:absolute;left:-16px;color:#0969da;">•</span>ดูกราฟงาน, ประวัติกิจกรรม, และจัดการตั๋วงานได้จากเว็บ</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h1 style="color:#0d1b2a;margin-top:36px;margin-bottom:12px;font-size:24px;font-weight:700;">🛠️ ขั้นตอนที่ 8: การแก้ไขปัญหาที่พบบ่อย</h1>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: หน้าเว็บขึ้น Error 404</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สาเหตุ:</strong> ลืมตั้ง Root Directory เป็น <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">nextjs-app</code></p>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีแก้:</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>Vercel → เลือกโปรเจกต์ → <strong>Settings</strong> → <strong>General</strong></div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>หา <strong>Root Directory</strong> → กด <strong>Edit</strong> → พิมพ์ <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">nextjs-app</code></strong> → Save</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">3.</strong>ไปที่ <strong>Deployments</strong> → คลิก <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">...</code> → <strong><code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">Redeploy</code></strong></div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: Dashboard แสดงข้อมูลเป็น 0 ทั้งหมด</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สาเหตุ:</strong> ยังไม่ได้ซิงค์ข้อมูลจาก Jira ครั้งแรก</p>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีแก้:</strong> เปิดเบราว์เซอร์ไปที่:</p>
+<pre style="background:#1e1e2e;color:#cdd6f4;padding:14px 18px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.5;margin:12px 0;font-family:Consolas, Monaco, monospace;"><code>https://[ลิงก์เว็บ]/api/cron/sync-tickets?secret=[CRON_SECRET]</code></pre>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">แล้วรีเฟรชหน้า Dashboard</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: Google Cloud แจ้ง "Error saving configuration"</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สาเหตุ:</strong> อีเมลในช่อง Visibility ไม่ถูกโดเมนองค์กร หรือไม่ได้กด Enter หลังพิมพ์อีเมล</p>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีแก้:</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ใช้อีเมลที่ลงท้ายด้วยโดเมนองค์กรเท่านั้น (ห้ามใช้ @gmail.com)</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>หลังพิมพ์อีเมล <strong>กด Enter</strong> ก่อนแล้วค่อย Save</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: บอทไม่ตอบสนองในห้องกลุ่ม</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>สาเหตุ:</strong> ลืมพิมพ์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp</code> นำหน้าคำสั่ง</p>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีแก้:</strong> ในห้องกลุ่มต้องพิมพ์ <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">@taskyapp</code> นำหน้าเสมอ ถ้าคุยผ่าน DM ไม่ต้อง @</p>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h3 style="color:#1a1a2e;margin-top:20px;margin-bottom:8px;font-size:16px;font-weight:600;">❌ ปัญหา: ระบบ /api/health แสดงว่า Jira เชื่อมต่อไม่ได้</h3>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;"><strong>วิธีแก้:</strong></p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong>ตรวจสอบค่า <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">JIRA_DOMAIN</code>, <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">JIRA_EMAIL</code>, <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">JIRA_API_TOKEN</code>, <code style="background:#f6f8fa;padding:3px 6px;border-radius:6px;font-size:12.5px;color:#cf222e;font-family:Consolas, Monaco, monospace;border:1px solid rgba(175,184,193,0.2);">JIRA_PROJECT_KEY</code> ใน Vercel Environment Variables</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong>ตรวจว่า API Token ยังไม่หมดอายุที่ https://id.atlassian.com/manage-profile/security/api-tokens</div>
+<div style="height:8px;"></div>
+<hr style="border:none;border-top:1px solid #d0d7de;margin:24px 0;"/>
+<div style="height:8px;"></div>
+<h2 style="color:#1a1a2e;margin-top:28px;margin-bottom:10px;font-size:19px;font-weight:700;border-bottom:2px solid #e8e8e8;padding-bottom:6px;">🔧 การเปลี่ยนชื่อบอทในอนาคต</h2>
+<div style="height:8px;"></div>
+<p style="margin:8px 0;font-size:14px;line-height:1.7;color:#24292f;">ถ้าต้องการเปลี่ยนชื่อบอทให้ทำ 2 จุดนี้ให้ตรงกัน:</p>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">1.</strong><strong>Google Cloud Console</strong> → Google Chat API → Configuration → <strong>App name</strong> = ชื่อใหม่</div>
+<div style="margin:6px 0 6px 24px;font-size:14px;line-height:1.7;color:#24292f;"><strong style="color:#0969da;margin-right:6px;">2.</strong><strong>Vercel</strong> → Settings → Environment Variables → <strong>BOT_NAME</strong> = ชื่อใหม่ → Redeploy</div>
+<div style="height:8px;"></div>
+
+<div style="text-align:center;margin-top:40px;padding-top:20px;border-top:2px solid #e8e8e8;">
+  <p style="font-size:12px;color:#999;">— จบคู่มือ —</p>
+</div>
+</body>
+</html>

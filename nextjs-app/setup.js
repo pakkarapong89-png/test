@@ -3,6 +3,12 @@ const crypto = require('crypto');
 const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
+
+function openUrl(url) {
+  const start = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+  exec(`${start} ${url}`);
+}
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -91,6 +97,8 @@ async function main() {
   console.log('┌───────────────────────────────────────────────────────────┐');
   console.log('│  1. ตั้งค่าฐานข้อมูล Supabase (Database Configuration)     │');
   console.log('└───────────────────────────────────────────────────────────┘');
+  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Supabase Dashboard เพื่อให้ท่านก๊อปปี้ลิงก์...');
+  openUrl('https://supabase.com/dashboard/projects');
   
   const databaseUrl = await ask('ลิงก์ Supabase URI (DATABASE_URL)', 'DATABASE_URL');
   if (!databaseUrl) {
@@ -211,6 +219,10 @@ async function main() {
   
   const jiraDomain = await ask('โดเมนหลัก Jira ของบริษัท (เช่น mycompany.atlassian.net)', 'JIRA_DOMAIN');
   const jiraEmail = await ask('อีเมลของแอดมินที่ผูกคีย์สิทธิ์', 'JIRA_EMAIL');
+  
+  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Atlassian Security เพื่อให้ท่านสร้าง API Token...');
+  openUrl('https://id.atlassian.com/manage-profile/security/api-tokens');
+  
   const jiraApiToken = await ask('รหัส Jira API Token ของคุณ', 'JIRA_API_TOKEN');
   const jiraProjectKey = await ask('คีย์โครงการ Jira ย่อ (เช่น DEV, TES)', 'JIRA_PROJECT_KEY');
 
@@ -229,6 +241,8 @@ async function main() {
   console.log('\n┌───────────────────────────────────────────────────────────┐');
   console.log('│  4. ตั้งค่าสมองกลปัญญาประดิษฐ์ AI (Google Gemini)           │');
   console.log('└───────────────────────────────────────────────────────────┘');
+  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Google AI Studio เพื่อให้ท่านสร้าง Gemini API Key...');
+  openUrl('https://aistudio.google.com/');
   
   const geminiKey = await ask('รหัส Google Gemini API Key', 'GEMINI_API_KEY');
   const geminiModel = await ask('รหัสรุ่นโมเดลหลัก (แนะนำ: gemini-3.5-flash)', 'GEMINI_MODEL', 'gemini-3.5-flash');

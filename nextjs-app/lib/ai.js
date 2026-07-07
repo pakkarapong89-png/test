@@ -141,7 +141,7 @@ export async function parseMessageWithGemini(messageText, senderName) {
 
   const response = await axios.post(url, payload, {
     headers: { 'Content-Type': 'application/json' },
-    timeout: 3000,
+    timeout: 5000,
   });
   const jsonText = response.data.candidates[0].content.parts[0].text;
   return JSON.parse(jsonText.trim());

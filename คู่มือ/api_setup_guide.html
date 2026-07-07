@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คู่มือการขอค่า API และการตั้งค่าระบบบอต (เข้าใจง่ายที่สุด)</title>
+  <title>คู่มือการขอค่า API และการ Deploy ระบบบอต Jira + Google Chat (ฉบับสมบูรณ์)</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -203,171 +203,246 @@
       color: var(--primary);
       border-color: #E0E7FF;
     }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.925rem;
+    }
+    
+    table th, table td {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    
+    table th {
+      background: #F1F5F9;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>คู่มือการขอค่า API และการตั้งค่าระบบบอต</h1>
-    <div class="subtitle">ฉบับอัปเดตล่าสุดปี 2026 — เรียบง่าย อ่านแล้วทำตามได้ทันที ไม่สับสน</div>
+    <h1>คู่มือการขอค่า API และการ Deploy ระบบบอต Jira + Google Chat</h1>
+    <div class="subtitle">ฉบับสมบูรณ์ครอบคลุมทุกขั้นตอนการติดตั้ง — ทำตามได้ทันที ไม่สับสน</div>
     
     <div class="toc">
       <div class="toc-title">📌 สารบัญขั้นตอนการตั้งค่า</div>
       <ul>
-        <li><a href="#gemini">1. การขอ Google Gemini API Key (คีย์สมอง AI)</a></li>
-        <li><a href="#jira">2. การขอข้อมูลและเชื่อมต่อฝั่ง Jira Cloud</a></li>
-        <li><a href="#gchat">3. การกำหนดค่าในห้องแชท Google Chat (Webhook & Chat App)</a></li>
-        <li><a href="#supabase">4. การสร้างและดึงค่า Supabase Database URL</a></li>
-        <li><a href="#env">5. สรุปการนำค่าไปใส่ในไฟล์ตั้งค่าระบบ (.env & Vercel)</a></li>
+        <li><a href="#gemini">1. การขอค่าคีย์และสิทธิ์เชื่อมต่อ API (API Credentials)</a></li>
+        <li><a href="#deploy">2. การนำโค้ดขึ้นระบบคลาวด์และติดตั้งใช้งานจริง (Deploy to Vercel)</a></li>
+        <li><a href="#webhooks">3. การกำหนดค่าและตั้งค่า Webhooks (Jira & Google Chat App)</a></li>
+        <li><a href="#firstsync">4. การเริ่มระบบและซิงก์ข้อมูลดึงตั๋วงานครั้งแรก (First Sync)</a></li>
+        <li><a href="#cron">5. สรุปฟังก์ชันการทำงานของระบบและระบบเวลาเตือนงานค้าง (Cron)</a></li>
       </ul>
     </div>
     
-    <!-- Section 1: Gemini -->
+    <!-- Section 1: API Keys -->
     <div id="gemini" class="section">
-      <h2>1. วิธีขอ Google Gemini API Key (สมองของบอต)</h2>
-      <p>คีย์นี้จะช่วยเชื่อมระบบบอตเข้ากับโมเดลปัญญาประดิษฐ์ เพื่อช่วยแปลงภาษาพูดของคนในแชทให้เป็นคำสั่งจัดการงานใน Jira ได้</p>
+      <h2>1. วิธีขอคีย์และสิทธิ์เชื่อมต่อ API (API Credentials)</h2>
+      <p>ขั้นตอนการขอและจัดเตรียมรหัสกุญแจสำคัญ 4 ดอกก่อนจะทำการรันระบบจริง:</p>
       
+      <h3>1.1 Google Gemini API Key (สมองแปลคำพูดของบอต)</h3>
       <ol>
-        <li>เปิดหน้าเว็บเบราว์เซอร์แล้วเข้าสู่ลิงก์: <strong><a href="https://aistudio.google.com/" target="_blank" class="link-btn">Google AI Studio</a></strong></li>
-        <li>ล็อกอินด้วยบัญชี Google ของคุณให้เรียบร้อย</li>
-        <li>มองหาปุ่มเมนูทางซ้ายมือ แล้วคลิกหัวข้อ <strong>"Get API key"</strong> (ไอคอนรูปกุญแจ)</li>
-        <li>คลิกปุ่มสีน้ำเงินที่เขียนว่า <strong>"Create API key"</strong></li>
-        <li>ระบบจะให้คุณเลือกโปรเจกต์:
+        <li>เปิดเบราว์เซอร์ไปที่: <strong><a href="https://aistudio.google.com/" target="_blank" class="link-btn">Google AI Studio</a></strong></li>
+        <li>ล็อกอินด้วยบัญชี Google ของท่าน</li>
+        <li>คลิกปุ่ม <strong>"Get API key"</strong> ที่แถบเครื่องมือซ้ายบน</li>
+        <li>คลิกเลือกปุ่มน้ำเงิน <strong>"Create API key"</strong></li>
+        <li>คลิกสร้างในโปรเจกต์ใหม่ (**Create API key in new project**) หรือเลือกโปรเจกต์เดิมที่มีอยู่</li>
+        <li>เมื่อระบบสร้างเสร็จแล้ว ให้กดปุ่ม <strong>"Copy"</strong> บันทึกรหัสคีย์เก็บไว้ทันที
+          <br><span class="badge badge-primary">💡 อัปเดตคีย์รูปแบบใหม่:</span> ปัจจุบันคีย์จะขึ้นต้นด้วยตัวย่อ <strong>"AQ."</strong> หรือ <strong>"AL."</strong> เสมอ สามารถนำรหัสตัวนี้ไปใส่ในโปรเจกต์เพื่อคุยกับโมเดลได้ทันทีครับ
+        </li>
+      </ol>
+      
+      <h3>1.2 ข้อมูลสิทธิ์การเชื่อมต่อ Jira Cloud</h3>
+      <p>จัดเตรียมข้อมูล 4 ค่าสำคัญดังนี้:</p>
+      <ol>
+        <li><strong>JIRA_DOMAIN (ที่อยู่โดเมน Jira):</strong> เปิดหน้าบอร์ด Jira และก๊อปปี้เอาเฉพาะโดเมนหลัก เช่น <code>myteam.atlassian.net</code> (ห้ามมี https:// หรือข้อความต่อท้าย)</li>
+        <li><strong>JIRA_EMAIL:</strong> อีเมลที่ท่านล็อกอินทำงานบอร์ดงาน Jira</li>
+        <li><strong>JIRA_API_TOKEN:</strong>
           <ul>
-            <li>หากพึ่งเคยใช้งานเป็นครั้งแรก ให้คลิกปุ่ม <strong>"Create API key in new project"</strong></li>
-            <li>หากมีโปรเจกต์ที่สร้างไว้แล้วในเครื่อง ให้คลิกเลือกโปรเจกต์นั้น แล้วกดดำเนินการต่อ</li>
+            <li>เปิดหน้าความปลอดภัยของ Atlassian: <strong><a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-btn">Atlassian API Token Manager</a></strong></li>
+            <li>คลิกปุ่ม **"Create API token"** แล้วตั้งชื่อกำกับ (เช่น <code>Jira-GoogleChat-Bot</code>) จากนั้นกดปุ่ม Create</li>
+            <li>รหัสจะขึ้นต้นด้วย **"ATATT..."** ให้กด Copy บันทึกในที่ปลอดภัยทันที *(จะแสดงผลให้เห็นเพียงครั้งเดียวเท่านั้น)*</li>
           </ul>
         </li>
-        <li>เมื่อระบบสร้างคีย์สำเร็จ จะแสดงแถบยาวๆ ขึ้นมา ให้คลิกปุ่ม <strong>"Copy"</strong> เพื่อบันทึกค่าไว้ในเครื่องทันที</li>
+        <li><strong>JIRA_PROJECT_KEY:</strong> รหัสตัวย่อหน้าตั๋วงานโปรเจกต์ เช่น ตั๋วงานคือ <code>TES-154</code> รหัสคือ <strong><code>TES</code></strong> (ตัวพิมพ์ใหญ่ทั้งหมด)</li>
       </ol>
       
-      <div class="highlight-box">
-        <strong>💡 อัปเดตข้อมูลเรื่องคีย์ Gemini แบบใหม่ (ปี 2026):</strong><br>
-        ปัจจุบัน Google เปลี่ยนรูปแบบการออกคีย์ใหม่ เพื่อให้ปลอดภัยขึ้น คีย์ของท่านจะขึ้นต้นด้วยตัวอักษร <strong>"AQ."</strong> หรือ <strong>"AL."</strong> เสมอ (เช่น <code class="badge">AQ.Ab8RN6LEI...</code>) ท่านสามารถคัดลอกค่านี้ไปใช้ได้ทันที ไม่ต้องตกใจว่าทำไมรูปแบบคีย์ถึงต่างจากเดิมครับ
-      </div>
+      <h3>1.3 ขอลิงก์ส่งการแจ้งเตือน (Google Chat Webhook URL)</h3>
+      <p>สำหรับให้ตัวเซิร์ฟเวอร์หลังบ้านบอต ยิงข้อความรายงานผลประจำวัน หรือเตือนเวลามีตั๋วงานค้างเข้าห้องแชทอัตโนมัติ</p>
+      <ol>
+        <li>เปิดแอปพลิเคชัน <strong>Google Chat</strong> หรือ Google Chat ใน Gmail</li>
+        <li>คลิกเลือกเข้าไปในห้องแชท (Space) ที่ต้องการให้บอตส่งข้อความ</li>
+        <li>คลิกที่ **ชื่อห้องแชทด้านบนสุด** -> เลือก **"Apps & integrations" (แอปและการบูรณาการ)** -> คลิกเลือก **"Webhooks" (เว็บฮุค)**</li>
+        <li>คลิกปุ่ม **"Add webhook" (เพิ่มเว็บฮุค)**</li>
+        <li>ตั้งชื่อโปรไฟล์เว็บฮุคบอต (เช่น <code>Tasky Alert Bot</code>) แล้วกดปุ่ม **"Save" (บันทึก)**</li>
+        <li>คัดลอกค่าลิงก์ URL ที่ได้รับมาเก็บไว้ใช้งาน (ลิงก์จะขึ้นต้นด้วย <code>https://chat.googleapis.com/...</code>)</li>
+      </ol>
+      
+      <h3>1.4 ขอลิงก์ฐานข้อมูล Supabase Database URL</h3>
+      <ol>
+        <li>สมัครใช้งานและสร้างโปรเจกต์ใหม่บน **<a href="https://supabase.com/" target="_blank" class="link-btn">Supabase.com</a>**</li>
+        <li>ไปที่หัวข้อ **Settings (ฟันเฟืองด้านล่างซ้าย)** -> เลือกหัวข้อ **Database**</li>
+        <li>เลื่อนลงมาหาหัวข้อ **Connection string** แล้วคลิกเลือกแท็บ **URI**</li>
+        <li>คัดลอกค่าลิงก์เชื่อมต่อฐานข้อมูล (ขึ้นต้นด้วย <code>postgres://...</code>) แล้วนำไปแทนที่ข้อความ <code>[YOUR-PASSWORD]</code> ด้วยรหัสผ่านฐานข้อมูลที่ท่านตั้งไว้ตอนสร้างโปรเจกต์</li>
+      </ol>
     </div>
     
-    <!-- Section 2: Jira -->
-    <div id="jira" class="section">
-      <h2>2. วิธีขอข้อมูลและคีย์ฝั่ง Jira Cloud</h2>
-      <p>เพื่อให้ระบบบอตของคุณสามารถเข้าไปอัปเดตงาน เพิ่มงาน หรือดึงข้อมูลงานในบอร์ด Jira มาแสดงผลได้ เราจำเป็นต้องเตรียมค่า 4 ตัวนี้:</p>
+    <!-- Section 2: Deploy to Vercel -->
+    <div id="deploy" class="section">
+      <h2>2. ขั้นตอนการนำโค้ดขึ้นระบบและรันใช้งานจริง (Deploy to Vercel)</h2>
+      <p>เมื่อรวบรวมคีย์ API ครบถ้วนแล้ว ขั้นตอนถัดไปคือนำโค้ดขึ้นรันบนอินเทอร์เน็ตสาธารณะ:</p>
       
-      <h3>2.1 หาค่า JIRA_DOMAIN (ที่อยู่เว็บบอร์ด Jira)</h3>
-      <ul>
-        <li>ให้ไปที่หน้าเว็บ Jira ที่คุณทำงานตามปกติ แล้วสังเกตช่องใส่ URL ด้านบนสุดของเบราว์เซอร์</li>
-        <li>คัดลอกเอาเฉพาะชื่อ Domain หลักเท่านั้น <strong>(ห้ามใส่ https:// และห้ามใส่เครื่องหมายสแลช / ต่อท้าย)</strong></li>
-        <li><em>ตัวอย่าง URL จริง:</em> <code>https://mycompany.atlassian.net/jira/your-board</code></li>
-        <li><em>ค่าที่ต้องคัดลอกมาใช้:</em> <strong><code>mycompany.atlassian.net</code></strong></li>
-      </ul>
-      
-      <h3>2.2 หาค่า JIRA_EMAIL</h3>
-      <ul>
-        <li>คือที่อยู่อีเมลจริงที่คุณใช้สมัครหรือล็อกอินเข้าใช้บอร์ดงาน Jira ดังกล่าว (เช่น <code>admin@mycompany.com</code>)</li>
-      </ul>
-      
-      <h3>2.3 วิธีสร้าง JIRA_API_TOKEN</h3>
+      <h3>2.1 อัปโหลดโค้ดขึ้น GitHub</h3>
       <ol>
-        <li>ล็อกอินและเข้าหน้าตั้งค่าความปลอดภัยของ Atlassian ผ่านลิงก์นี้: <strong><a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-btn">Atlassian API Tokens</a></strong></li>
-        <li>คลิกปุ่มสีน้ำเงิน <strong>"Create API token"</strong></li>
-        <li>ตั้งชื่อป้ายกำกับเพื่อกันลืม (เช่น <code>Jira-GoogleChat-Bot</code>) จากนั้นกดปุ่ม <strong>"Create"</strong></li>
-        <li>ระบบจะแสดงรหัส Token ยาวๆ ขึ้นต้นด้วยตัวอักษร <strong>"ATATT..."</strong></li>
-        <li>ให้กดปุ่ม <strong>"Copy"</strong> แล้วรีบนำไปจดบันทึกไว้ในที่ปลอดภัยทันที
-          <br><strong style="color: #DC2626;">*ข้อควรระวัง: รหัสนี้จะแสดงให้ดูเพียงแค่ครั้งเดียวตอนสร้างเสร็จเท่านั้น หากปิดหน้าต่างนี้ไปจะไม่สามารถกลับมาเปิดดูคีย์เดิมซ้ำได้อีก*</strong>
-        </li>
+        <li>เข้าเว็บ **[GitHub.com](https://github.com/)** สร้าง Repository ของคุณเอง ตั้งชื่อ เช่น `jira-googlechat-bot`</li>
+        <li>เลือกประเภทเป็น <strong>Private (ส่วนตัว)</strong> เสมอ เพื่อความปลอดภัย</li>
+        <li>ทำการอัปโหลดโค้ดระบบทั้งหมดขึ้นไปเก็บไว้ใน Repository ดังกล่าว</li>
       </ol>
       
-      <h3>2.4 หาค่า JIRA_PROJECT_KEY</h3>
-      <ul>
-        <li>ให้เปิดดูตั๋วงานในบอร์ด Jira ของทีมคุณ</li>
-        <li>ค่านี้คือตัวอักษรย่อภาษาอังกฤษที่อยู่ด้านหน้ารหัสตั๋วงาน เช่น ถ้างานในบอร์ดคือ <code>TES-154</code>, <code>TES-155</code> รหัสโปรเจกต์ของคุณคือ <strong><code>TES</code></strong> (พิมพ์ด้วยตัวพิมพ์ใหญ่ทั้งหมด)</li>
-      </ul>
+      <h3>2.2 การ Deploy ขึ้น Vercel</h3>
+      <ol>
+        <li>ล็อกอินเข้าไปที่ **[Vercel.com](https://vercel.com/)** ผ่านสิทธิ์บัญชี GitHub ของท่าน</li>
+        <li>คลิกปุ่ม **"Add New"** -> เลือก **"Project"**</li>
+        <li>กดคลิกปุ่ม **"Import"** ตัวคลังโปรเจกต์ `jira-googlechat-bot` ของเราที่ดึงมาจาก GitHub</li>
+        <li>เลื่อนหน้าจอลงมาหาหัวข้อ **Environment Variables** แล้วนำค่าคีย์ที่เราเตรียมไว้ทั้งหมดไปใส่ดังนี้:</li>
+      </ol>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>ชื่อตัวแปร (Key)</th>
+            <th>ค่าข้อมูลที่จะนำมาใส่ (Value)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DATABASE_URL</strong></td>
+            <td>ลิงก์เชื่อมฐานข้อมูล Supabase จากข้อ 1.4</td>
+          </tr>
+          <tr>
+            <td><strong>JIRA_DOMAIN</strong></td>
+            <td>โดเมนโปรเจกต์ Jira เช่น <code>myteam.atlassian.net</code> จากข้อ 1.2</td>
+          </tr>
+          <tr>
+            <td><strong>JIRA_EMAIL</strong></td>
+            <td>อีเมลทำงานของ Jira จากข้อ 1.2</td>
+          </tr>
+          <tr>
+            <td><strong>JIRA_API_TOKEN</strong></td>
+            <td>รหัสผ่าน API Token จากข้อ 1.2</td>
+          </tr>
+          <tr>
+            <td><strong>JIRA_PROJECT_KEY</strong></td>
+            <td>รหัสตัวย่อโปรเจกต์ เช่น <code>TES</code> จากข้อ 1.2</td>
+          </tr>
+          <tr>
+            <td><strong>GOOGLE_CHAT_WEBHOOK_URL</strong></td>
+            <td>ลิงก์ส่งข้อความแจ้งเตือนห้องแชท จากข้อ 1.3</td>
+          </tr>
+          <tr>
+            <td><strong>LLM_PROVIDER</strong></td>
+            <td>พิมพ์คำว่า <code>gemini</code></td>
+          </tr>
+          <tr>
+            <td><strong>GEMINI_API_KEY</strong></td>
+            <td>คีย์ปัญญาประดิษฐ์ขึ้นต้นด้วย <code>AQ.</code> หรือ <code>AL.</code> จากข้อ 1.1</td>
+          </tr>
+          <tr>
+            <td><strong>GEMINI_MODEL</strong></td>
+            <td>พิมพ์คำว่า <code>gemini-3.5-flash</code></td>
+          </tr>
+          <tr>
+            <td><strong>BOT_NAME</strong></td>
+            <td>ชื่อบอตที่จะใช้เรียกในระบบ เช่น <code>TaskyBot</code></td>
+          </tr>
+          <tr>
+            <td><strong>SESSION_SECRET</strong></td>
+            <td>พิมพ์ตัวอักษรสุ่มยาวๆ เพื่อความปลอดภัยล็อกอิน Dashboard</td>
+          </tr>
+          <tr>
+            <td><strong>CRON_SECRET</strong></td>
+            <td>พิมพ์ตัวอักษรสุ่มยาวๆ เพื่อความปลอดภัยในการเรียกฟังก์ชันระบบเวลา</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <ol start="5">
+        <li>เมื่อใส่ครบถ้วนเรียบร้อยแล้ว ให้คลิกปุ่มสีน้ำเงิน <strong>"Deploy"</strong></li>
+        <li>รอระบบ Compile ประมาณ 1-2 นาที เมื่อหน้าจอแสดงผลเสร็จเรียบร้อย ให้คัดลอกลิงก์ที่อยู่ URL ที่ Vercel ให้มา (เช่น <code>https://jira-googlechat-bot.vercel.app</code>)</li>
+      </ol>
     </div>
     
-    <!-- Section 3: Google Chat -->
-    <div id="gchat" class="section">
-      <h2>3. วิธีการกำหนดค่าและตั้งค่าใน Google Chat</h2>
-      <p>เพื่อให้แชทของทีมส่งสัญญาณและพูดคุยโต้ตอบกับบอตได้ จะแบ่งออกเป็น 2 ขา ดังนี้:</p>
+    <!-- Section 3: Webhooks -->
+    <div id="webhooks" class="section">
+      <h2>3. การกำหนดค่าและตั้งค่า Webhooks (จุดสำคัญที่สุด)</h2>
+      <p>ขั้นตอนนี้เป็นการเชื่อมต่อสายส่งข้อมูลเพื่อให้ระบบภายนอกสื่อสารกับแอปพลิเคชันหลังบ้านของเราได้:</p>
       
-      <h3>3.1 การแจ้งเตือนขาออก (Google Chat Webhook URL)</h3>
-      <p>ใช้สำหรับให้บอตสามารถส่งข้อความแจ้งสรุปงานประจำวัน (Daily Summary) หรือยิงข้อความเตือนเมื่อมีตั๋วงานค้างเข้าห้องแชทเองอัตโนมัติ</p>
+      <h3>3.1 ตั้งค่าเว็บฮุคฝั่ง Jira Cloud (ซิงก์ข้อมูลเวลามีตั๋วงานเคลื่อนไหว)</h3>
       <ol>
-        <li>เปิดโปรแกรม <strong>Google Chat</strong> หรือ Google Chat ใน Gmail</li>
-        <li>เข้าไปที่ห้องแชทของทีม (Space) ที่ต้องการให้บอตส่งข้อความเข้ามา</li>
-        <li>คลิกที่แถบ **ชื่อห้องแชท** ด้านบนสุด เพื่อเปิดแถบเมนูเสริม</li>
-        <li>เลือกเมนู **"Apps & integrations" (แอปและการบูรณาการ)** -> คลิกหัวข้อ **"Webhooks" (เว็บฮุค)**</li>
-        <li>คลิกเลือกปุ่ม **"Add webhook" (เพิ่มเว็บฮุค)**</li>
-        <li>ตั้งชื่อเว็บฮุค (เช่น <code>Tasky Alert Bot</code>) และใส่ภาพโปรไฟล์ของบอตที่คุณชื่นชอบ</li>
-        <li>กดปุ่ม **"Save" (บันทึก)** จากนั้นระบบจะสร้างลิงก์ให้ ให้กดคลิก **คัดลอกค่าลิงก์ URL** ยาวๆ ที่ได้รับมาเก็บไว้ใช้งาน</li>
-      </ol>
-      
-      <h3>3.2 การรับคำสั่งขาเข้า (Google Chat App)</h3>
-      <p>ใช้สำหรับการตั้งค่าแอปพลิเคชัน เพื่อให้คนในองค์กรพิมพ์ @ชื่อบอต แล้วส่งข้อความคุยกับบอตได้โดยตรง</p>
-      <ol>
-        <li>ล็อกอินเข้าใช้งานที่เว็บ <strong><a href="https://console.cloud.google.com/" target="_blank" class="link-btn">Google Cloud Console</a></strong></li>
-        <li>เลือกโปรเจกต์ระบบบอตของคุณที่แถบเมนูด้านบนสุด</li>
-        <li>ค้นหาบริการคำว่า <strong>"Google Chat API"</strong> ในช่องค้นหาด้านบน และคลิกเข้าไปกดปุ่ม <strong>"Enable"</strong> (เปิดใช้งาน)</li>
-        <li>เมื่อเปิดเสร็จแล้ว ให้คลิกที่หัวข้อ <strong>"Configuration" (การกำหนดค่า)</strong> ที่แถบเมนูด้านซ้าย</li>
-        <li>กรอกรายละเอียดข้อมูลบอตดังนี้:
+        <li>เปิดเบราว์เซอร์แล้วเข้าใช้งานลิงก์ทางลัดนี้: <strong><code>https://[JIRA_DOMAIN_ของคุณ]/plugins/servlet/webhooks</code></strong></li>
+        <li>คลิกปุ่ม **"Create a Webhook"** ที่มุมขวาบน</li>
+        <li>กำหนดรายละเอียดดังนี้:
           <ul>
-            <li><strong>App name:</strong> ชื่อบอตของคุณ เช่น <code>TaskyBot</code></li>
-            <li><strong>Avatar URL:</strong> ลิงก์รูปภาพสัญลักษณ์ของบอต</li>
-            <li><strong>Description:</strong> รายละเอียดบอต เช่น "บอตช่วยจัดการบอร์ดงาน Jira และแจ้งเตือนทีม"</li>
+            <li><strong>Name:</strong> ตั้งชื่อตามต้องการ เช่น <code>Sync to Dashboard</code></li>
+            <li><strong>URL:</strong> นำลิงก์เว็บ Vercel ของท่านมากรอกและเติมท้ายลิงก์ด้วยคำว่า <code>/api/jira/webhook</code> เสมอ
+              <br><em>ตัวอย่าง:</em> <code>https://jira-googlechat-bot.vercel.app/api/jira/webhook</code>
+            </li>
+            <li><strong>Events (หัวข้อส่งสัญญาณ):</strong> เลื่อนลงไปที่แถบ **Issue** และติ๊กเครื่องหมายเลือก 3 ตัวนี้:
+              <br>☑️ **Created** (ส่งเมื่อสร้างตั๋ว)
+              <br>☑️ **Updated** (ส่งเมื่อแก้ไขงานหรือเปลี่ยนดิวเดต/ย้ายสถานะบอร์ด)
+              <br>☑️ **Deleted** (ส่งเมื่อมีการกดลบตั๋วงาน)
+            </li>
           </ul>
         </li>
-        <li>เลื่อนลงมาตรงหัวข้อ **Interactive Connection Settings** ให้คลิกเปิด **"Connection settings"**</li>
-        <li>คลิกเลือกที่หัวข้อ **"Webhook URL" (หรือ HTTPS Endpoint)**</li>
-        <li>นำลิงก์แอปพลิเคชันหลังบ้านของคุณที่ Deploy บน **Vercel** มากอกลงไป โดยลงท้ายลิงก์ด้วยคำว่า <code>/api/webhook</code> เสมอ
-          <br><em>ตัวอย่างการกรอก:</em> <code class="badge badge-primary">https://your-app.vercel.app/api/webhook</code>
-        </li>
-        <li>ส่วนล่างสุดหัวข้อ **Visibility** ให้เลือกติ๊ก <strong>"Only people and groups in my domain..."</strong> เพื่อจำกัดการเข้าใช้งานเฉพาะในบริษัท</li>
-        <li>กด **"Save" (บันทึก)** ข้อมูลทั้งหมดเป็นอันเสร็จเรียบร้อย</li>
+        <li>กดบันทึกโดยคลิกปุ่ม **"Create"** ด้านล่างสุด</li>
       </ol>
-    </div>
-    
-    <!-- Section 4: Supabase -->
-    <div id="supabase" class="section">
-      <h2>4. วิธีดึงค่า Supabase Database URL (ฐานข้อมูลระบบ)</h2>
-      <p>ระบบนี้ต้องการฐานข้อมูลสำหรับเก็บบันทึกประวัติ รายชื่อเล่นทีม และสถานะของตั๋วงานเพื่อนำไปแสดงผลบน Dashboard</p>
-      <ol>
-        <li>เข้าสู่ระบบที่ <strong><a href="https://supabase.com/" target="_blank" class="link-btn">Supabase.com</a></strong></li>
-        <li>คลิกเปิดโปรเจกต์ของคุณขึ้นมา (หากยังไม่มี ให้กดสร้าง New Project)</li>
-        <li>คลิกที่ไอคอน **Settings (รูปฟันเฟือง)** ที่แถบด้านซ้ายล่างสุด -> เลือกหัวข้อ **"Database"**</li>
-        <li>เลื่อนหน้าจอลงมาหาหัวข้อ **Connection string** จากนั้นคลิกแท็บ **"URI"**</li>
-        <li>คัดลอกตัวหนังสือที่ขึ้นต้นด้วย <code>postgres://...</code></li>
-        <li>ให้แก้ไขเปลี่ยนข้อความตรงตัวหนังสือ <code>[YOUR-PASSWORD]</code> ให้เป็นรหัสผ่านฐานข้อมูลจริงที่คุณกำหนดไว้ตอนสร้างโปรเจกต์</li>
-      </ol>
-    </div>
-    
-    <!-- Section 5: Env Summary -->
-    <div id="env" class="section">
-      <h2>5. สรุปตัวแปรทั้งหมดที่ต้องกรอก (.env)</h2>
-      <p>เมื่อรวบรวมค่าคีย์ต่างๆ จาก 4 ขั้นตอนด้านบนมาได้แล้ว ให้นำมากรอกใส่ในไฟล์ <code>.env</code> หรือใส่ในหน้า <strong>Environment Variables</strong> บนหน้า Vercel เพื่อใช้รันระบบจริง ดังนี้ครับ:</p>
       
-      <div class="code-block">
-<span class="comment"># 1. ลิงก์ฐานข้อมูล Supabase</span>
-DATABASE_URL="postgres://postgres.abc:Password123@aws-region.pooler.supabase.com:6543/postgres"
-
-<span class="comment"># 2. ข้อมูลการเข้าใช้งาน Jira</span>
-JIRA_DOMAIN="mycompany.atlassian.net"
-JIRA_EMAIL="your-email@company.com"
-JIRA_API_TOKEN="ATATT..."
-JIRA_PROJECT_KEY="TES"
-
-<span class="comment"># 3. ลิงก์แจ้งเตือนเข้าห้อง Google Chat</span>
-GOOGLE_CHAT_WEBHOOK_URL="https://chat.googleapis.com/v1/spaces/..."
-
-<span class="comment"># 4. ตั้งค่าบริการปัญญาประดิษฐ์ Google Gemini</span>
-LLM_PROVIDER="gemini"
-GEMINI_API_KEY="AQ.xxxxxxx"
-GEMINI_MODEL="gemini-3.5-flash"
-BOT_NAME="TaskyBot"
-
-<span class="comment"># 5. รหัสลับสำหรับระบบความปลอดภัย (สุ่มตัวอักษรอะไรก็ได้ยาวๆ)</span>
-SESSION_SECRET="random_session_key_here_12345"
-CRON_SECRET="random_cron_key_here_12345"
-      </div>
+      <h3>3.2 ตั้งค่าแอปพลิเคชันห้องแชท (Google Chat App)</h3>
+      <p>สำหรับกำหนดทิศทางให้เวลาเราพิมพ์ `@ชื่อบอต` สั่งงานในห้องแชท แล้วห้องแชทยิงคำถามส่งมาหาสมอง AI ที่ Vercel:</p>
+      <ol>
+        <li>เข้าหน้าเว็บ **[Google Cloud Console](https://console.cloud.google.com/)** เลือกโปรเจกต์ระบบให้ถูกต้อง</li>
+        <li>ค้นหาเปิดบริการ **"Google Chat API"** และกดปุ่ม **"Enable"** (เปิดใช้งาน)</li>
+        <li>คลิกเมนู **"Configuration" (การกำหนดค่า)** แถบเมนูด้านซ้ายมือ</li>
+        <li>กรอกข้อมูลบอตเบื้องต้น เช่น App name, Avatar URL, Description ให้สวยงาม</li>
+        <li>เลื่อนลงมาที่หัวข้อ **Connection settings** ติ๊กเลือกที่ **"Webhook URL"**</li>
+        <li>นำลิงก์แอป Vercel ของท่านมากรอกลงในช่อง และต้องพิมพ์ต่อท้ายลิงก์ด้วยคำว่า <code>/api/webhook</code> เสมอ
+          <br><em>ตัวอย่าง:</em> <code>https://jira-googlechat-bot.vercel.app/api/webhook</code>
+        </li>
+        <li>ในหัวข้อ **Visibility** เลือกติ๊กจำกัดสิทธิ์ใช้งานเฉพาะบัญชีในองค์กรของท่าน</li>
+        <li>กดปุ่ม **"Save" (บันทึก)** บันทึกข้อมูล</li>
+      </ol>
     </div>
-
+    
+    <!-- Section 4: First Sync -->
+    <div id="firstsync" class="section">
+      <h2>4. การเริ่มระบบและซิงก์ข้อมูลดึงตั๋วงานครั้งแรก (First Sync)</h2>
+      <p>เพื่อให้ตัวบอตและหน้า Dashboard รู้จักประวัติรายชื่อพนักงานและดึงงานเก่าที่เคยสร้างค้างไว้ใน Jira มาเก็บในระบบ:</p>
+      <ol>
+        <li>เปิดหน้าเว็บแดชบอร์ดงานขึ้นมา (เช่น <code>https://jira-googlechat-bot.vercel.app/dashboard</code>)</li>
+        <li>กดสมัครสมาชิกบัญชีแรกของระบบเพื่อใช้ล็อกอินเป็นบัญชีดูแลระบบ (Admin)</li>
+        <li>จากนั้น ให้ทำการสั่งยิงข้อมูลอัปเดตงานทั้งหมดด้วยการเปิดลิงก์ดึงข้อมูลนี้บนแท็บหน้าเว็บเบราว์เซอร์:
+          <br><strong>รูปแบบลิงก์:</strong> <code>https://[ชื่อเว็บคลาวด์ของคุณ]/api/cron/sync-tickets?secret=[ค่า_CRON_SECRET_ของคุณ]</code>
+          <br><em>ตัวอย่างลิงก์จริง:</em> <code>https://jira-googlechat-bot.vercel.app/api/cron/sync-tickets?secret=my_cron_secret_123</code>
+        </li>
+        <li>หากขึ้นข้อความระบุว่า <code>sync success</code> แสดงว่าดึงข้อมูลเสร็จสิ้นเรียบร้อยแล้ว หน้าแดชบอร์ดบอร์ดและบอตก็พร้อมเริ่มตอบคำถามและแสดงสถิติงามๆ ทั้งหมดได้ทันทีครับ!</li>
+      </ol>
+    </div>
+    
+    <!-- Section 5: Cron Summary -->
+    <div id="cron" class="section">
+      <h2>5. สรุปฟังก์ชันระบบและตั้งเวลาแจ้งเตือนค้าง (Vercel Cron)</h2>
+      <p>ในตัวโปรเจกต์นี้ได้รับการตั้งค่าไฟล์กำหนดระบบเวลารันงานอัตโนมัติ (Vercel Cron Jobs) ผ่านไฟล์ <code>vercel.json</code> ไว้เรียบร้อยแล้วครับ ซึ่งจะรันหลังใช้งานจริงดังนี้:</p>
+      <ul>
+        <li><strong>การรายงานสรุปประจำวัน (Daily Summary):</strong> บอตจะแจ้งผลสรุปประสิทธิภาพงานประจำวันของทีมเข้าไปที่ห้องแชทอัตโนมัติ ทุกวันเวลา 18:00 น.</li>
+        <li><strong>ระบบซิงก์ประวัติงาน (Hourly Ticket Sync):</strong> จะซิงก์ดึงความเคลื่อนไหวจาก Jira มารอไว้ในหน้าแดชบอร์ด ทุกๆ ชั่วโมงเพื่อความอัปเดตสดใหม่</li>
+      </ul>
+    </div>
+    
   </div>
 
 </body>

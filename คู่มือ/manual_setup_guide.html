@@ -251,45 +251,75 @@
 
     <!-- Step 1 -->
     <div id="step1" class="section">
-      <div class="section-title">🔑 สเต็ปที่ 1: การขอข้อมูลและคีย์ API สำคัญ</div>
-      <p>ล็อกอินเข้าบัญชีผู้ให้บริการของแต่ละที่ และคัดลอกรหัสสำคัญจดเก็บลงใน Notepad ล่วงหน้าดังนี้ครับ:</p>
+      <div class="section-title">🔑 สเต็ปที่ 1: การขอข้อมูลและคีย์ API สำคัญ (ทีละขั้นตอนอย่างละเอียด)</div>
+      <p>ให้เปิดล็อกอิน (Login) บัญชีผู้ใช้งานค้างไว้ในเว็บเบราว์เซอร์ และคัดลอกค่ารหัสต่างๆ ด้านล่างนี้ไปจดลงในโปรแกรม Notepad บนเครื่องคอมพิวเตอร์ของคุณเตรียมไว้ครับ:</p>
 
       <div class="guide-card">
-        <div class="guide-card-title">1.1 ลิงก์ฐานข้อมูล Supabase (DATABASE_URL)</div>
+        <div class="guide-card-title">1.1 ลิงก์เชื่อมฐานข้อมูล Supabase (DATABASE_URL)</div>
+        <p><em>จุดประสงค์: ใช้เพื่อให้บอตสามารถเชื่อมต่อและเก็บบันทึกประวัติตั๋วงานทั้งหมดได้</em></p>
         <ol>
-          <li>เปิดหน้าโครงการใน <a href="https://supabase.com/" target="_blank" class="link-btn">Supabase.com</a></li>
-          <li>คลิกปุ่มสีเขียว <strong>"Connect"</strong> ด้านบนสุดของโปรเจกต์</li>
-          <li>เลือกแท็บ <strong>"Direct"</strong> ในหน้าต่างย่อยด้านบนสุด</li>
-          <li>ติ๊กหัวข้อ Connection Method ให้เป็น <strong>"Transaction pooler"</strong></li>
-          <li>เลือก Type เป็น <strong>"URI"</strong> และกดปุ่ม Copy ลิงก์ยาวที่ขึ้นต้นด้วย <code>postgres://...</code></li>
-          <li>นำค่า <code>[YOUR-PASSWORD]</code> ในข้อความลิงก์ออกแล้วพิมพ์แทนที่ด้วยรหัสผ่านจริงที่คุณตั้งค่าไว้</li>
+          <li>เข้าเว็บไซต์ <a href="https://supabase.com/" target="_blank" class="link-btn">Supabase.com</a> -> คลิกปุ่มสีเขียว <strong>"Start your project"</strong> หรือสมัครสมาชิกผ่านบัญชี GitHub ให้เรียบร้อย</li>
+          <li>เมื่อเข้ามาหน้าแรก ให้คลิกปุ่มสีเขียว <strong>"New Project" (สร้างโครงการใหม่)</strong> -> เลือกชื่อองค์กรของคุณ</li>
+          <li>กรอกรายละเอียดโครงการใหม่:
+            <ul>
+              <li><strong>Name (ชื่อโปรเจกต์):</strong> พิมพ์ตั้งชื่อตามชอบ เช่น <code>Tasky-Jira-Bot</code></li>
+              <li><strong>Database Password:</strong> <span class="highlight-text">⚠️ สำคัญมาก:</span> ตั้งรหัสผ่านฐานข้อมูลที่มีความปลอดภัย แล้วก๊อปปี้รหัสผ่านจริงตัวนี้จดแยกใส่ Notepad เก็บไว้ทันที (เพราะระบบจะไม่แสดงรหัสนี้ให้เห็นอีก และต้องนำไปใช้แทนที่ในภายหลัง)</li>
+              <li><strong>Region:</strong> เลือกเป็น <code>Singapore (ap-southeast-1)</code> (เพื่อให้เซิร์ฟเวอร์อยู่ใกล้ไทยและทำงานได้ไวที่สุด)</li>
+              <li><strong>Pricing Plan:</strong> เลือกเป็น <code>Free</code></li>
+            </ul>
+          </li>
+          <li>คลิกปุ่มสีเขียว <strong>"Create new project"</strong> -> รอระบบเตรียมการประมาณ 1-2 นาที (สังเกตไอคอนวงกลมหมุนๆ จนกระทั่งสร้างโครงการเสร็จสมบูรณ์)</li>
+          <li>เมื่อเข้ามาที่หน้าแรกของโครงการแล้ว มองไปที่แถบสีดำด้านบนสุดขวามือ คลิกปุ่มสีเขียวคำว่า <strong>"Connect"</strong> (อยู่ข้างชื่อโครงการของคุณ)</li>
+          <li>ในป๊อปอัปสี่เหลี่ยมที่เด้งขึ้นมา ให้คลิกเลือกแท็บคำว่า <strong>"Direct"</strong> ที่อยู่ด้านบนสุด</li>
+          <li>ในหน้าจอของแท็บ Direct ให้ระบุตั้งค่า 2 ข้อดังนี้:
+            <ul>
+              <li><strong>Connection Method:</strong> ติ๊กเลือกที่หัวข้อ <strong>"Transaction pooler"</strong></li>
+              <li><strong>Type:</strong> คลิกเลือกที่คำว่า <strong>"URI"</strong></li>
+            </ul>
+          </li>
+          <li>สังเกตกล่องสีดำที่มีลิงก์ขึ้นต้นด้วย <code>postgres://...</code> ให้คลิกปุ่ม <strong>"Copy"</strong> ที่อยู่มุมขวาของกล่องนั้นเพื่อคัดลอกลิงก์</li>
+          <li>เอาลิงก์มาวางใน Notepad แล้วสังเกตตัวหนังสือคำว่า <code>[YOUR-PASSWORD]</code> ให้ลบคำนี้ออก (รวมทั้งวงเล็บเหลี่ยมด้วย) แล้วนำ <strong>รหัสผ่านจริง</strong> ที่คุณตั้งไว้ในขั้นตอนแรกสุดมาพิมพ์ใส่แทนที่ตรงจุดนั้นเป๊ะๆ</li>
         </ol>
       </div>
 
       <div class="guide-card">
-        <div class="guide-card-title">1.2 ข้อมูลฝั่ง Jira Cloud</div>
+        <div class="guide-card-title">1.2 ข้อมูลการล็อกอินและเชื่อมต่อกับ Jira Cloud</div>
         <ol>
-          <li><strong>JIRA_DOMAIN:</strong> โดเมนหลักของทีม เช่น <code>myteam.atlassian.net</code> (ห้ามพิมพ์ https หรือทับ)</li>
-          <li><strong>JIRA_EMAIL:</strong> อีเมลที่ผูกเข้าใช้งาน Jira</li>
-          <li><strong>JIRA_API_TOKEN:</strong> สร้างได้จากหน้าเว็บ <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-btn">Atlassian API Tokens</a> กดปุ่ม <strong>Create API token</strong> แล้ว Copy รหัสที่ขึ้นต้นด้วย <code>ATATT...</code></li>
-          <li><strong>JIRA_PROJECT_KEY:</strong> รหัสย่อหน้าตั๋วงาน เช่น โครงการงานรหัส <code>DEV-452</code> ค่ารหัสย่อคือ <strong><code>DEV</code></strong></li>
+          <li><strong>JIRA_DOMAIN (โดเมนของบริษัท):</strong> เปิดหน้าเบราว์เซอร์ใช้งาน Jira บอร์ดหลักปกติ สังเกตแถบที่อยู่เว็บด้านบน (URL) ก๊อปปี้เอาเฉพาะท่อนโดเมน เช่น <code>mycompany.atlassian.net</code> (ห้ามพิมพ์ <code>https://</code> หรือเครื่องหมายขีดทับ <code>/</code> ต่อท้ายเด็ดขาด)</li>
+          <li><strong>JIRA_EMAIL:</strong> กรอกที่อยู่อีเมลที่คุณใช้เข้าใช้งานระบบ Jira ของที่ทำงานปกติ</li>
+          <li><strong>JIRA_API_TOKEN (รหัสผ่านเชื่อมโยงข้อมูล):</strong>
+            <ul>
+              <li>เข้าหน้าจัดการความปลอดภัยของ Atlassian: <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-btn">Atlassian API Tokens</a></li>
+              <li>คลิกปุ่มสีน้ำเงิน <strong>"Create API token"</strong></li>
+              <li>ตั้งชื่อป้ายกำกับว่า <code>Jira-GoogleChat-Bot</code> แล้วกด <strong>Create</strong></li>
+              <li>หน้าต่างจะแสดงรหัสคีย์ที่ขึ้นต้นด้วย <code>ATATT...</code> ให้กดปุ่ม <strong>"Copy"</strong> เก็บเข้า Notepad ทันที <span class="highlight-text">(⚠️ คำเตือน: รหัสนี้จะแสดงครั้งเดียวตอนสร้างเสร็จเท่านั้น หากปิดไปแล้วต้องสร้างใหม่)</span></li>
+            </ul>
+          </li>
+          <li><strong>JIRA_PROJECT_KEY (คีย์ย่อโครงการ):</strong> สังเกตชื่อรหัสตั๋วงานใน Jira ของคุณ เช่น ตั๋วงานมีชื่อรหัสว่า <code>DEV-120</code> หรือ <code>TES-99</code> ให้เอาเฉพาะส่วนหน้าขีดคือ <strong><code>DEV</code></strong> หรือ <strong><code>TES</code></strong> (พิมพ์ตัวพิมพ์ใหญ่ทั้งหมด)</li>
         </ol>
       </div>
 
       <div class="guide-card">
-        <div class="guide-card-title">1.3 ลิงก์ Google Chat Webhook URL</div>
+        <div class="guide-card-title">1.3 ลิงก์ห้องแชท Google Chat Webhook URL</div>
+        <p><em>จุดประสงค์: เป็นท่อปลายทางเพื่อให้บอตสามารถส่งข้อความไปหาคนในทีมได้</em></p>
         <ol>
-          <li>เปิดแอป Google Chat ในคอมพิวเตอร์ของคุณ</li>
-          <li>เข้าไปใน Space ห้องแชทกลุ่ม -> คลิกชื่อห้องด้านบนสุด -> เลือก **Apps & integrations** -> เลือก **Webhooks**</li>
-          <li>กดปุ่มเพิ่ม webhook และก๊อปปี้ลิงก์ที่ระบบสร้างให้เก็บไว้</li>
+          <li>เปิดหน้าแอป <strong>Google Chat</strong> ในคอมพิวเตอร์ของคุณ</li>
+          <li>เอาเมาส์ไปชี้ที่ชื่อห้องกลุ่ม (Space) ของทีมคุณ -> คลิกที่เครื่องหมายสามจุด <code>...</code> (หรือคลิกที่ชื่อกลุ่มด้านบนสุดของหน้าจอแชท) -> เลือกเมนู <strong>"Apps & integrations" (แอปและการบูรณาการ)</strong></li>
+          <li>คลิกเลือกเมนูย่อย <strong>"Webhooks"</strong></li>
+          <li>คลิกปุ่ม <strong>"Add webhook"</strong> (หรือปุ่มเพิ่ม) -> ตั้งชื่อโปรไฟล์ของบอต เช่น <code>Tasky Alert Bot</code> -> คลิกปุ่ม <strong>Save (บันทึก)</strong></li>
+          <li>กดปุ่ม <strong>"Copy"</strong> ลิงก์ที่เด้งขึ้นมาเก็บไว้ (ขึ้นต้นด้วย <code>https://chat.googleapis.com/v1/spaces/...</code>)</li>
         </ol>
       </div>
 
       <div class="guide-card">
-        <div class="guide-card-title">1.4 รหัส Gemini API Key</div>
+        <div class="guide-card-title">1.4 รหัส Gemini API Key (คีย์สมองบอต AI)</div>
+        <p><em>จุดประสงค์: เพื่อใช้ปัญญาประดิษฐ์มาสรุปแจกแจงงานด่วนและวิเคราะห์ทีมงาน</em></p>
         <ol>
-          <li>เปิดหน้าเว็บ <a href="https://aistudio.google.com/" target="_blank" class="link-btn">Google AI Studio</a></li>
-          <li>คลิก <strong>Get API key</strong> ด้านบนซ้าย -> คลิกปุ่มสีน้ำเงิน <strong>Create API key</strong> -> คัดลอกรหัสคีย์ที่ขึ้นต้นด้วย <code>AQ.</code> หรือ <code>AL.</code></li>
+          <li>เปิดหน้าเว็บ <a href="https://aistudio.google.com/" target="_blank" class="link-btn">Google AI Studio</a> แล้วล็อกอินด้วยบัญชี Gmail/Google ทั่วไป</li>
+          <li>มองหาแท็บเมนูด้านซ้ายบนสุด คลิกที่เมนูรูปไอคอนกุญแจเขียนว่า <strong>"Get API key"</strong></li>
+          <li>คลิกปุ่มสีน้ำเงินคำว่า <strong>"Create API key"</strong></li>
+          <li>หน้าต่างย่อยจะเด้งขึ้นมา ให้เลือกสร้างคีย์ในโปรเจกต์ใหม่ หรือเลือกโปรเจกต์เดิมที่มีอยู่ แล้วคลิกยืนยันสร้าง</li>
+          <li>คลิกปุ่ม <strong>"Copy"</strong> รหัสคีย์ยาวๆ ที่ระบบสรุปให้มา (รหัสจะขึ้นต้นด้วยตัวอักษรย่อ <strong><code>AQ.</code></strong> หรือ <strong><code>AL.</code></strong> เสมอ) ก๊อปปี้ไปวางรอไว้ใน Notepad ครับ</li>
         </ol>
       </div>
     </div>
@@ -364,15 +394,50 @@ CREATE TABLE IF NOT EXISTS tickets (
 );
       </pre>
       <ol start="4">
-        <li>คลิกปุ่มสีเขียวคำว่า <strong>"Run"</strong> เพื่อสร้างตารางทั้งหมดเสร็จสิ้น</li>
-        <li><strong>การเพิ่มบัญชี Admin บอร์ด:</strong> ไปที่เมนู **Table Editor** ด้านซ้าย -> เลือกตาราง **users** -> คลิกปุ่ม **Insert row** เพื่อเพิ่มชื่อและรหัสล็อกอินของผู้ดูแลหน้าเว็บแดชบอร์ดโดยตรงได้เลยครับ</li>
+        <li>คลิกปุ่มสีเขียวคำว่า <strong>"Run"</strong> (หรือกด <code>Ctrl + Enter</code> บนแป้นพิมพ์) เพื่อสร้างตารางทั้งหมดเสร็จสิ้น</li>
+        <li><strong>การสร้างบัญชีผู้ดูแลระบบ (Admin User):</strong>
+          <ul>
+            <li>ลบคำสั่งสร้างตารางเดิมในช่อง SQL Editor ออกให้หมด</li>
+            <li>คัดลอกคำสั่งรันด้านล่างนี้ลงไปแปะในหน้าต่างเดิม:
+              <pre>
+-- คำสั่งเพิ่มผู้ใช้ Admin เข้าสู่ตาราง เพื่อนำไปใช้ล็อกอินหน้า Dashboard
+-- (โดยบัญชีนี้จะมีชื่อล็อกอินว่า: admin และรหัสผ่านคือ: admin123)
+INSERT INTO users (username, password_hash, salt, name, email, role, is_approved)
+VALUES (
+  'admin', 
+  '457bd77b738e4a9e52541db8b5df40d7c3dbb9fa54a19b8ee49195d5279b908b9826f4974917540788102a90da3d1796c9c614b8a4f9104b2b467651048b26ef', 
+  '73238596645391a3c617c72957bdc026', 
+  'Administrator', 
+  'admin@example.com', 
+  'Admin', 
+  true
+);
+              </pre>
+            </li>
+            <li>คลิกปุ่มสีเขียว <strong>"Run"</strong> อีกครั้งเพื่อเปิดบัญชี</li>
+            <li><em>💡 แนะนำเพิ่มเติม:</em> บัญชีนี้ใช้สำหรับล็อกอินหน้า Dashboard โดยใช้ username: <code>admin</code> และ password: <code>admin123</code> เมื่อติดตั้งหน้าเว็บจนใช้งานได้แล้ว ค่อยกดเข้าสู่ระบบไปเปลี่ยนรหัสผ่านใหม่ได้ทันทีครับ</li>
+          </ul>
+        </li>
       </ol>
     </div>
 
     <!-- Step 3 -->
     <div id="step3" class="section">
       <div class="section-title">📝 สเต็ปที่ 3: การเขียนไฟล์ค่ากำหนดสภาพแวดล้อม (.env)</div>
-      <p>สร้างไฟล์ชื่อ <code>.env</code> ไว้ที่ระดับโฟลเดอร์นอกสุดของโปรเจกต์คุณ และระบุค่าข้อมูลดังนี้:</p>
+      <p>เมื่อจัดแจงข้อมูลส่วนหลังบ้านเสร็จแล้ว ต่อมาเราจะนำค่าทั้งหมดมาผูกลงในไฟล์ตั้งค่าของโปรเจกต์ครับ:</p>
+      <ol>
+        <li>เปิดโฟลเดอร์หลักของโปรเจกต์คุณขึ้นมาในเครื่องคอมพิวเตอร์</li>
+        <li><strong>เปิดการแสดงผลนามสกุลไฟล์บนระบบ Windows (สำคัญมาก):</strong>
+          <ul>
+            <li>หากใช้ Windows 11: คลิกที่เมนู <strong>View</strong> ด้านบนสุด -> ชี้ไปที่ <strong>Show</strong> -> ติ๊กเลือก <strong>"File name extensions" (นามสกุลไฟล์)</strong></li>
+            <li>หากใช้ Windows 10: คลิกที่แท็บ <strong>View</strong> ด้านบนสุดของหน้าต่าง -> ติ๊กถูกที่ช่อง <strong>"File name extensions" (นามสกุลไฟล์)</strong></li>
+            <li><span class="highlight-text">⚠️ หากไม่ทำข้อนี้:</span> เวลาเปลี่ยนชื่อไฟล์อาจจะกลายเป็น <code>.env.txt</code> ซึ่งระบบจะไม่ยอมรับและรันงานไม่ผ่านครับ</li>
+          </ul>
+        </li>
+        <li>ค้นหาไฟล์ตัวอย่างที่ชื่อ <code>.env.example</code> -> คลิกขวาเลือก <strong>Copy (คัดลอก)</strong> และกด <strong>Paste (วาง)</strong> ลงในโฟลเดอร์เดิม</li>
+        <li>เปลี่ยนชื่อไฟล์ที่เพิ่งคัดลอกใหม่นี้ให้เหลือแค่ <strong>`.env`</strong> (ลบข้อความ <code>.example</code> หรือ <code>.txt</code> ออกให้หมด เหลือเพียงจุดทศนิยมและคำว่า env)</li>
+        <li>คลิกขวาที่ไฟล์ <code>.env</code> เลือก Open with -> โปรแกรม <strong>Notepad</strong> (หรือ VS Code) แล้วแก้ไขข้อมูลใส่คีย์ที่จดไว้ลงไปดังนี้ครับ:</li>
+      </ol>
       <pre>
 DATABASE_URL="ลิงก์เชื่อม Supabase จากข้อ 1.1"
 

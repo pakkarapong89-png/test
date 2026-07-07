@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คู่มือตั้งค่าบอต Jira + Dashboard (ฉบับเข้าใจง่ายที่สุดในโลก)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --secondary: #10B981;
+      --background: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --warning: #F59E0B;
+      --warning-bg: #FEF3C7;
+      --success-bg: #D1FAE5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sarabun', 'Outfit', sans-serif;
+      background-color: var(--background);
+      color: var(--text-main);
+      line-height: 1.625;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 3rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      font-family: 'Outfit', 'Sarabun', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #0F172A;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+
+    .badge-primary {
+      background: #EEF2FF;
+      color: var(--primary);
+      border-color: #E0E7FF;
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: #B45309;
+      border-color: #FDE68A;
+    }
+
+    .alert {
+      background-color: #EFF6FF;
+      border-left: 4px solid var(--primary);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+      color: #1E40AF;
+    }
+
+    .toc {
+      background: #F1F5F9;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .toc-title {
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    .toc ul {
+      list-style-type: none;
+      padding-left: 0.5rem;
+    }
+
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+
+    .toc a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    .section {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-size: 1.625rem;
+      font-weight: 700;
+      color: #0F172A;
+      border-bottom: 2px solid #E2E8F0;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin: 2rem 0 1rem 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: #334155;
+    }
+
+    ol, ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.75rem;
+    }
+
+    code {
+      font-family: 'Outfit', monospace;
+      background: #F1F5F9;
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #D946EF;
+      font-weight: 600;
+    }
+
+    pre {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 1.25rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: 'Outfit', monospace;
+      font-size: 0.875rem;
+    }
+
+    .link-btn {
+      display: inline-block;
+      background: #EEF2FF;
+      color: var(--primary);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .link-btn:hover {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .guide-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .guide-card-title {
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    table th, table td {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    table th {
+      background: #F1F5F9;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .highlight-text {
+      color: #B45309;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎮 คู่มือสร้างบอตเตือนงาน Jira + แดชบอร์ด</h1>
+    <div class="subtitle">ฉบับอ่านง่ายที่สุดในโลก — สรุปทีละกริ๊ก ทำตามง่ายเหมือนเล่นเกม!</div>
+    
+    <div class="alert">
+      <strong>👋 ยินดีต้อนรับครับ!</strong> คู่มือหน้าเว็บนี้เขียนขึ้นมาให้อ่านเข้าใจง่ายเป็นพิเศษ ไม่มีภาษาเขียนโปรแกรมยากๆ มาปน ให้ทำตามทีละขั้นตอนอย่างสบายใจได้เลยครับ!
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">📌 สารบัญด่านการตั้งค่า (ทำตาม 4 สเต็ปนี้ได้เลย!)</div>
+      <ul>
+        <li><a href="#step1">🛠️ ด่านที่ 1: ใช้โปรแกรมช่วยตั้งค่าอัจฉวิยะในเครื่อง (setup-assistant.bat)</a></li>
+        <li><a href="#step2">🚀 ด่านที่ 2: เอาบอตขึ้นรันออนไลน์บนระบบ Vercel คลาวด์</a></li>
+        <li><a href="#step3">🔌 ด่านที่ 3: ต่อท่อผูกสายสัญญาณ Webhook ระหว่างระบบ</a></li>
+        <li><a href="#step4">🏁 ด่านที่ 4: เคาะระฆังเรียกตั๋วงานรอบแรกสุด (First Sync)</a></li>
+      </ul>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="step1" class="section">
+      <div class="section-title">🛠️ ด่านที่ 1: ดับเบิ้ลคลิกเพื่อรันสคริปต์อัตโนมัติ</div>
+      <p>ในโฟลเดอร์หลักของโปรเจกต์คุณ จะมีไฟล์ชื่อ <code>setup-assistant.bat</code> อยู่ ให้ทำตามนี้ครับ:</p>
+      
+      <div class="guide-card">
+        <div class="guide-card-title">🚀 วิธีการเริ่มรัน:</div>
+        <ol>
+          <li><strong>ดับเบิ้ลคลิกที่ไฟล์ <code>setup-assistant.bat</code></strong></li>
+          <li>หน้าจอสีดำ (CMD) จะเด้งเปิดขึ้นมาช่วยตรวจสอบความพร้อมของคอมพิวเตอร์ของคุณ</li>
+          <li>ตัวหน้าจอจะเริ่มถามคำถามทีละข้อ และคอยเด้งเปิดเบราว์เซอร์ไปแต่ละหน้าเว็บให้อัตโนมัติ!</li>
+        </ol>
+      </div>
+
+      <h3>💡 วิธีหาค่ามาตอบคำถามทีละหัวข้อ:</h3>
+
+      <div class="guide-card">
+        <div class="badge badge-primary">ขั้นตอนที่ 1.1</div>
+        <div class="guide-card-title">🌐 ลิงก์ฐานข้อมูล Supabase (DATABASE_URL)</div>
+        <p>เมื่อโปรแกรมถามข้อนี้ และเด้งเปิดหน้าเว็บ Supabase Dashboard ขึ้นมาให้:</p>
+        <ol>
+          <li>คลิกปุ่มสีเขียวคำว่า <strong>"Connect"</strong> ที่อยู่แถบเมนูด้านบนสุดของโปรเจกต์คุณ</li>
+          <li>ในหน้าต่างสี่เหลี่ยมที่เด้งขึ้นมา ให้เลือกแท็บ <strong>"Direct"</strong> ด้านบนสุด</li>
+          <li>ที่หัวข้อ Connection Method ให้คลิกเลือกตัวเลือก <strong>"Transaction pooler"</strong></li>
+          <li>ที่ช่อง Type ด้านล่าง ให้เลือกตัวเลือกเป็น <strong>"URI"</strong></li>
+          <li>กดคัดลอก (Copy) ลิงก์ยาวๆ ที่ขึ้นต้นด้วย <code>postgres://...</code></li>
+          <li>นำมาวางในหน้าจอ CMD และลบคำว่า <code>[YOUR-PASSWORD]</code> ออก แล้วพิมพ์ใส่<strong>รหัสผ่านจริง</strong>ของฐานข้อมูลที่คุณตั้งไว้ลงไปแทน จากนั้นกด Enter</li>
+          <li>จากนั้น ให้กรอกตั้งชื่อแอดมินและรหัสผ่านที่คุณต้องการใช้ล็อกอินหน้าเว็บ Dashboard ตามใจชอบได้เลยครับ!</li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="badge badge-primary">ขั้นตอนที่ 1.2</div>
+        <div class="guide-card-title">🔑 รหัส Jira API Token</div>
+        <p>เมื่อโปรแกรมถามข้อนี้ และเด้งเปิดหน้าเว็บความปลอดภัยของ Atlassian ขึ้นมาให้:</p>
+        <ol>
+          <li>คลิกปุ่มสีน้ำเงินคำว่า <strong>"Create API token"</strong></li>
+          <li>ตั้งชื่อกำกับอะไรก็ได้ เช่น <code>Jira-Bot</code> แล้วกด Create</li>
+          <li>กดปุ่ม <strong>Copy</strong> รหัสที่ขึ้นต้นด้วย <code>ATATT...</code> นำมาวางลงในช่องถามในหน้าจอ CMD แล้วกด Enter</li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="badge badge-primary">ขั้นตอนที่ 1.3</div>
+        <div class="guide-card-title">💬 ลิงก์แจ้งเตือนกลุ่ม Google Chat Webhook</div>
+        <p>ข้อนี้ระบบเปิดลิงก์ให้ไม่ได้ ให้คุณเปิดแอป Google Chat ในคอมพิวเตอร์ของคุณเอง แล้วกดเข้าไปในห้องคุยกลุ่มของทีม:</p>
+        <ol>
+          <li>คลิกที่ <strong>ชื่อห้องแชทด้านบนสุด</strong> -> เลือกเมนู <strong>"Apps & integrations"</strong> -> เลือก <strong>"Webhooks"</strong></li>
+          <li>คลิกปุ่ม <strong>"Add webhook"</strong> ตั้งชื่อบอต เช่น <code>AlertBot</code> แล้วกด Save</li>
+          <li>กดปุ่ม <strong>Copy</strong> ลิงก์ที่ได้รับมา (จะขึ้นต้นด้วย <code>https://chat.googleapis.com/...</code>) นำมาวางลงในหน้าจอ CMD แล้วกด Enter</li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="badge badge-primary">ขั้นตอนที่ 1.4</div>
+        <div class="guide-card-title">🧠 รหัสคีย์ปัญญาประดิษฐ์ Google Gemini API Key</div>
+        <p>เมื่อโปรแกรมถามข้อนี้ และเด้งเปิดหน้าเว็บ Google AI Studio ขึ้นมาให้:</p>
+        <ol>
+          <li>คลิกปุ่มรูปกุญแจซ้ายบนคำว่า <strong>"Get API key"</strong></li>
+          <li>คลิกปุ่มสีน้ำเงินคำว่า <strong>"Create API key"</strong></li>
+          <li>เลือกโปรเจกต์ หรือสร้างในโปรเจกต์ใหม่ แล้วกดสร้างคีย์</li>
+          <li>กดปุ่ม <strong>Copy</strong> รหัสคีย์ API ที่ขึ้นต้นด้วย <code>AQ.</code> หรือ <code>AL.</code> นำมาวางลงในช่องถามในหน้าจอ CMD แล้วกด Enter</li>
+        </ol>
+      </div>
+
+      <div class="alert" style="background-color: #FEF3C7; border-left-color: var(--warning); color: #92400E; margin-top: 1rem;">
+        <strong>📌 เมื่อตอบคำถามครบแล้ว:</strong> ระบบจะสรุปรายชื่อชื่อตัวแปรและข้อมูลคีย์ทั้งหมดทิ้งไว้บนหน้าจอสีดำ ให้คุณลากเมาส์คลุมดำคัดลอกข้อความสรุปทั้งหมดนั้นเก็บใส่ Notepad เอาไว้ เพื่อเตรียมนำไปกรอกบนหน้าเว็บ Vercel คลาวด์ ในสเต็ปถัดไปครับ!
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="step2" class="section">
+      <div class="section-title">🚀 ด่านที่ 2: เอาโค้ดขึ้นระบบใช้งานจริงออนไลน์ (Deploy to Vercel)</div>
+      <p>นำโค้ดระบบทั้งหมดขึ้นทำงานออนไลน์ถาวรบนอินเทอร์เน็ตผ่าน GitHub และ Vercel:</p>
+      <ol>
+        <li><strong>เอาโค้ดขึ้น GitHub:</strong> สมัครและเปิดเข้าเว็บ GitHub.com กดปุ่มสร้าง <strong>New repository</strong> ตั้งชื่อโปรเจกต์ที่คุณชอบ เลือกสถานะเป็น <strong>Private (ส่วนตัว)</strong> เสมอ แล้วจัดการนำโค้ดทั้งหมดในโฟลเดอร์เครื่องคอมของคุณ อัปโหลดขึ้นไปจัดเก็บไว้ให้เรียบร้อย</li>
+        <li><strong>เชื่อมต่อรันบน Vercel:</strong>
+          <ul>
+            <li>เปิดเข้าเว็บ Vercel.com ลงชื่อเข้าใช้งานด้วยบัญชี GitHub</li>
+            <li>กดปุ่ม <strong>"Add New"</strong> -> เลือกหัวข้อ <strong>"Project"</strong></li>
+            <li>กดปุ่ม <strong>"Import"</strong> โปรเจกต์ที่คุณเพิ่งทำในขั้นตอนที่แล้ว</li>
+            <li>เลื่อนหน้าจอลงมาหาหัวข้อตั้งค่าตัวแปรระบบที่ชื่อ <strong>"Environment Variables"</strong></li>
+            <li>เปิดโปรแกรม Notepad ที่บันทึกสรุปค่าคีย์ไว้ ก๊อปปี้ชื่อตัวแปร (Key) และค่าข้อมูล (Value) ไปเพิ่มใส่ในตารางทีละช่องจนครบทั้งหมด</li>
+            <li>เมื่อกรอกเสร็จสิ้น คลิกปุ่มสีน้ำเงินคำว่า <strong>"Deploy"</strong> ด้านล่างสุด</li>
+            <li>รอประมาณ 1-2 นาที เมื่อเสร็จเรียบร้อย ให้กดก๊อปปี้ลิงก์ที่อยู่เว็บของคุณเก็บไว้ (ตัวอย่างลิงก์ เช่น <code>https://jira-googlechat-bot.vercel.app</code>)</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="step3" class="section">
+      <div class="section-title">🔌 ด่านที่ 3: ต่อท่อส่งข้อมูลการแจ้งเตือน (Webhook Connect)</div>
+      <p>นำที่อยู่ลิงก์เว็บ Vercel ของคุณไปแจ้งให้ฝั่ง Jira และ Google Chat ได้รับรู้เพื่อส่งสัญญาณข้อมูลหากัน:</p>
+      
+      <div class="guide-card">
+        <div class="guide-card-title">3.1 ผูกสัญญาณกับ Jira Cloud</div>
+        <ol>
+          <li>เปิดเบราว์เซอร์แล้วเข้าที่อยู่ลิงก์นี้: <code>https://[ชื่อโดเมน_Jira_ของคุณ]/plugins/servlet/webhooks</code></li>
+          <li>คลิกปุ่มมุมขวาบนคำว่า <strong>"Create a Webhook"</strong></li>
+          <li>กรอกข้อมูลตั้งค่าดังนี้:
+            <ul>
+              <li><strong>Name:</strong> ตั้งชื่อตามชอบ เช่น <code>Sync to Dashboard</code></li>
+              <li><strong>URL:</strong> วางลิงก์เว็บ Vercel ของคุณ และพิมพ์คำว่า <code>/api/jira/webhook</code> ต่อท้าย (เช่น <code>https://jira-googlechat-bot.vercel.app/api/jira/webhook</code>)</li>
+              <li><strong>Events:</strong> เลื่อนลงไปหาหมวดหมู่ที่ชื่อ **Issue** แล้วติ๊กถูกในช่อง **Created**, **Updated**, และ **Deleted**</li>
+            </ul>
+          </li>
+          <li>เลื่อนลงล่างสุด คลิกปุ่มสีน้ำเงินคำว่า <strong>"Create"</strong></li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title">3.2 ผูกสัญญาณกับห้องคุย Google Chat API</div>
+        <ol>
+          <li>เข้าหน้าเว็บ <strong><a href="https://console.cloud.google.com/" target="_blank" class="link-btn">Google Cloud Console</a></strong></li>
+          <li>เลือกโปรเจกต์ของคุณ ค้นหาเปิดหน้าบริการที่ชื่อว่า <strong>"Google Chat API"</strong> แล้วกดคลิกปุ่ม <strong>Enable (เปิดใช้งาน)</strong></li>
+          <li>คลิกปุ่มเมนูการกำหนดค่า <strong>"Configuration"</strong> ด้านซ้ายมือ กรอกชื่อเล่นของบอตตามใจชอบ</li>
+          <li>เลื่อนหน้าจอลงมาหาหัวข้อตั้งค่า **Connection settings** ติ๊กเลือกที่หัวข้อ <strong>"Webhook URL"</strong></li>
+          <li>นำลิงก์แอป Vercel ของคุณมาวาง และพิมพ์คำว่า <code>/api/webhook</code> ต่อท้าย (เช่น <code>https://jira-googlechat-bot.vercel.app/api/webhook</code>)</li>
+          <li>เลื่อนลงด้านล่างสุด คลิกปุ่ม <strong>"Save" (บันทึก)</strong></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="step4" class="section">
+      <div class="section-title">🏁 ด่านที่ 4: เคาะระฆังเรียกตั๋วงานรอบแรกสุด (First Sync)</div>
+      <p>ขั้นตอนสุดท้ายเพื่อให้ตั๋วงาน Jira ที่มีอยู่เดิมถูกดึงไปจัดระเบียบแสดงบนหน้า แดชบอร์ด ครั้งแรก:</p>
+      <ol>
+        <li>เปิดแท็บเบราว์เซอร์ใหม่ขึ้นมา</li>
+        <li>พิมพ์เรียกคำสั่งดึงข้อมูลดังนี้:
+          <pre>https://[ที่อยู่เว็บ_Vercel_ของคุณ]/api/cron/sync-tickets?secret=[ค่า_CRON_SECRET_ของคุณ]</pre>
+          <span class="highlight-text">*ตัวอย่าง:*</span> <code>https://jira-googlechat-bot.vercel.app/api/cron/sync-tickets?secret=cron_secret_random123</code>
+        </li>
+        <li>กด Enter หากระบบแสดงผลข้อความคำว่า <strong>"sync success"</strong> บนหน้าจอ แปลว่าบอตของคุณพร้อมทำงานทุกระบบเรียบร้อยแล้วครับ! 🎉</li>
+      </ol>
+    </div>
+
+    <div style="text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+      🤖 บอตและแดชบอร์ด TaskyBot จัดทำโดย Antigravity • พัฒนาด้วยเทคโนโลยีอัจฉริยะ
+    </div>
+  </div>
+
+</body>
+</html>

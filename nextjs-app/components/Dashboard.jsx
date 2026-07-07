@@ -1716,10 +1716,10 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
           <div 
             className="glass" 
             style={{ 
-              border: '1px solid rgba(239, 68, 68, 0.15)', 
-              background: 'rgba(239, 68, 68, 0.02)', 
+              border: '1px solid rgba(239, 68, 68, 0.2)', 
+              background: 'rgba(15, 37, 69, 0.4)', 
               padding: '1.5rem',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
               borderRadius: '16px'
             }}
           >
@@ -1744,12 +1744,12 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     className="glass" 
                     style={{ 
                       padding: '1.25rem', 
-                      background: 'rgba(30, 41, 59, 0.35)', 
+                      background: 'rgba(153, 27, 27, 0.15)', 
                       borderLeft: '4px solid #EF4444',
-                      borderTop: '1px solid rgba(255, 255, 255, 0.03)',
-                      borderRight: '1px solid rgba(255, 255, 255, 0.03)',
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
+                      borderTop: '1px solid rgba(239, 68, 68, 0.15)',
+                      borderRight: '1px solid rgba(239, 68, 68, 0.15)',
+                      borderBottom: '1px solid rgba(239, 68, 68, 0.15)',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',

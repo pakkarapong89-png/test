@@ -1713,13 +1713,22 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} className="animate-fade-in">
         
         {overdueTasks.length > 0 && (
-          <div className="glass" style={{ border: '1px solid var(--surface-border)', background: 'var(--surface-hover-bg)', padding: '1.5rem' }}>
+          <div 
+            className="glass" 
+            style={{ 
+              border: '1px solid rgba(239, 68, 68, 0.3)', 
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.01) 100%)', 
+              padding: '1.5rem',
+              boxShadow: '0 8px 32px rgba(239, 68, 68, 0.04)',
+              borderRadius: '16px'
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-              <AlertTriangle size={24} style={{ color: 'var(--text-primary)' }} />
-              <h3 style={{ fontSize: '1.3rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>
+              <AlertTriangle size={24} style={{ color: '#EF4444', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.5))' }} />
+              <h3 style={{ fontSize: '1.3rem', color: '#EF4444', fontWeight: 'bold', margin: 0, textShadow: '0 0 10px rgba(239, 68, 68, 0.1)' }}>
                 งานเกินกำหนดส่งเร่งด่วน! (แจ้งเตือนงานล่าช้า)
               </h3>
-              <span className="badge" style={{ background: 'var(--text-primary)', color: 'var(--bg-color)', fontSize: '0.85rem', padding: '4px 10px' }}>
+              <span className="badge" style={{ background: '#EF4444', color: '#FFFFFF', fontSize: '0.85rem', padding: '4px 10px', fontWeight: 'bold', boxShadow: '0 0 12px rgba(239, 68, 68, 0.4)', border: 'none' }}>
                 {overdueTasks.length} งาน
               </span>
             </div>
@@ -1727,6 +1736,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {overdueTasks.map(task => {
                 const daysOverdue = getOverdueDays(task.duedate);
+                const isUnassigned = task.assignee === 'Unassigned' || !task.assignee;
                 return (
                   <div 
                     key={task.id} 
@@ -1734,29 +1744,37 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     className="glass" 
                     style={{ 
                       padding: '1.25rem', 
-                      background: 'var(--surface)', 
-                      borderLeft: '4px solid var(--text-primary)',
+                      background: 'rgba(15, 23, 42, 0.3)', 
+                      borderLeft: '4px solid #EF4444',
+                      borderTop: '1px solid rgba(239, 68, 68, 0.15)',
+                      borderRight: '1px solid rgba(239, 68, 68, 0.15)',
+                      borderBottom: '1px solid rgba(239, 68, 68, 0.15)',
+                      boxShadow: '0 4px 20px rgba(239, 68, 68, 0.03)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       gap: '0.65rem',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      borderRadius: '12px',
+                      transition: 'all 0.2s ease-in-out'
                     }}
                   >
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <span style={{ color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '0.9rem' }}>{task.key}</span>
-                        <span style={{ fontSize: '0.75rem', background: 'var(--surface-hover-bg)', padding: '3px 8px', borderRadius: '4px', color: 'var(--text-secondary)' }}>
+                        <span style={{ color: '#EF4444', fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: '0.02em' }}>{task.key}</span>
+                        <span style={{ fontSize: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '3px 8px', borderRadius: '6px', color: '#EF4444', fontWeight: 'bold' }}>
                           {task.issuetype}
                         </span>
                       </div>
-                      <h4 style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.4rem', lineHeight: '1.4' }}>{task.summary}</h4>
+                      <h4 style={{ fontSize: '1.05rem', fontWeight: '600', marginBottom: '0.4rem', lineHeight: '1.4', color: 'var(--text-primary)' }}>{task.summary}</h4>
                     </div>
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem', borderTop: '1px solid var(--surface-border-subtle)', paddingTop: '0.65rem', marginTop: '0.4rem' }}>
-                      <span style={{ color: 'var(--text-secondary)' }}>ผู้รับผิดชอบ: <strong style={{ color: 'var(--text-primary)' }}>{task.assignee}</strong></span>
-                      <span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>
-                        [เกินกำหนด {daysOverdue} วัน]
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        ผู้รับผิดชอบ: <strong style={{ color: isUnassigned ? '#F59E0B' : 'var(--text-primary)' }}>{task.assignee || 'Unassigned'}</strong>
+                      </span>
+                      <span style={{ color: '#FFFFFF', background: '#EF4444', fontSize: '0.75rem', fontWeight: 'bold', padding: '4px 10px', borderRadius: '6px', boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)' }}>
+                        เกินกำหนด {daysOverdue} วัน
                       </span>
                     </div>
                   </div>

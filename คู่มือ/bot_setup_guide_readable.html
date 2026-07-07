@@ -1,0 +1,747 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คู่มือการติดตั้งและตั้งค่าระบบ Bot Google Chat + Jira + Dashboard</title>
+<style>:root{--ink:#172033;--muted:#667085;--blue:#1f4d78;--blue2:#2e74b5;--line:#d7dee8;--soft:#f5f8fb;--warn:#fff4cc;--code:#f4f6f8}*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.68}.page{max-width:980px;margin:32px auto;padding:48px 56px;background:#fff;border:1px solid #e1e7ef;box-shadow:0 12px 36px rgba(16,24,40,.08)}.cover{padding:32px 0 26px;border-bottom:3px solid var(--blue2);margin-bottom:28px}h1{font-size:32px;line-height:1.25;margin:0 0 10px;color:#0b2545}h2{font-size:24px;line-height:1.35;margin:34px 0 12px;color:var(--blue);border-bottom:1px solid var(--line);padding-bottom:6px}h3{font-size:18px;line-height:1.35;margin:24px 0 8px;color:var(--blue2)}h4{font-size:16px;margin:18px 0 8px;color:var(--blue)}p{margin:0 0 12px}a{color:#1a73e8}.toc{background:var(--soft);border:1px solid var(--line);padding:18px 22px;margin:22px 0 30px}.toc a{text-decoration:none;color:var(--ink)}ul,ol{margin:0 0 14px 24px;padding:0}li{margin:4px 0}blockquote{margin:16px 0;padding:12px 16px;background:var(--warn);border-left:5px solid #d99b00}pre{white-space:pre-wrap;overflow:auto;background:var(--code);border:1px solid #d8dee8;border-radius:6px;padding:14px 16px;font-family:Consolas,monospace;font-size:13px;line-height:1.45}code{font-family:Consolas,monospace;background:#f1f3f5;border:1px solid #e0e4ea;border-radius:4px;padding:1px 5px;color:#9b1c1c}table{width:100%;border-collapse:collapse;margin:16px 0 22px;font-size:14px}th,td{border:1px solid #cfd8e3;padding:9px 10px;vertical-align:top}th{background:var(--blue2);color:#fff;text-align:left}tr:nth-child(even) td{background:#f8fafc}.meta{color:var(--muted);font-size:14px}.print-note{margin-top:20px;color:var(--muted);font-size:13px}@media print{body{background:#fff}.page{box-shadow:none;border:0;margin:0;max-width:none;padding:20mm}a{color:inherit}h2{page-break-after:avoid}pre,table,blockquote{page-break-inside:avoid}}@media(max-width:700px){.page{margin:0;padding:28px 20px;border:0}h1{font-size:25px}h2{font-size:21px}}</style></head><body><main class="page">
+<section class="cover"><h1>คู่มือการติดตั้งและตั้งค่าระบบ Bot Google Chat + Jira + Dashboard</h1><p class="meta">Readable guide generated from setup_guide_complete.md</p></section>
+<nav class="toc"><strong>Contents</strong><ul>
+<li><a href="#section-1">สารบัญ</a></li>
+<li><a href="#1">1. ภาพรวมสิ่งที่ต้องเตรียม</a></li>
+<li><a href="#2-Environment-Variables">2. ตาราง Environment Variables ทั้งหมด</a></li>
+<li><a href="#3-Supabase-DATABASE-URL">3. เตรียม Supabase และหา DATABASE_URL</a></li>
+<li style="margin-left:18px"><a href="#3-1-Supabase-project">3.1 สร้าง Supabase project</a></li>
+<li style="margin-left:18px"><a href="#3-2-connection-string">3.2 หา connection string</a></li>
+<li style="margin-left:18px"><a href="#3-3-SSL-port">3.3 เรื่อง SSL และ port</a></li>
+<li style="margin-left:18px"><a href="#3-4">3.4 ตารางที่จะถูกสร้างอัตโนมัติ</a></li>
+<li><a href="#4-Jira-Cloud-JIRA">4. เตรียม Jira Cloud และหา JIRA_*</a></li>
+<li style="margin-left:18px"><a href="#4-1-JIRA-DOMAIN">4.1 หา JIRA_DOMAIN</a></li>
+<li style="margin-left:18px"><a href="#4-2-JIRA-PROJECT-KEY">4.2 หา JIRA_PROJECT_KEY</a></li>
+<li style="margin-left:18px"><a href="#4-3-account-JIRA-EMAIL">4.3 เตรียม account สำหรับ JIRA_EMAIL</a></li>
+<li style="margin-left:18px"><a href="#4-4-JIRA-API-TOKEN">4.4 สร้าง JIRA_API_TOKEN</a></li>
+<li style="margin-left:18px"><a href="#4-5-Jira">4.5 ทดสอบค่า Jira แบบง่าย</a></li>
+<li><a href="#5-Google-Gemini-API-Key">5. เตรียม Google Gemini API Key</a></li>
+<li style="margin-left:18px"><a href="#5-1-API-key">5.1 สร้าง API key</a></li>
+<li style="margin-left:18px"><a href="#5-2-Create-API-key">5.2 ถ้าปุ่ม Create API key ใช้ไม่ได้</a></li>
+<li style="margin-left:18px"><a href="#5-3-quota-billing">5.3 คำแนะนำเรื่อง quota และ billing</a></li>
+<li><a href="#6-Google-Chat-Incoming-Webhook-URL">6. เตรียม Google Chat Incoming Webhook URL</a></li>
+<li style="margin-left:18px"><a href="#6-1-incoming-webhook">6.1 สร้าง incoming webhook</a></li>
+<li style="margin-left:18px"><a href="#6-2">6.2 ข้อควรระวัง</a></li>
+<li><a href="#7-Google-Chat-App">7. เตรียม Google Chat App สำหรับรับคำสั่งจากผู้ใช้</a></li>
+<li style="margin-left:18px"><a href="#7-1-endpoint">7.1 เตรียม endpoint</a></li>
+<li style="margin-left:18px"><a href="#7-2-Google-Cloud-Console">7.2 ตั้งค่าใน Google Cloud Console</a></li>
+<li style="margin-left:18px"><a href="#7-3-2-URL-Google-Chat">7.3 ความแตกต่างของ 2 URL ใน Google Chat</a></li>
+<li><a href="#8-Jira-Webhook-sync-dashboard">8. เตรียม Jira Webhook สำหรับ sync ข้อมูลกลับเข้า dashboard</a></li>
+<li style="margin-left:18px"><a href="#8-1-URL">8.1 URL ที่ต้องใช้</a></li>
+<li style="margin-left:18px"><a href="#8-2-Jira">8.2 ตั้งค่าใน Jira</a></li>
+<li style="margin-left:18px"><a href="#8-3-Jira-webhook">8.3 ทดสอบ Jira webhook</a></li>
+<li><a href="#9-env-local">9. สร้างไฟล์ .env สำหรับเครื่อง local</a></li>
+<li style="margin-left:18px"><a href="#9-1-setup-wizard">9.1 ใช้ setup wizard</a></li>
+<li style="margin-left:18px"><a href="#9-2-env">9.2 เขียน .env เอง</a></li>
+<li style="margin-left:18px"><a href="#9-3-env-push">9.3 ตรวจว่า .env ไม่ถูก push</a></li>
+<li><a href="#10-local">10. ทดสอบระบบบนเครื่อง local</a></li>
+<li><a href="#11-Git-push-code-GitHub">11. เตรียม Git และ push code ขึ้น GitHub</a></li>
+<li style="margin-left:18px"><a href="#11-1-repository-GitHub">11.1 สร้าง repository บน GitHub</a></li>
+<li style="margin-left:18px"><a href="#11-2-commit">11.2 ตรวจไฟล์ก่อน commit</a></li>
+<li style="margin-left:18px"><a href="#11-3-push-GitHub">11.3 push ขึ้น GitHub ครั้งแรก</a></li>
+<li style="margin-left:18px"><a href="#11-4-push-secret">11.4 ถ้าเผลอ push secret ไปแล้ว</a></li>
+<li><a href="#12-Deploy-Vercel">12. Deploy ขึ้น Vercel</a></li>
+<li style="margin-left:18px"><a href="#12-1-Import-GitHub-repository">12.1 Import GitHub repository</a></li>
+<li style="margin-left:18px"><a href="#12-2-Root-Directory">12.2 Root Directory สำคัญมาก</a></li>
+<li><a href="#13-Environment-Variables-Vercel">13. ตั้ง Environment Variables บน Vercel</a></li>
+<li><a href="#14-URL-deploy">14. ตั้ง URL หลัง deploy</a></li>
+<li style="margin-left:18px"><a href="#14-1-Google-Chat-App-endpoint">14.1 Google Chat App endpoint</a></li>
+<li style="margin-left:18px"><a href="#14-2-Jira-webhook-endpoint">14.2 Jira webhook endpoint</a></li>
+<li style="margin-left:18px"><a href="#14-3-URL">14.3 URL สำหรับตรวจระบบ</a></li>
+<li><a href="#15-Sync-tickets">15. Sync tickets ครั้งแรก</a></li>
+<li><a href="#16-cron">16. ตั้งค่า cron และรายงานประจำวัน</a></li>
+<li><a href="#17-deploy">17. ทดสอบระบบหลัง deploy</a></li>
+<li style="margin-left:18px"><a href="#17-1-Health-check">17.1 Health check</a></li>
+<li style="margin-left:18px"><a href="#17-2-Google-Chat-Bot">17.2 ทดสอบ Google Chat Bot</a></li>
+<li style="margin-left:18px"><a href="#17-3-Dashboard">17.3 ทดสอบ Dashboard</a></li>
+<li style="margin-left:18px"><a href="#17-4-Jira-webhook">17.4 ทดสอบ Jira webhook</a></li>
+<li><a href="#18-bot">18. คำสั่ง bot ที่ใช้บ่อย</a></li>
+<li><a href="#19">19. การแก้ปัญหาที่พบบ่อย</a></li>
+<li style="margin-left:18px"><a href="#19-1-api-health-env-missing">19.1 /api/health แจ้ง env missing</a></li>
+<li style="margin-left:18px"><a href="#19-2-Jira-401">19.2 Jira ขึ้น 401</a></li>
+<li style="margin-left:18px"><a href="#19-3-Jira-404">19.3 Jira ขึ้น 404</a></li>
+<li style="margin-left:18px"><a href="#19-4-Database">19.4 Database ต่อไม่ได้</a></li>
+<li style="margin-left:18px"><a href="#19-5-Google-Chat-Bot">19.5 Google Chat Bot ไม่ตอบ</a></li>
+<li style="margin-left:18px"><a href="#19-6-Notification-Google-Chat">19.6 Notification ไม่เข้า Google Chat</a></li>
+<li style="margin-left:18px"><a href="#19-7-Daily-summary">19.7 Daily summary ไม่มาตามเวลา</a></li>
+<li style="margin-left:18px"><a href="#19-8-push-env-GitHub">19.8 เผลอ push .env ขึ้น GitHub</a></li>
+<li><a href="#20-Checklist">20. Checklist ก่อนส่งมอบงาน</a></li>
+<li><a href="#section-66">แหล่งอ้างอิง</a></li>
+</ul></nav>
+<h1>คู่มือการติดตั้งและตั้งค่าระบบ Bot Google Chat + Jira + Dashboard</h1>
+<p>เอกสารนี้เป็นคู่มือฉบับละเอียดสำหรับติดตั้งระบบ bot ตั้งแต่เริ่มต้นจนใช้งานจริง ครอบคลุมการหา API key และค่าต่าง ๆ, การใส่ค่าในไฟล์ <code>.env</code> และ Vercel, การ push code ขึ้น GitHub, การ deploy, การตั้ง Google Chat App, การตั้ง Jira webhook และการทดสอบระบบหลัง deploy</p>
+<p>ระบบนี้ประกอบด้วย 2 ส่วนหลัก</p>
+<ul>
+<li>Google Chat Bot: ให้ผู้ใช้พิมพ์คำสั่งภาษาพูด เช่น สร้างงาน แก้งาน ปิดงาน หรือดูงานค้าง แล้วระบบส่งคำสั่งไปทำงานบน Jira</li>
+<li>Web Dashboard: ใช้ดูภาพรวมงาน Jira, ตารางงาน, activity logs, team members, admin panel และรายละเอียด ticket</li>
+</ul>
+<blockquote>ข้อควรระวังสำคัญ: ห้ามส่งต่อหรือ commit ค่า API key, token, <code>.env</code>, <code>.env.local</code>, database URL หรือ webhook URL ลง GitHub เด็ดขาด เพราะค่าเหล่านี้ใช้เข้าถึงระบบจริงได้</blockquote>
+<p>---</p>
+<h2 id="section-1">สารบัญ</h2>
+<p>1. ภาพรวมสิ่งที่ต้องเตรียม</p>
+<p>2. ตาราง Environment Variables ทั้งหมด</p>
+<p>3. เตรียม Supabase และหา <code>DATABASE_URL</code></p>
+<p>4. เตรียม Jira Cloud และหา <code>JIRA_DOMAIN</code>, <code>JIRA_EMAIL</code>, <code>JIRA_API_TOKEN</code>, <code>JIRA_PROJECT_KEY</code></p>
+<p>5. เตรียม Google Gemini API Key</p>
+<p>6. เตรียม Google Chat Incoming Webhook สำหรับส่งข้อความเข้าห้อง</p>
+<p>7. เตรียม Google Chat App สำหรับรับคำสั่งจากผู้ใช้</p>
+<p>8. เตรียม Jira Webhook สำหรับ sync ข้อมูลกลับเข้า dashboard</p>
+<p>9. สร้างไฟล์ <code>.env</code> สำหรับเครื่อง local</p>
+<p>10. ทดสอบระบบบนเครื่อง local</p>
+<p>11. เตรียม Git และ push code ขึ้น GitHub</p>
+<p>12. Deploy ขึ้น Vercel</p>
+<p>13. ตั้ง Environment Variables บน Vercel</p>
+<p>14. ตั้ง URL หลัง deploy</p>
+<p>15. Sync tickets ครั้งแรก</p>
+<p>16. ตั้งค่า cron และรายงานประจำวัน</p>
+<p>17. ทดสอบระบบหลัง deploy</p>
+<p>18. คำสั่ง bot ที่ใช้บ่อย</p>
+<p>19. การแก้ปัญหาที่พบบ่อย</p>
+<p>20. Checklist ก่อนส่งมอบงาน</p>
+<p>---</p>
+<h2 id="1">1. ภาพรวมสิ่งที่ต้องเตรียม</h2>
+<table>
+<tr><th>ลำดับ</th><th>บริการ</th><th>ค่าที่ต้องได้</th><th>ใช้ทำอะไร</th></tr>
+<tr><td>1</td><td>Supabase/Postgres</td><td><code>DATABASE_URL</code></td><td>เก็บ users, tickets cache, activity logs, team members</td></tr>
+<tr><td>2</td><td>Jira Cloud</td><td><code>JIRA_DOMAIN</code></td><td>ระบุ Jira site เช่น <code>company.atlassian.net</code></td></tr>
+<tr><td>3</td><td>Jira Cloud</td><td><code>JIRA_EMAIL</code></td><td>อีเมล Atlassian account ที่ใช้คู่กับ token</td></tr>
+<tr><td>4</td><td>Jira Cloud</td><td><code>JIRA_API_TOKEN</code></td><td>ให้ระบบเรียก Jira REST API</td></tr>
+<tr><td>5</td><td>Jira Cloud</td><td><code>JIRA_PROJECT_KEY</code></td><td>ระบุ project เช่น <code>TES</code>, <code>DEV</code>, <code>KAN</code></td></tr>
+<tr><td>6</td><td>Google AI Studio</td><td><code>GEMINI_API_KEY</code></td><td>ให้ AI ช่วย parse คำสั่งภาษาไทย/อังกฤษ</td></tr>
+<tr><td>7</td><td>Google Chat Space</td><td><code>GOOGLE_CHAT_WEBHOOK_URL</code></td><td>ส่งแจ้งเตือนและ daily summary เข้าห้อง Chat</td></tr>
+<tr><td>8</td><td>Google Cloud Console</td><td>Chat App endpoint</td><td>ให้ผู้ใช้ mention bot แล้วเรียก <code>/api/webhook</code></td></tr>
+<tr><td>9</td><td>Vercel</td><td>Project deployment</td><td>host web, API routes และ cron</td></tr>
+<tr><td>10</td><td>GitHub</td><td>Repository</td><td>เก็บ code และเชื่อม auto deploy</td></tr>
+</table>
+<p>ไฟล์สำคัญในโปรเจกต์นี้</p>
+<table>
+<tr><th>ไฟล์</th><th>หน้าที่</th></tr>
+<tr><td><code>setup.js</code></td><td>wizard ช่วยกรอกค่า config และสร้าง <code>.env</code></td></tr>
+<tr><td><code>lib/db.js</code></td><td>เชื่อม database และสร้างตารางอัตโนมัติ</td></tr>
+<tr><td><code>lib/jira.js</code></td><td>ติดต่อ Jira API</td></tr>
+<tr><td><code>lib/ai.js</code></td><td>ติดต่อ Gemini/OpenAI/Groq เพื่อ parse ข้อความ</td></tr>
+<tr><td><code>app/api/webhook/route.js</code></td><td>endpoint รับข้อความจาก Google Chat App</td></tr>
+<tr><td><code>app/api/jira/webhook/route.js</code></td><td>endpoint รับ event จาก Jira</td></tr>
+<tr><td><code>app/api/cron/sync-tickets/route.js</code></td><td>sync tickets จาก Jira เข้า database</td></tr>
+<tr><td><code>app/api/cron/daily-summary/route.js</code></td><td>ส่งรายงานประจำวันเข้า Google Chat</td></tr>
+<tr><td><code>app/api/health/route.js</code></td><td>ตรวจสถานะ env, database, Jira, webhook</td></tr>
+<tr><td><code>vercel.json</code></td><td>ตั้ง cron บน Vercel</td></tr>
+</table>
+<p>---</p>
+<h2 id="2-Environment-Variables">2. ตาราง Environment Variables ทั้งหมด</h2>
+<table>
+<tr><th>ชื่อตัวแปร</th><th>ตัวอย่างค่า</th><th>จำเป็นไหม</th><th>หมายเหตุ</th></tr>
+<tr><td><code>DATABASE_URL</code></td><td><code>postgres://...</code></td><td>จำเป็น</td><td>แนะนำใช้ Supabase pooler transaction mode สำหรับ Vercel</td></tr>
+<tr><td><code>JIRA_DOMAIN</code></td><td><code>company.atlassian.net</code></td><td>จำเป็น</td><td>ไม่ต้องใส่ <code>https://</code></td></tr>
+<tr><td><code>JIRA_EMAIL</code></td><td><code>admin@company.com</code></td><td>จำเป็น</td><td>ต้องเป็น account ที่สร้าง Jira API token</td></tr>
+<tr><td><code>JIRA_API_TOKEN</code></td><td><code>ATATT...</code></td><td>จำเป็น</td><td>copy ได้ครั้งเดียว ควรเก็บใน password manager</td></tr>
+<tr><td><code>JIRA_PROJECT_KEY</code></td><td><code>TES</code></td><td>จำเป็น</td><td>ตัวหน้าเลข ticket เช่น <code>TES-14</code></td></tr>
+<tr><td><code>GOOGLE_CHAT_WEBHOOK_URL</code></td><td><code>https://chat.googleapis.com/...</code></td><td>จำเป็น</td><td>ใช้ส่งข้อความออกไปยังห้อง Chat</td></tr>
+<tr><td><code>LLM_PROVIDER</code></td><td><code>gemini</code></td><td>แนะนำ</td><td>ระบบนี้ตั้งใจใช้ Gemini เป็นหลัก</td></tr>
+<tr><td><code>GEMINI_API_KEY</code></td><td><code>AIza...</code></td><td>จำเป็นถ้าใช้ Gemini</td><td>สร้างจาก Google AI Studio</td></tr>
+<tr><td><code>GEMINI_MODEL</code></td><td><code>gemini-3.5-flash</code></td><td>แนะนำ</td><td>ถ้าไม่ใส่ ระบบมีค่า default ใน code</td></tr>
+<tr><td><code>BOT_NAME</code></td><td><code>sekloso</code> หรือ <code>taskyapp</code></td><td>แนะนำ</td><td>ชื่อที่ใช้ในข้อความคู่มือและ response</td></tr>
+<tr><td><code>SESSION_SECRET</code></td><td>random hex 64 ตัว</td><td>จำเป็น</td><td>ใช้เซ็น session dashboard</td></tr>
+<tr><td><code>CRON_SECRET</code></td><td>random hex 32 ตัว</td><td>จำเป็น</td><td>ใช้ป้องกัน endpoint sync/cron</td></tr>
+</table>
+<p>ตัวอย่างไฟล์ <code>.env</code></p>
+<pre>DATABASE_URL=&quot;postgres://postgres.xxxxx:PASSWORD@aws-region.pooler.supabase.com:6543/postgres&quot;
+
+JIRA_DOMAIN=&quot;company.atlassian.net&quot;
+JIRA_EMAIL=&quot;admin@company.com&quot;
+JIRA_API_TOKEN=&quot;ใส่-token-จาก-Atlassian&quot;
+JIRA_PROJECT_KEY=&quot;TES&quot;
+
+GOOGLE_CHAT_WEBHOOK_URL=&quot;https://chat.googleapis.com/v1/spaces/.../messages?key=...&amp;token=...&quot;
+
+LLM_PROVIDER=&quot;gemini&quot;
+GEMINI_API_KEY=&quot;ใส่-key-จาก-Google-AI-Studio&quot;
+GEMINI_MODEL=&quot;gemini-3.5-flash&quot;
+BOT_NAME=&quot;sekloso&quot;
+
+SESSION_SECRET=&quot;สุ่มค่าใหม่&quot;
+CRON_SECRET=&quot;สุ่มค่าใหม่&quot;</pre>
+<p>---</p>
+<h2 id="3-Supabase-DATABASE-URL">3. เตรียม Supabase และหา DATABASE_URL</h2>
+<p>Supabase คือฐานข้อมูล PostgreSQL บน cloud ที่ระบบนี้ใช้เก็บข้อมูลสำคัญ เช่น ticket cache, user, role, activity log, team member และข้อมูลช่วยจับว่า action มาจาก bot, Jira หรือ dashboard</p>
+<h3 id="3-1-Supabase-project">3.1 สร้าง Supabase project</h3>
+<p>1. เข้าเว็บไซต์ <code>https://supabase.com</code></p>
+<p>2. Login หรือสมัครบัญชีใหม่</p>
+<p>3. กด <code>New project</code></p>
+<p>4. เลือก organization</p>
+<p>5. ตั้งชื่อ project เช่น <code>jira-bot-production</code></p>
+<p>6. ตั้ง Database Password ให้แข็งแรง</p>
+<p>7. เลือก region ใกล้ผู้ใช้ เช่น Singapore ถ้าทีมอยู่ไทย</p>
+<p>8. กด Create project แล้วรอจน project พร้อมใช้งาน</p>
+<p>สิ่งที่ต้องจดไว้ทันที</p>
+<ul>
+<li>Database password</li>
+<li>Project ref หรือชื่อ project</li>
+<li>Region</li>
+</ul>
+<h3 id="3-2-connection-string">3.2 หา connection string</h3>
+<p>1. เข้า Supabase project dashboard</p>
+<p>2. กดปุ่ม <code>Connect</code></p>
+<p>3. เลือก Postgres connection string</p>
+<p>4. สำหรับ Vercel/serverless แนะนำใช้ <code>Transaction pooler</code> เพราะเหมาะกับ request สั้น ๆ และ connection จำนวนมาก</p>
+<p>5. Copy URI ที่ขึ้นต้นด้วย <code>postgres://</code> หรือ <code>postgresql://</code></p>
+<p>6. แทน <code>[YOUR-PASSWORD]</code> ด้วย database password ที่ตั้งไว้</p>
+<p>ตัวอย่าง</p>
+<pre>postgres://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres</pre>
+<p>หลังแทน password แล้วจะเป็น</p>
+<pre>DATABASE_URL=&quot;postgres://postgres.xxxxx:MyStrongPassword@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres&quot;</pre>
+<h3 id="3-3-SSL-port">3.3 เรื่อง SSL และ port</h3>
+<p>โปรเจกต์นี้ใช้ <code>pg</code> และตั้ง SSL ใน <code>lib/db.js</code> แล้ว ดังนั้นไม่ต้องเพิ่ม SSL certificate เอง</p>
+<p>พอร์ตที่พบบ่อย</p>
+<ul>
+<li><code>5432</code>: direct connection หรือ session pooler</li>
+<li><code>6543</code>: transaction pooler เหมาะกับ serverless เช่น Vercel</li>
+</ul>
+<h3 id="3-4">3.4 ตารางที่จะถูกสร้างอัตโนมัติ</h3>
+<p>เมื่อระบบเริ่มทำงานหรือรัน <code>npm run setup</code> ระบบจะสร้างตารางเหล่านี้ถ้ายังไม่มี</p>
+<ul>
+<li><code>team_members</code></li>
+<li><code>activity_logs</code></li>
+<li><code>ticket_status_cache</code></li>
+<li><code>user_spaces_map</code></li>
+<li><code>users</code></li>
+<li><code>tickets</code></li>
+<li><code>action_sources</code></li>
+</ul>
+<p>ไม่จำเป็นต้องสร้างตารางเองใน Supabase SQL editor ยกเว้นต้องการตรวจสอบหรือ debug</p>
+<p>---</p>
+<h2 id="4-Jira-Cloud-JIRA">4. เตรียม Jira Cloud และหา JIRA_*</h2>
+<p>ระบบนี้ใช้ Jira API เพื่อดึง ticket, สร้าง issue, แก้ issue, assign user, เปลี่ยน status และอ่าน changelog</p>
+<h3 id="4-1-JIRA-DOMAIN">4.1 หา JIRA_DOMAIN</h3>
+<p>1. เปิด Jira ของบริษัท</p>
+<p>2. ดู URL เช่น</p>
+<pre>https://company.atlassian.net/jira/software/projects/TES/boards/1</pre>
+<p>ค่าที่ต้องใช้คือเฉพาะ domain</p>
+<pre>JIRA_DOMAIN=&quot;company.atlassian.net&quot;</pre>
+<p>ห้ามใส่ <code>https://</code> และห้ามใส่ path ต่อท้าย</p>
+<h3 id="4-2-JIRA-PROJECT-KEY">4.2 หา JIRA_PROJECT_KEY</h3>
+<p>วิธีที่ 1: ดูจาก ticket key</p>
+<p>ถ้า ticket ใน project มีชื่อ <code>TES-14</code> ค่า project key คือ <code>TES</code></p>
+<pre>JIRA_PROJECT_KEY=&quot;TES&quot;</pre>
+<p>วิธีที่ 2: ดูจาก Project settings</p>
+<p>1. เปิด Jira project</p>
+<p>2. ไปที่ <code>Project settings</code></p>
+<p>3. เข้า <code>Details</code></p>
+<p>4. ดูช่อง <code>Key</code></p>
+<h3 id="4-3-account-JIRA-EMAIL">4.3 เตรียม account สำหรับ JIRA_EMAIL</h3>
+<p>ใช้ email ของ Atlassian account ที่จะสร้าง API token เช่น</p>
+<pre>JIRA_EMAIL=&quot;jira.bot@company.com&quot;</pre>
+<p>แนะนำให้ใช้ service account แยก เช่น <code>jira.bot@company.com</code> แทน account ส่วนตัว ถ้านโยบายบริษัทอนุญาต</p>
+<p>สิทธิ์ที่ account ควรมีใน Jira project</p>
+<ul>
+<li>Browse project</li>
+<li>Create issue</li>
+<li>Edit issue</li>
+<li>Assign issue</li>
+<li>Transition issue</li>
+<li>View users หรือ browse users สำหรับค้นหา assignee</li>
+<li>View changelog หรือ permission ที่เกี่ยวข้องกับ issue history</li>
+</ul>
+<h3 id="4-4-JIRA-API-TOKEN">4.4 สร้าง JIRA_API_TOKEN</h3>
+<p>1. เข้า <code>https://id.atlassian.com/manage-profile/security/api-tokens</code></p>
+<p>2. Login ด้วย Atlassian account ที่จะใช้เป็น <code>JIRA_EMAIL</code></p>
+<p>3. กด <code>Create API token</code> หรือ <code>Create API token with scopes</code></p>
+<p>4. ตั้งชื่อ เช่น <code>sekloso-bot-production</code></p>
+<p>5. ตั้งวันหมดอายุ ตาม policy บริษัท</p>
+<p>6. กด Create</p>
+<p>7. Copy token ทันที</p>
+<p>8. เก็บ token ใน password manager</p>
+<pre>JIRA_API_TOKEN=&quot;ATATT...&quot;</pre>
+<p>ข้อควรระวัง</p>
+<ul>
+<li>Token ดูซ้ำไม่ได้หลังปิดหน้าจอ</li>
+<li>Token ใหม่ของ Atlassian มีอายุหมดอายุได้ ควรตั้ง reminder ก่อนหมดอายุ</li>
+<li>ถ้า token หลุด ให้ revoke แล้วสร้างใหม่ทันที</li>
+</ul>
+<h3 id="4-5-Jira">4.5 ทดสอบค่า Jira แบบง่าย</h3>
+<p>หลังใส่ค่า env และรันระบบแล้ว เปิด</p>
+<pre>https://your-app.vercel.app/api/health</pre>
+<p>ถ้า Jira ถูกต้อง ควรเห็น <code>checks.jira.status</code> เป็น <code>ok</code></p>
+<p>ถ้าขึ้น 401 มักเกิดจาก email/token ผิด</p>
+<p>ถ้าขึ้น 404 มักเกิดจาก project key ผิด หรือ account ไม่มีสิทธิ์เห็น project</p>
+<p>---</p>
+<h2 id="5-Google-Gemini-API-Key">5. เตรียม Google Gemini API Key</h2>
+<p>Gemini ใช้เป็น AI สำหรับอ่านข้อความใน Google Chat แล้วแปลงเป็น JSON เพื่อสั่ง Jira เช่น แยกว่าเป็น create, update, transition หรือ chat</p>
+<h3 id="5-1-API-key">5.1 สร้าง API key</h3>
+<p>1. เข้า <code>https://aistudio.google.com/apikey</code></p>
+<p>2. Login ด้วย Google account</p>
+<p>3. เลือก Google Cloud project หรือสร้าง project ใหม่</p>
+<p>4. กด <code>Create API key</code></p>
+<p>5. Copy key ที่ได้</p>
+<p>6. ใส่ใน env เป็น <code>GEMINI_API_KEY</code></p>
+<pre>LLM_PROVIDER=&quot;gemini&quot;
+GEMINI_API_KEY=&quot;AIza...&quot;
+GEMINI_MODEL=&quot;gemini-3.5-flash&quot;</pre>
+<h3 id="5-2-Create-API-key">5.2 ถ้าปุ่ม Create API key ใช้ไม่ได้</h3>
+<p>สาเหตุที่พบบ่อย</p>
+<ul>
+<li>บัญชีไม่มี permission ใน Google Cloud project</li>
+<li>organization policy ไม่อนุญาตสร้าง key</li>
+<li>ยังไม่ได้ enable service ที่เกี่ยวข้อง</li>
+</ul>
+<p>ให้ติดต่อ Google Cloud admin เพื่อให้สิทธิ์สร้าง API key หรือสร้าง project ที่มีสิทธิ์เอง</p>
+<h3 id="5-3-quota-billing">5.3 คำแนะนำเรื่อง quota และ billing</h3>
+<ul>
+<li>ตรวจ quota ใน Google AI Studio/Google Cloud</li>
+<li>ตั้ง budget alert ถ้าเปิด billing</li>
+<li>ไม่ใส่ API key ใน frontend code</li>
+<li>ไม่ commit key ลง GitHub</li>
+<li>หาก key หลุด ให้ rotate key ทันที</li>
+</ul>
+<p>---</p>
+<h2 id="6-Google-Chat-Incoming-Webhook-URL">6. เตรียม Google Chat Incoming Webhook URL</h2>
+<p>ส่วนนี้ใช้สำหรับ “ส่งข้อความจากระบบเข้าห้อง Google Chat” เช่น daily summary และ notification จาก Jira webhook</p>
+<blockquote>จุดที่มักสับสน: Incoming webhook ไม่ใช่ตัวรับคำสั่งจากผู้ใช้ ถ้าต้องการให้ผู้ใช้พิมพ์ <code>@sekloso ping</code> ต้องตั้ง Google Chat App ในขั้นตอนที่ 7 เพิ่มด้วย</blockquote>
+<h3 id="6-1-incoming-webhook">6.1 สร้าง incoming webhook</h3>
+<p>1. เปิด <code>https://chat.google.com</code></p>
+<p>2. เข้า Space ที่ต้องการรับแจ้งเตือน</p>
+<p>3. กดชื่อ Space ด้านบน</p>
+<p>4. เลือก <code>Apps &amp; integrations</code></p>
+<p>5. กด <code>Add webhooks</code></p>
+<p>6. ตั้งชื่อ เช่น <code>Jira Bot Notification</code></p>
+<p>7. ใส่ Avatar URL ถ้าต้องการ</p>
+<p>8. กด Save</p>
+<p>9. Copy webhook URL</p>
+<p>นำค่าไปใส่</p>
+<pre>GOOGLE_CHAT_WEBHOOK_URL=&quot;https://chat.googleapis.com/v1/spaces/.../messages?key=...&amp;token=...&quot;</pre>
+<h3 id="6-2">6.2 ข้อควรระวัง</h3>
+<ul>
+<li>URL นี้เป็น secret เพราะใครมี URL ก็ส่งข้อความเข้าห้องได้</li>
+<li>ถ้า URL หลุด ให้ลบ webhook เดิมแล้วสร้างใหม่</li>
+<li>Workspace บางองค์กรต้องให้ admin เปิดสิทธิ์ incoming webhook ก่อน</li>
+</ul>
+<p>---</p>
+<h2 id="7-Google-Chat-App">7. เตรียม Google Chat App สำหรับรับคำสั่งจากผู้ใช้</h2>
+<p>ส่วนนี้คือสิ่งที่ทำให้ผู้ใช้พิมพ์ <code>@sekloso สร้างงาน...</code> แล้วระบบยิงมาที่ <code>/api/webhook</code></p>
+<h3 id="7-1-endpoint">7.1 เตรียม endpoint</h3>
+<p>หลัง deploy บน Vercel แล้ว endpoint จะเป็น</p>
+<pre>https://YOUR-APP.vercel.app/api/webhook</pre>
+<p>ถ้ายังไม่ deploy และต้องทดสอบ local ต้องใช้ tunnel เช่น ngrok หรือ cloudflared ให้ได้ HTTPS URL ที่ชี้เข้า local server</p>
+<p>ตัวอย่าง local tunnel</p>
+<pre>https://xxxx.ngrok-free.app/api/webhook</pre>
+<h3 id="7-2-Google-Cloud-Console">7.2 ตั้งค่าใน Google Cloud Console</h3>
+<p>1. เข้า Google Cloud Console</p>
+<p>2. สร้างหรือเลือก project สำหรับ bot</p>
+<p>3. ค้นหาและเปิดใช้งาน <code>Google Chat API</code></p>
+<p>4. เข้าเมนู configuration ของ Google Chat API</p>
+<p>5. ตั้ง App name เช่น <code>sekloso</code></p>
+<p>6. ตั้ง Avatar และ description ตามต้องการ</p>
+<p>7. เลือก Interactive features หรือ App URL ตามหน้าจอ Google Cloud เวอร์ชันปัจจุบัน</p>
+<p>8. ใส่ HTTP endpoint เป็น</p>
+<pre>https://YOUR-APP.vercel.app/api/webhook</pre>
+<p>9. กำหนด visibility ว่าใช้เฉพาะในองค์กรหรือเฉพาะบางคน</p>
+<p>10. Save</p>
+<p>11. เพิ่ม app เข้า Space</p>
+<p>12. ทดสอบด้วยคำสั่ง</p>
+<pre>@sekloso ping</pre>
+<h3 id="7-3-2-URL-Google-Chat">7.3 ความแตกต่างของ 2 URL ใน Google Chat</h3>
+<table>
+<tr><th>ค่า</th><th>ใช้ทำอะไร</th><th>ตัวอย่าง</th></tr>
+<tr><td><code>GOOGLE_CHAT_WEBHOOK_URL</code></td><td>ระบบส่งข้อความเข้าห้อง</td><td><code>https://chat.googleapis.com/v1/spaces/...</code></td></tr>
+<tr><td>Chat App endpoint</td><td>ผู้ใช้ส่งคำสั่งเข้า bot</td><td><code>https://your-app.vercel.app/api/webhook</code></td></tr>
+</table>
+<p>ต้องมีทั้ง 2 อย่างถ้าต้องการให้ bot รับคำสั่งและส่งแจ้งเตือนได้ครบ</p>
+<p>---</p>
+<h2 id="8-Jira-Webhook-sync-dashboard">8. เตรียม Jira Webhook สำหรับ sync ข้อมูลกลับเข้า dashboard</h2>
+<p>Jira webhook ใช้เมื่อมีคนแก้ ticket โดยตรงบน Jira แล้วระบบจะ sync ข้อมูลเข้า database และ activity logs</p>
+<h3 id="8-1-URL">8.1 URL ที่ต้องใช้</h3>
+<p>หลัง deploy แล้ว URL คือ</p>
+<pre>https://YOUR-APP.vercel.app/api/jira/webhook</pre>
+<h3 id="8-2-Jira">8.2 ตั้งค่าใน Jira</h3>
+<p>1. Login Jira ด้วย admin account</p>
+<p>2. ไปที่ Jira settings หรือ System</p>
+<p>3. เข้า Webhooks</p>
+<p>4. กด Create webhook</p>
+<p>5. ตั้งชื่อ เช่น <code>sekloso-jira-sync</code></p>
+<p>6. ใส่ URL เป็น <code>/api/jira/webhook</code> ของ Vercel</p>
+<p>7. ตั้ง status เป็น Active</p>
+<p>8. ถ้ามีช่อง JQL ให้ใส่เพื่อจำกัด project เช่น</p>
+<pre>project = TES</pre>
+<p>9. เลือก issue events อย่างน้อย</p>
+<ul>
+<li>Issue created</li>
+<li>Issue updated</li>
+<li>Issue deleted</li>
+</ul>
+<p>10. Save</p>
+<h3 id="8-3-Jira-webhook">8.3 ทดสอบ Jira webhook</h3>
+<p>1. เปิด ticket ใน Jira</p>
+<p>2. แก้ summary หรือเปลี่ยน status</p>
+<p>3. เปิด dashboard ดู Activity Logs</p>
+<p>4. ตรวจว่าข้อมูล ticket ถูก sync เข้า dashboard</p>
+<p>5. ถ้าตั้ง Google Chat webhook ไว้ ควรมี notification เข้า Space</p>
+<p>---</p>
+<h2 id="9-env-local">9. สร้างไฟล์ .env สำหรับเครื่อง local</h2>
+<h3 id="9-1-setup-wizard">9.1 ใช้ setup wizard</h3>
+<p>ในโฟลเดอร์โปรเจกต์ <code>nextjs-app</code> ให้รัน</p>
+<pre>npm install
+npm run setup</pre>
+<p>ระบบจะถามค่าทีละตัว แล้วสร้างไฟล์ <code>.env</code> ให้</p>
+<p>ค่าที่ wizard ถาม</p>
+<ul>
+<li><code>DATABASE_URL</code></li>
+<li><code>JIRA_DOMAIN</code></li>
+<li><code>JIRA_EMAIL</code></li>
+<li><code>JIRA_API_TOKEN</code></li>
+<li><code>JIRA_PROJECT_KEY</code></li>
+<li><code>GOOGLE_CHAT_WEBHOOK_URL</code></li>
+<li><code>GEMINI_API_KEY</code></li>
+<li><code>GEMINI_MODEL</code></li>
+<li><code>BOT_NAME</code></li>
+</ul>
+<p>ค่าที่ wizard สุ่มให้</p>
+<ul>
+<li><code>SESSION_SECRET</code></li>
+<li><code>CRON_SECRET</code></li>
+</ul>
+<h3 id="9-2-env">9.2 เขียน .env เอง</h3>
+<p>ถ้าไม่ใช้ wizard ให้สร้างไฟล์ <code>.env</code> ใน root ของ <code>nextjs-app</code> แล้วใส่ค่าตามตัวอย่างในหัวข้อ 2</p>
+<h3 id="9-3-env-push">9.3 ตรวจว่า .env ไม่ถูก push</h3>
+<p>ก่อน push code ตรวจว่า <code>.gitignore</code> มีบรรทัดเหล่านี้</p>
+<pre>.env
+.env.local
+.env.*.local</pre>
+<p>ถ้าไม่มี ให้เพิ่มก่อน commit</p>
+<p>---</p>
+<h2 id="10-local">10. ทดสอบระบบบนเครื่อง local</h2>
+<p>ติดตั้ง dependency</p>
+<pre>npm install</pre>
+<p>รัน dev server</p>
+<pre>npm run dev</pre>
+<p>เปิดเว็บ</p>
+<pre>http://localhost:3000</pre>
+<p>ตรวจ health</p>
+<pre>http://localhost:3000/api/health</pre>
+<p>sync tickets ครั้งแรก</p>
+<pre>http://localhost:3000/api/cron/sync-tickets?secret=YOUR_CRON_SECRET</pre>
+<p>ทดสอบ build ก่อน deploy</p>
+<pre>npm run build</pre>
+<p>ถ้า <code>npm run build</code> ผ่าน ค่อย push และ deploy</p>
+<p>---</p>
+<h2 id="11-Git-push-code-GitHub">11. เตรียม Git และ push code ขึ้น GitHub</h2>
+<h3 id="11-1-repository-GitHub">11.1 สร้าง repository บน GitHub</h3>
+<p>1. เข้า <code>https://github.com</code></p>
+<p>2. กด <code>New repository</code></p>
+<p>3. ตั้งชื่อ repository เช่น <code>jira-chat-bot</code></p>
+<p>4. เลือก Private ถ้าเป็นระบบภายในบริษัท</p>
+<p>5. ไม่จำเป็นต้องสร้าง README ถ้า project มีไฟล์อยู่แล้ว</p>
+<p>6. กด Create repository</p>
+<h3 id="11-2-commit">11.2 ตรวจไฟล์ก่อน commit</h3>
+<p>ใช้คำสั่ง</p>
+<pre>git status</pre>
+<p>ห้ามมีไฟล์เหล่านี้อยู่ในรายการที่จะ commit</p>
+<ul>
+<li><code>.env</code></li>
+<li><code>.env.local</code></li>
+<li>ไฟล์ที่มี token หรือ password</li>
+<li>ไฟล์ backup ที่ copy ค่า secret ไว้</li>
+</ul>
+<h3 id="11-3-push-GitHub">11.3 push ขึ้น GitHub ครั้งแรก</h3>
+<p>ถ้า project ยังไม่เคย init git</p>
+<pre>git init
+git branch -M main
+git add .
+git commit -m &quot;Initial deployable Jira chat bot&quot;
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git push -u origin main</pre>
+<p>ถ้า project มี git อยู่แล้ว</p>
+<pre>git status
+git add .
+git commit -m &quot;Update setup guide and deployment config&quot;
+git push origin main</pre>
+<h3 id="11-4-push-secret">11.4 ถ้าเผลอ push secret ไปแล้ว</h3>
+<p>ให้ทำทันที</p>
+<p>1. Revoke Jira API token</p>
+<p>2. Rotate Gemini API key</p>
+<p>3. ลบ Google Chat webhook เดิมแล้วสร้างใหม่</p>
+<p>4. เปลี่ยน <code>SESSION_SECRET</code> และ <code>CRON_SECRET</code></p>
+<p>5. เปลี่ยน database password ถ้า <code>DATABASE_URL</code> หลุด</p>
+<p>6. อัปเดตค่าใหม่ใน Vercel</p>
+<p>7. Redeploy</p>
+<p>การลบ commit อย่างเดียวไม่พอ เพราะ secret อาจถูกดึงไปแล้ว</p>
+<p>---</p>
+<h2 id="12-Deploy-Vercel">12. Deploy ขึ้น Vercel</h2>
+<h3 id="12-1-Import-GitHub-repository">12.1 Import GitHub repository</h3>
+<p>1. เข้า <code>https://vercel.com/dashboard</code></p>
+<p>2. กด <code>Add New</code> &gt; <code>Project</code></p>
+<p>3. เลือก GitHub repository ที่ push ไว้</p>
+<p>4. Framework Preset เลือก <code>Next.js</code></p>
+<p>5. Root Directory ให้เลือกโฟลเดอร์ที่มี <code>package.json</code> ของ app</p>
+<p>6. Build command ใช้ default หรือ <code>npm run build</code></p>
+<p>7. Install command ใช้ default หรือ <code>npm install</code></p>
+<p>8. อย่าเพิ่ง deploy ถ้ายังไม่ได้ใส่ Environment Variables</p>
+<h3 id="12-2-Root-Directory">12.2 Root Directory สำคัญมาก</h3>
+<p>ถ้า repository มีหลายโฟลเดอร์ ต้องตั้ง Root Directory ให้ตรงกับ <code>nextjs-app</code></p>
+<p>ถูกต้องถ้าใน root นั้นมีไฟล์เหล่านี้</p>
+<ul>
+<li><code>package.json</code></li>
+<li><code>next.config.mjs</code></li>
+<li><code>app/</code></li>
+<li><code>components/</code></li>
+<li><code>lib/</code></li>
+</ul>
+<p>ถ้าเลือก root ผิด build จะหา <code>package.json</code> ไม่เจอ หรือ deploy app ผิดตัว</p>
+<p>---</p>
+<h2 id="13-Environment-Variables-Vercel">13. ตั้ง Environment Variables บน Vercel</h2>
+<p>ไปที่</p>
+<pre>Vercel Project &gt; Settings &gt; Environment Variables</pre>
+<p>เพิ่มค่าทั้งหมดจากหัวข้อ 2</p>
+<p>เลือก environment ให้ครบตามต้องการ</p>
+<ul>
+<li>Production: ใช้กับเว็บจริง</li>
+<li>Preview: ใช้กับ branch หรือ pull request</li>
+<li>Development: ใช้กับ <code>vercel dev</code></li>
+</ul>
+<p>แนะนำให้ใส่ Production และ Preview อย่างน้อย</p>
+<p>หลังเพิ่มหรือแก้ env ต้อง redeploy ใหม่ ไม่อย่างนั้น deployment เก่าจะยังใช้ค่าเดิม</p>
+<p>---</p>
+<h2 id="14-URL-deploy">14. ตั้ง URL หลัง deploy</h2>
+<p>เมื่อ Vercel deploy สำเร็จ จะได้ URL เช่น</p>
+<pre>https://jira-chat-bot.vercel.app</pre>
+<p>นำ URL นี้ไปตั้ง 2 จุด</p>
+<h3 id="14-1-Google-Chat-App-endpoint">14.1 Google Chat App endpoint</h3>
+<pre>https://jira-chat-bot.vercel.app/api/webhook</pre>
+<h3 id="14-2-Jira-webhook-endpoint">14.2 Jira webhook endpoint</h3>
+<pre>https://jira-chat-bot.vercel.app/api/jira/webhook</pre>
+<h3 id="14-3-URL">14.3 URL สำหรับตรวจระบบ</h3>
+<pre>https://jira-chat-bot.vercel.app/api/health</pre>
+<p>---</p>
+<h2 id="15-Sync-tickets">15. Sync tickets ครั้งแรก</h2>
+<p>หลัง deploy และใส่ env แล้ว ให้ sync งานจาก Jira เข้า database ครั้งแรก</p>
+<p>เปิด URL นี้ใน browser</p>
+<pre>https://jira-chat-bot.vercel.app/api/cron/sync-tickets?secret=YOUR_CRON_SECRET</pre>
+<p>ถ้าสำเร็จควรได้ response ประมาณ</p>
+<pre>{
+  &quot;success&quot;: true,
+  &quot;message&quot;: &quot;Synchronized ... tickets successfully.&quot;,
+  &quot;count&quot;: 10
+}</pre>
+<p>จากนั้นเปิด dashboard แล้วตรวจว่ามี tickets แสดงหรือไม่</p>
+<p>---</p>
+<h2 id="16-cron">16. ตั้งค่า cron และรายงานประจำวัน</h2>
+<p>โปรเจกต์นี้มี <code>vercel.json</code> ดังนี้</p>
+<pre>{
+  &quot;crons&quot;: [
+    {
+      &quot;path&quot;: &quot;/api/cron/daily-summary&quot;,
+      &quot;schedule&quot;: &quot;0 1 * * 1-5&quot;
+    }
+  ]
+}</pre>
+<p>ความหมาย</p>
+<ul>
+<li><code>0 1 * * 1-5</code> คือเวลา 01:00 UTC วันจันทร์ถึงศุกร์</li>
+<li>เวลาไทยคือประมาณ 08:00 น. วันจันทร์ถึงศุกร์</li>
+<li>endpoint ที่ถูกเรียกคือ <code>/api/cron/daily-summary</code></li>
+<li>endpoint นี้จะดึงงาน overdue/due today จาก Jira แล้วส่งเข้า <code>GOOGLE_CHAT_WEBHOOK_URL</code></li>
+</ul>
+<p>ถ้าต้องการเปลี่ยนเป็น 06:00 เวลาไทย ต้องใช้ 23:00 UTC ของวันก่อนหน้า</p>
+<pre>{
+  &quot;path&quot;: &quot;/api/cron/daily-summary&quot;,
+  &quot;schedule&quot;: &quot;0 23 * * 0-4&quot;
+}</pre>
+<p>หลังแก้ <code>vercel.json</code> ต้อง commit และ push เพื่อให้ Vercel deploy ใหม่</p>
+<p>---</p>
+<h2 id="17-deploy">17. ทดสอบระบบหลัง deploy</h2>
+<h3 id="17-1-Health-check">17.1 Health check</h3>
+<p>เปิด</p>
+<pre>https://jira-chat-bot.vercel.app/api/health</pre>
+<p>ควรเห็น</p>
+<ul>
+<li><code>overall</code>: <code>ready</code></li>
+<li><code>checks.env.status</code>: <code>ok</code></li>
+<li><code>checks.database.status</code>: <code>ok</code></li>
+<li><code>checks.jira.status</code>: <code>ok</code></li>
+<li><code>checks.google_chat.status</code>: <code>configured</code></li>
+</ul>
+<p>ถ้าไม่ ready ให้อ่าน message ใน response ก่อน เพราะ endpoint นี้บอกค่อนข้างชัดว่าขาดอะไร</p>
+<h3 id="17-2-Google-Chat-Bot">17.2 ทดสอบ Google Chat Bot</h3>
+<p>ในห้อง Google Chat ที่เพิ่ม app แล้ว พิมพ์</p>
+<pre>@sekloso ping</pre>
+<p>ควรตอบประมาณ</p>
+<pre>Pong! ระบบ Chat Bot ทำงานปกติครับ</pre>
+<p>ทดสอบดูงานค้าง</p>
+<pre>@sekloso ดูงานค้างทั้งหมด</pre>
+<p>ทดสอบสร้างงาน</p>
+<pre>@sekloso สร้างงาน ทดสอบระบบ bot ส่งพรุ่งนี้ priority low</pre>
+<p>หลังทดสอบเสร็จจะไปลบ ticket ใน Jira ก็ได้</p>
+<h3 id="17-3-Dashboard">17.3 ทดสอบ Dashboard</h3>
+<p>เปิด</p>
+<pre>https://jira-chat-bot.vercel.app/dashboard</pre>
+<p>ใน code ปัจจุบัน หน้าแรกเป็น UAT role selection ให้เลือก role เพื่อเข้า dashboard หากเปลี่ยนกลับไปใช้ระบบ login จริง ให้ใช้ user/admin ตามที่ตั้งไว้ใน database</p>
+<h3 id="17-4-Jira-webhook">17.4 ทดสอบ Jira webhook</h3>
+<p>1. เปิด ticket ใน Jira</p>
+<p>2. เปลี่ยน status หรือแก้ summary</p>
+<p>3. รอไม่กี่วินาที</p>
+<p>4. เปิด dashboard activity logs</p>
+<p>5. ตรวจว่ามี log จาก Jira Cloud หรือไม่</p>
+<p>---</p>
+<h2 id="18-bot">18. คำสั่ง bot ที่ใช้บ่อย</h2>
+<table>
+<tr><th>งานที่ต้องการ</th><th>ตัวอย่างคำสั่ง</th></tr>
+<tr><td>ทดสอบ bot</td><td><code>@sekloso ping</code></td></tr>
+<tr><td>ขอวิธีใช้</td><td><code>@sekloso help</code></td></tr>
+<tr><td>สร้าง Epic</td><td><code>@sekloso สร้างงาน ระบบลงทะเบียนสมาชิก ส่ง 31/07/69</code></td></tr>
+<tr><td>สร้าง Task ใต้งานแม่</td><td><code>@sekloso สร้าง job เขียน API login ในงาน TES-14 ให้แพ็ก ส่งพรุ่งนี้</code></td></tr>
+<tr><td>แก้กำหนดส่ง</td><td><code>@sekloso แก้ไขวันส่ง TES-14 เป็น 31/07/69</code></td></tr>
+<tr><td>เปลี่ยนผู้รับผิดชอบ</td><td><code>@sekloso มอบหมาย TES-14 ให้แพ็ก</code></td></tr>
+<tr><td>เปลี่ยนสถานะ</td><td><code>@sekloso ย้าย TES-14 เป็น In Progress</code></td></tr>
+<tr><td>ปิดงาน</td><td><code>@sekloso ปิดงาน TES-14</code></td></tr>
+<tr><td>ดูงานค้างทั้งหมด</td><td><code>@sekloso ดูงานค้างทั้งหมด</code></td></tr>
+<tr><td>ดูเฉพาะ Epic</td><td><code>@sekloso ดู epic</code></td></tr>
+<tr><td>ดูเฉพาะ Task/job</td><td><code>@sekloso ดู job</code></td></tr>
+</table>
+<p>---</p>
+<h2 id="19">19. การแก้ปัญหาที่พบบ่อย</h2>
+<h3 id="19-1-api-health-env-missing">19.1 /api/health แจ้ง env missing</h3>
+<p>สาเหตุ</p>
+<ul>
+<li>ลืมใส่ Environment Variables ใน Vercel</li>
+<li>ใส่เฉพาะ Preview แต่ deploy เป็น Production</li>
+<li>ใส่ชื่อ key ผิด เช่น <code>JIRA_TOKEN</code> แทน <code>JIRA_API_TOKEN</code></li>
+<li>เพิ่ม env แล้วแต่ยังไม่ได้ redeploy</li>
+</ul>
+<p>วิธีแก้</p>
+<p>1. ไปที่ Vercel Project Settings &gt; Environment Variables</p>
+<p>2. ตรวจชื่อ key ทีละตัว</p>
+<p>3. เลือก environment ให้ถูก</p>
+<p>4. Redeploy</p>
+<h3 id="19-2-Jira-401">19.2 Jira ขึ้น 401</h3>
+<p>สาเหตุที่พบบ่อย</p>
+<ul>
+<li><code>JIRA_EMAIL</code> ไม่ใช่บัญชีที่สร้าง token</li>
+<li><code>JIRA_API_TOKEN</code> copy ผิด หรือหมดอายุ</li>
+<li>token ถูก revoke</li>
+</ul>
+<p>วิธีแก้</p>
+<ul>
+<li>สร้าง Jira API token ใหม่</li>
+<li>อัปเดต <code>JIRA_API_TOKEN</code> ใน Vercel</li>
+<li>Redeploy</li>
+</ul>
+<h3 id="19-3-Jira-404">19.3 Jira ขึ้น 404</h3>
+<p>สาเหตุที่พบบ่อย</p>
+<ul>
+<li><code>JIRA_PROJECT_KEY</code> ผิด</li>
+<li>account ไม่มีสิทธิ์เข้าถึง project</li>
+<li><code>JIRA_DOMAIN</code> ใส่ path เกินมา เช่น <code>/jira/software/...</code></li>
+</ul>
+<p>วิธีแก้</p>
+<ul>
+<li>ตรวจ project key จาก ticket จริง เช่น <code>TES-14</code></li>
+<li>ตรวจ permission ของ account</li>
+<li>ใส่ domain แค่ <code>company.atlassian.net</code></li>
+</ul>
+<h3 id="19-4-Database">19.4 Database ต่อไม่ได้</h3>
+<p>สาเหตุที่พบบ่อย</p>
+<ul>
+<li><code>DATABASE_URL</code> ยังมี <code>[YOUR-PASSWORD]</code></li>
+<li>password มีอักขระพิเศษแต่ไม่ได้ encode</li>
+<li>Supabase project ถูก paused</li>
+<li>ใช้ direct connection แต่ network/serverless ต่อไม่ได้</li>
+</ul>
+<p>วิธีแก้</p>
+<ul>
+<li>copy transaction pooler string ใหม่</li>
+<li>reset database password หากจำไม่ได้</li>
+<li>restore Supabase project ถ้าถูก pause</li>
+<li>ตรวจว่า URL ใช้ port <code>6543</code> ถ้าใช้ pooler transaction</li>
+</ul>
+<h3 id="19-5-Google-Chat-Bot">19.5 Google Chat Bot ไม่ตอบ</h3>
+<p>สาเหตุที่พบบ่อย</p>
+<ul>
+<li>Google Chat App endpoint ผิด</li>
+<li>App ยังไม่ได้เพิ่มเข้า Space</li>
+<li>ในห้องกลุ่มไม่ได้ mention bot</li>
+<li>Vercel function error เพราะ env missing</li>
+<li>Gemini API key ใช้ไม่ได้</li>
+</ul>
+<p>วิธีแก้</p>
+<p>1. เปิด <code>/api/health</code></p>
+<p>2. ตรวจ Vercel Logs ของ <code>/api/webhook</code></p>
+<p>3. ตรวจ Google Chat API configuration ว่า URL เป็น <code>/api/webhook</code></p>
+<p>4. ลอง <code>@sekloso ping</code></p>
+<h3 id="19-6-Notification-Google-Chat">19.6 Notification ไม่เข้า Google Chat</h3>
+<p>สาเหตุที่พบบ่อย</p>
+<ul>
+<li><code>GOOGLE_CHAT_WEBHOOK_URL</code> ผิด</li>
+<li>webhook ถูกลบจาก Space</li>
+<li>Workspace ปิด incoming webhook</li>
+</ul>
+<p>วิธีแก้</p>
+<ul>
+<li>สร้าง incoming webhook ใหม่</li>
+<li>อัปเดตค่าใน Vercel</li>
+<li>Redeploy</li>
+<li>ทดสอบ daily summary หรือแก้ ticket ใน Jira</li>
+</ul>
+<h3 id="19-7-Daily-summary">19.7 Daily summary ไม่มาตามเวลา</h3>
+<p>โปรเจกต์ปัจจุบันตั้งเวลาไว้ที่ <code>0 1 * * 1-5</code> หรือประมาณ 08:00 เวลาไทย</p>
+<p>ถ้าอยากได้ 06:00 เวลาไทย ให้เปลี่ยนเป็น</p>
+<pre>&quot;schedule&quot;: &quot;0 23 * * 0-4&quot;</pre>
+<p>ตรวจเพิ่ม</p>
+<ul>
+<li>Vercel plan รองรับ cron หรือไม่</li>
+<li>มี deployment ล่าสุดที่มี <code>vercel.json</code> หรือไม่</li>
+<li><code>GOOGLE_CHAT_WEBHOOK_URL</code> ถูกต้องหรือไม่</li>
+<li>ดู Vercel Logs ของ <code>/api/cron/daily-summary</code></li>
+</ul>
+<h3 id="19-8-push-env-GitHub">19.8 เผลอ push .env ขึ้น GitHub</h3>
+<p>ให้ถือว่า key ทั้งหมดรั่วทันที</p>
+<p>ต้องทำ</p>
+<p>1. Revoke Jira API token</p>
+<p>2. Rotate Gemini API key</p>
+<p>3. ลบและสร้าง Google Chat webhook ใหม่</p>
+<p>4. เปลี่ยน database password หรือ connection string</p>
+<p>5. สุ่ม <code>SESSION_SECRET</code> และ <code>CRON_SECRET</code> ใหม่</p>
+<p>6. อัปเดต Vercel Environment Variables</p>
+<p>7. Redeploy</p>
+<p>8. ลบ secret ออกจาก Git history หากจำเป็น แต่ยังต้อง rotate key อยู่ดี</p>
+<p>---</p>
+<h2 id="20-Checklist">20. Checklist ก่อนส่งมอบงาน</h2>
+<ul>
+<li>[ ] สร้าง Supabase project แล้ว</li>
+<li>[ ] ได้ <code>DATABASE_URL</code> แล้ว และใช้ pooler ที่เหมาะกับ Vercel</li>
+<li>[ ] สร้าง Jira API token แล้ว</li>
+<li>[ ] ได้ <code>JIRA_DOMAIN</code>, <code>JIRA_EMAIL</code>, <code>JIRA_API_TOKEN</code>, <code>JIRA_PROJECT_KEY</code> แล้ว</li>
+<li>[ ] สร้าง Gemini API key แล้ว</li>
+<li>[ ] สร้าง Google Chat Incoming Webhook แล้ว</li>
+<li>[ ] ตั้ง Google Chat App endpoint เป็น <code>/api/webhook</code> แล้ว</li>
+<li>[ ] ตั้ง Jira webhook endpoint เป็น <code>/api/jira/webhook</code> แล้ว</li>
+<li>[ ] สร้าง <code>.env</code> สำหรับ local แล้ว</li>
+<li>[ ] ตรวจว่า <code>.env</code> ไม่ถูก commit</li>
+<li>[ ] <code>npm install</code> ผ่าน</li>
+<li>[ ] <code>npm run build</code> ผ่าน</li>
+<li>[ ] push code ขึ้น GitHub แล้ว</li>
+<li>[ ] import project เข้า Vercel แล้ว</li>
+<li>[ ] ใส่ Environment Variables บน Vercel ครบแล้ว</li>
+<li>[ ] deploy สำเร็จแล้ว</li>
+<li>[ ] <code>/api/health</code> เป็น ready แล้ว</li>
+<li>[ ] sync tickets ครั้งแรกแล้ว</li>
+<li>[ ] ทดสอบ <code>@sekloso ping</code> ผ่านแล้ว</li>
+<li>[ ] ทดสอบคำสั่งสร้าง/แก้ไข/ดูงานค้างแล้ว</li>
+<li>[ ] ทดสอบ Jira webhook แล้ว</li>
+<li>[ ] ตรวจ Vercel cron แล้ว</li>
+</ul>
+<p>---</p>
+<h2 id="section-66">แหล่งอ้างอิง</h2>
+<ul>
+<li>Atlassian API token: https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/</li>
+<li>Jira webhooks: https://support.atlassian.com/jira-cloud-administration/docs/manage-webhooks/</li>
+<li>Supabase database connection: https://supabase.com/docs/guides/database/connecting-to-postgres</li>
+<li>Gemini API key: https://ai.google.dev/gemini-api/docs/api-key</li>
+<li>Google Chat incoming webhook: https://developers.google.com/workspace/chat/quickstart/webhooks</li>
+<li>Vercel environment variables: https://vercel.com/docs/environment-variables</li>
+<li>Vercel Git deployments: https://vercel.com/docs/git</li>
+<li>GitHub repository quickstart: https://docs.github.com/en/repositories/creating-and-managing-repositories/quickstart-for-repositories</li>
+</ul>
+<p>---</p>
+<p>อัปเดตล่าสุด: กรกฎาคม 2569</p>
+</main></body></html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คู่มือการตั้งค่าระบบบอตด้วยตนเอง (Manual Setup Guide)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --secondary: #10B981;
+      --background: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --warning: #F59E0B;
+      --warning-bg: #FEF3C7;
+      --info-bg: #EFF6FF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sarabun', 'Outfit', sans-serif;
+      background-color: var(--background);
+      color: var(--text-main);
+      line-height: 1.625;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 3rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      font-family: 'Outfit', 'Sarabun', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #0F172A;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+
+    .badge-primary {
+      background: #EEF2FF;
+      color: var(--primary);
+      border-color: #E0E7FF;
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: #B45309;
+      border-color: #FDE68A;
+    }
+
+    .alert {
+      background-color: #EFF6FF;
+      border-left: 4px solid var(--primary);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+      color: #1E40AF;
+    }
+
+    .toc {
+      background: #F1F5F9;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .toc-title {
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    .toc ul {
+      list-style-type: none;
+      padding-left: 0.5rem;
+    }
+
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+
+    .toc a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    .section {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-size: 1.625rem;
+      font-weight: 700;
+      color: #0F172A;
+      border-bottom: 2px solid #E2E8F0;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin: 2rem 0 1rem 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: #334155;
+    }
+
+    ol, ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.75rem;
+    }
+
+    code {
+      font-family: 'Outfit', monospace;
+      background: #F1F5F9;
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #D946EF;
+      font-weight: 600;
+    }
+
+    pre {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 1.25rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: 'Outfit', monospace;
+      font-size: 0.875rem;
+    }
+
+    .link-btn {
+      display: inline-block;
+      background: #EEF2FF;
+      color: var(--primary);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .link-btn:hover {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .guide-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .guide-card-title {
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .highlight-text {
+      color: #B45309;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>📋 คู่มือตั้งค่าระบบด้วยตนเอง (Manual Setup)</h1>
+    <div class="subtitle">คำแนะนำทีละขั้นตอนสำหรับตั้งค่าระบบ ปกติ ด้วยตัวแปรและการรันคำสั่งโดยตรง</div>
+    
+    <div class="alert">
+      <strong>⚙️ คู่มือสำหรับการติดตั้งแบบปกติ:</strong> หน้านี้จัดทำขึ้นเพื่อให้คุณตั้งค่าระบบบอตและแดชบอร์ดด้วยขั้นตอนมาตรฐานสำหรับนักพัฒนาทั่วไป โดยไม่มีการใช้สคริปต์อัตโนมัติ CMD ใดๆ เพื่อความยืดหยุ่นในการปรับแต่งส่วนหลังบ้านทั้งหมดครับ
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">🧭 สารบัญขั้นตอนการติดตั้ง:</div>
+      <ul>
+        <li><a href="#step1">🔑 สเต็ปที่ 1: การขอข้อมูลและคีย์ API สำคัญ</a></li>
+        <li><a href="#step2">🗄️ สเต็ปที่ 2: การสร้างตารางฐานข้อมูลใน Supabase</a></li>
+        <li><a href="#step3">📝 สเต็ปที่ 3: การเขียนไฟล์ค่ากำหนดสภาพแวดล้อม (.env)</a></li>
+        <li><a href="#step4">🚀 สเต็ปที่ 4: การ Deploy ขึ้นระบบจริงบน Vercel</a></li>
+        <li><a href="#step5">🔌 สเต็ปที่ 5: การเชื่อมระบบ Webhooks</a></li>
+        <li><a href="#step6">🏁 สเต็ปที่ 6: การเริ่มดึงข้อมูลครั้งแรก (First Sync)</a></li>
+      </ul>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="step1" class="section">
+      <div class="section-title">🔑 สเต็ปที่ 1: การขอข้อมูลและคีย์ API สำคัญ</div>
+      <p>ล็อกอินเข้าบัญชีผู้ให้บริการของแต่ละที่ และคัดลอกรหัสสำคัญจดเก็บลงใน Notepad ล่วงหน้าดังนี้ครับ:</p>
+
+      <div class="guide-card">
+        <div class="guide-card-title">1.1 ลิงก์ฐานข้อมูล Supabase (DATABASE_URL)</div>
+        <ol>
+          <li>เปิดหน้าโครงการใน <a href="https://supabase.com/" target="_blank" class="link-btn">Supabase.com</a></li>
+          <li>คลิกปุ่มสีเขียว <strong>"Connect"</strong> ด้านบนสุดของโปรเจกต์</li>
+          <li>เลือกแท็บ <strong>"Direct"</strong> ในหน้าต่างย่อยด้านบนสุด</li>
+          <li>ติ๊กหัวข้อ Connection Method ให้เป็น <strong>"Transaction pooler"</strong></li>
+          <li>เลือก Type เป็น <strong>"URI"</strong> และกดปุ่ม Copy ลิงก์ยาวที่ขึ้นต้นด้วย <code>postgres://...</code></li>
+          <li>นำค่า <code>[YOUR-PASSWORD]</code> ในข้อความลิงก์ออกแล้วพิมพ์แทนที่ด้วยรหัสผ่านจริงที่คุณตั้งค่าไว้</li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title">1.2 ข้อมูลฝั่ง Jira Cloud</div>
+        <ol>
+          <li><strong>JIRA_DOMAIN:</strong> โดเมนหลักของทีม เช่น <code>myteam.atlassian.net</code> (ห้ามพิมพ์ https หรือทับ)</li>
+          <li><strong>JIRA_EMAIL:</strong> อีเมลที่ผูกเข้าใช้งาน Jira</li>
+          <li><strong>JIRA_API_TOKEN:</strong> สร้างได้จากหน้าเว็บ <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-btn">Atlassian API Tokens</a> กดปุ่ม <strong>Create API token</strong> แล้ว Copy รหัสที่ขึ้นต้นด้วย <code>ATATT...</code></li>
+          <li><strong>JIRA_PROJECT_KEY:</strong> รหัสย่อหน้าตั๋วงาน เช่น โครงการงานรหัส <code>DEV-452</code> ค่ารหัสย่อคือ <strong><code>DEV</code></strong></li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title">1.3 ลิงก์ Google Chat Webhook URL</div>
+        <ol>
+          <li>เปิดแอป Google Chat ในคอมพิวเตอร์ของคุณ</li>
+          <li>เข้าไปใน Space ห้องแชทกลุ่ม -> คลิกชื่อห้องด้านบนสุด -> เลือก **Apps & integrations** -> เลือก **Webhooks**</li>
+          <li>กดปุ่มเพิ่ม webhook และก๊อปปี้ลิงก์ที่ระบบสร้างให้เก็บไว้</li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title">1.4 รหัส Gemini API Key</div>
+        <ol>
+          <li>เปิดหน้าเว็บ <a href="https://aistudio.google.com/" target="_blank" class="link-btn">Google AI Studio</a></li>
+          <li>คลิก <strong>Get API key</strong> ด้านบนซ้าย -> คลิกปุ่มสีน้ำเงิน <strong>Create API key</strong> -> คัดลอกรหัสคีย์ที่ขึ้นต้นด้วย <code>AQ.</code> หรือ <code>AL.</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="step2" class="section">
+      <div class="section-title">🗄️ สเต็ปที่ 2: การสร้างตารางฐานข้อมูลใน Supabase (Database Setup)</div>
+      <p>เนื่องจากเป็นขั้นตอนปกติ ให้คุณคัดลอกสคริปต์ SQL ด้านล่างนี้ไปสั่งรันตารางในหน้าเว็บโดยตรงครับ:</p>
+      <ol>
+        <li>เปิดหน้าโครงการในเว็บ Supabase -> คลิกเลือกเมนู <strong>"SQL Editor"</strong> ที่แถบเมนูด้านซ้าย</li>
+        <li>คลิกสร้าง <strong>"New Query"</strong> หน้าเอกสารเปล่าใหม่</li>
+        <li>คัดลอกสคริปต์ด้านล่างนี้ไปแปะในหน้าต่างพิมพ์คำสั่ง:</li>
+      </ol>
+      <pre>
+CREATE TABLE IF NOT EXISTS team_members (
+  id SERIAL PRIMARY KEY,
+  nickname VARCHAR(100) UNIQUE NOT NULL,
+  jira_display_name VARCHAR(255) UNIQUE NOT NULL,
+  email VARCHAR(255),
+  webhook_url TEXT
+);
+
+CREATE TABLE IF NOT EXISTS activity_logs (
+  id SERIAL PRIMARY KEY,
+  timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  username VARCHAR(100) NOT NULL,
+  role VARCHAR(100) NOT NULL,
+  action VARCHAR(100) NOT NULL,
+  ticket_key VARCHAR(100),
+  details TEXT
+);
+
+CREATE TABLE IF NOT EXISTS ticket_status_cache (
+  ticket_key VARCHAR(100) PRIMARY KEY,
+  status VARCHAR(100) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_spaces_map (
+  nickname VARCHAR(100) PRIMARY KEY,
+  space_name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  salt VARCHAR(200) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  role VARCHAR(100) NOT NULL DEFAULT 'Admin',
+  is_approved BOOLEAN NOT NULL DEFAULT TRUE,
+  jira_display_name VARCHAR(255),
+  jira_account_id VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tickets (
+  key VARCHAR(100) PRIMARY KEY,
+  summary VARCHAR(255) NOT NULL,
+  status VARCHAR(100) NOT NULL,
+  issuetype VARCHAR(100) NOT NULL,
+  priority VARCHAR(100) NOT NULL,
+  assignee VARCHAR(255),
+  reporter VARCHAR(255),
+  created TIMESTAMP WITH TIME ZONE,
+  duedate DATE,
+  resolved TIMESTAMP WITH TIME ZONE,
+  parent VARCHAR(100),
+  description TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+      </pre>
+      <ol start="4">
+        <li>คลิกปุ่มสีเขียวคำว่า <strong>"Run"</strong> เพื่อสร้างตารางทั้งหมดเสร็จสิ้น</li>
+        <li><strong>การเพิ่มบัญชี Admin บอร์ด:</strong> ไปที่เมนู **Table Editor** ด้านซ้าย -> เลือกตาราง **users** -> คลิกปุ่ม **Insert row** เพื่อเพิ่มชื่อและรหัสล็อกอินของผู้ดูแลหน้าเว็บแดชบอร์ดโดยตรงได้เลยครับ</li>
+      </ol>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="step3" class="section">
+      <div class="section-title">📝 สเต็ปที่ 3: การเขียนไฟล์ค่ากำหนดสภาพแวดล้อม (.env)</div>
+      <p>สร้างไฟล์ชื่อ <code>.env</code> ไว้ที่ระดับโฟลเดอร์นอกสุดของโปรเจกต์คุณ และระบุค่าข้อมูลดังนี้:</p>
+      <pre>
+DATABASE_URL="ลิงก์เชื่อม Supabase จากข้อ 1.1"
+
+JIRA_DOMAIN="ชื่อโดเมนจากข้อ 1.2"
+JIRA_EMAIL="อีเมลเข้าใช้งาน Jira"
+JIRA_API_TOKEN="รหัสผ่าน API Token ขึ้นต้นด้วย ATATT..."
+JIRA_PROJECT_KEY="รหัสตัวย่อโครงการ เช่น DEV"
+
+GOOGLE_CHAT_WEBHOOK_URL="ลิงก์ส่งข้อความจากข้อ 1.3"
+
+LLM_PROVIDER="gemini"
+GEMINI_API_KEY="คีย์ AI จากข้อ 1.4"
+GEMINI_MODEL="gemini-3.5-flash"
+
+SESSION_SECRET="สุ่มข้อความยาว 32 ตัวเพื่อใช้ความปลอดภัยในเว็บ"
+CRON_SECRET="สุ่มข้อความสั้น 16 ตัวเพื่อใช้เป็นความลับสั่งรัน Cron"
+BOT_NAME="TaskyBot"
+      </pre>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="step4" class="section">
+      <div class="section-title">🚀 สเต็ปที่ 4: การ Deploy ขึ้นระบบจริงบน Vercel</div>
+      <ol>
+        <li>นำซอร์สโค้ดโปรเจกต์ทั้งหมดอัปโหลดขึ้น GitHub Repository ส่วนตัว (Private Repository) ของคุณ</li>
+        <li>ไปที่เว็บ **Vercel.com** ล็อกอินด้วย GitHub -> คลิกปุ่ม **"Add New"** -> **"Project"**</li>
+        <li>กดปุ่ม <strong>"Import"</strong> โปรเจกต์ดังกล่าวจากรายชื่อของคุณ</li>
+        <li>เลื่อนหาเมนูย่อย **Environment Variables** นำค่าคีย์ทั้งหมดที่เขียนไว้ในไฟล์ <code>.env</code> ในข้อ 3 มากรอกใส่ให้ครบถ้วน</li>
+        <li>คลิกปุ่มสีน้ำเงินคำว่า <strong>"Deploy"</strong> และก๊อปปี้ลิงก์ที่เว็บที่ได้ (เช่น <code>https://my-jira-bot.vercel.app</code>) เก็บไว้</li>
+      </ol>
+    </div>
+
+    <!-- Step 5 -->
+    <div id="step5" class="section">
+      <div class="section-title">🔌 สเต็ปที่ 5: การเชื่อมระบบ Webhooks</div>
+      
+      <div class="guide-card">
+        <div class="guide-card-title">5.1 ตั้งค่าเว็บฮุคฝั่ง Jira Cloud:</div>
+        <p>เปิดลิงก์ตั้งค่านี้ในเบราว์เซอร์: <code>https://[โดเมน_Jira_ของคุณ]/plugins/servlet/webhooks</code></p>
+        <ol>
+          <li>คลิกปุ่ม <strong>"Create a Webhook"</strong> ขวาบน</li>
+          <li>ตั้งค่ารายละเอียดดังนี้:
+            <ul>
+              <li><strong>Name:</strong> <code>Sync to Dashboard</code></li>
+              <li><strong>URL:</strong> ลิงก์ Vercel ของคุณต่อท้ายด้วย <code>/api/jira/webhook</code> (เช่น <code>https://my-jira-bot.vercel.app/api/jira/webhook</code>)</li>
+              <li><strong>JQL Filter:</strong> ระบุคำสั่งสูตรกรอง <code>project = "รหัสย่อโปรเจกต์ของคุณ"</code> (เช่น <code>project = "DEV"</code>)</li>
+              <li><strong>Events:</strong> เลื่อนลงหาหมวด Issue ติ๊กถูกที่ช่อง **Created**, **Updated**, และ **Deleted**</li>
+            </ul>
+          </li>
+          <li>คลิกปุ่มสีน้ำเงินด้านล่างสุด <strong>"Create"</strong></li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title">5.2 ตั้งค่าเว็บฮุคฝั่ง Google Chat API:</div>
+        <ol>
+          <li>เข้าเว็บ <a href="https://console.cloud.google.com/" target="_blank" class="link-btn">Google Cloud Console</a> เลือกโปรเจกต์งานของคุณ</li>
+          <li>ค้นหาเปิดบริการ <strong>"Google Chat API"</strong> แล้วกดเปิดใช้งาน (Enable)</li>
+          <li>ไปที่เมนู <strong>"Configuration"</strong> ด้านซ้าย กรอกโปรไฟล์บอตตามชอบ</li>
+          <li>ที่หัวข้อ **Connection settings** เลือก **"Webhook URL"**</li>
+          <li>วางที่อยู่อีเมลลิงก์เว็บ Vercel ของคุณ และใส่ต่อท้ายด้วย <code>/api/webhook</code> (เช่น <code>https://my-jira-bot.vercel.app/api/webhook</code>)</li>
+          <li>คลิกปุ่ม <strong>"Save"</strong> ล่างสุด</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div id="step6" class="section">
+      <div class="section-title">🏁 สเต็ปที่ 6: การเริ่มระบบดึงประวัติครั้งแรก (First Sync)</div>
+      <p>พิมพ์เปิดลิงก์สั่งงานเพื่อซิงก์ดึงประวัติตั๋วงานเก่าทั้งหมดบน Jira เข้าแดชบอร์ดของคุณเพื่อเตรียมแสดงผล:</p>
+      <pre>https://[ที่อยู่เว็บ_Vercel_ของคุณ]/api/cron/sync-tickets?secret=[รหัส_CRON_SECRET_ของคุณ]</pre>
+      <p><span class="highlight-text">*ตัวอย่าง:*</span> <code>https://my-jira-bot.vercel.app/api/cron/sync-tickets?secret=my_custom_secret_123</code></p>
+      <p>เมื่อเบราว์เซอร์แสดงข้อความระบุว่า <strong>"sync success"</strong> ก็แปลว่าบอตและ Dashboard ของคุณติดตั้งเชื่อมต่อด้วยตนเองเสร็จสมบูรณ์เรียบร้อยแล้วครับ! 🎉</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+      🤖 บอตและแดชบอร์ด TaskyBot จัดทำโดย Antigravity • พัฒนาด้วยเทคโนโลยีอัจฉริยะ
+    </div>
+  </div>
+
+</body>
+</html>

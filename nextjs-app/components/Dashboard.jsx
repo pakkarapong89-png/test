@@ -1716,24 +1716,24 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
           <div 
             className="glass" 
             style={{ 
-              border: '1px solid rgba(239, 68, 68, 0.3)', 
-              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.01) 100%)', 
+              border: '1px solid rgba(239, 68, 68, 0.15)', 
+              background: 'rgba(239, 68, 68, 0.02)', 
               padding: '1.5rem',
-              boxShadow: '0 8px 32px rgba(239, 68, 68, 0.04)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
               borderRadius: '16px'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-              <AlertTriangle size={24} style={{ color: '#EF4444', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.5))' }} />
-              <h3 style={{ fontSize: '1.3rem', color: '#EF4444', fontWeight: 'bold', margin: 0, textShadow: '0 0 10px rgba(239, 68, 68, 0.1)' }}>
+              <AlertTriangle size={20} style={{ color: '#F87171' }} />
+              <h3 style={{ fontSize: '1.15rem', color: '#F87171', fontWeight: '600', margin: 0 }}>
                 งานเกินกำหนดส่งเร่งด่วน! (แจ้งเตือนงานล่าช้า)
               </h3>
-              <span className="badge" style={{ background: '#EF4444', color: '#FFFFFF', fontSize: '0.85rem', padding: '4px 10px', fontWeight: 'bold', boxShadow: '0 0 12px rgba(239, 68, 68, 0.4)', border: 'none' }}>
+              <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#F87171', fontSize: '0.8rem', padding: '3px 8px', fontWeight: '600', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: '6px' }}>
                 {overdueTasks.length} งาน
               </span>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem' }}>
               {overdueTasks.map(task => {
                 const daysOverdue = getOverdueDays(task.duedate);
                 const isUnassigned = task.assignee === 'Unassigned' || !task.assignee;
@@ -1744,25 +1744,27 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     className="glass" 
                     style={{ 
                       padding: '1.25rem', 
-                      background: 'rgba(15, 23, 42, 0.3)', 
+                      background: 'rgba(30, 41, 59, 0.35)', 
                       borderLeft: '4px solid #EF4444',
-                      borderTop: '1px solid rgba(239, 68, 68, 0.15)',
-                      borderRight: '1px solid rgba(239, 68, 68, 0.15)',
-                      borderBottom: '1px solid rgba(239, 68, 68, 0.15)',
-                      boxShadow: '0 4px 20px rgba(239, 68, 68, 0.03)',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.03)',
+                      borderRight: '1px solid rgba(255, 255, 255, 0.03)',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       gap: '0.65rem',
                       cursor: 'pointer',
                       borderRadius: '12px',
+                      width: '100%',
+                      maxWidth: '380px',
                       transition: 'all 0.2s ease-in-out'
                     }}
                   >
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <span style={{ color: '#EF4444', fontWeight: 'bold', fontSize: '0.9rem', letterSpacing: '0.02em' }}>{task.key}</span>
-                        <span style={{ fontSize: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '3px 8px', borderRadius: '6px', color: '#EF4444', fontWeight: 'bold' }}>
+                        <span style={{ color: '#F87171', fontWeight: 'bold', fontSize: '0.9rem' }}>{task.key}</span>
+                        <span style={{ fontSize: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', padding: '3px 8px', borderRadius: '6px', color: 'var(--text-secondary)' }}>
                           {task.issuetype}
                         </span>
                       </div>
@@ -1773,7 +1775,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                       <span style={{ color: 'var(--text-secondary)' }}>
                         ผู้รับผิดชอบ: <strong style={{ color: isUnassigned ? '#F59E0B' : 'var(--text-primary)' }}>{task.assignee || 'Unassigned'}</strong>
                       </span>
-                      <span style={{ color: '#FFFFFF', background: '#EF4444', fontSize: '0.75rem', fontWeight: 'bold', padding: '4px 10px', borderRadius: '6px', boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)' }}>
+                      <span style={{ color: '#EF4444', background: 'rgba(239, 68, 68, 0.1)', fontSize: '0.75rem', fontWeight: 'bold', padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                         เกินกำหนด {daysOverdue} วัน
                       </span>
                     </div>

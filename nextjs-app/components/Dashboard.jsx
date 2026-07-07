@@ -1716,19 +1716,27 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
           <div 
             className="glass" 
             style={{ 
-              border: '1px solid rgba(239, 68, 68, 0.25)', 
-              background: 'rgba(13, 30, 59, 0.4)', 
-              padding: '1.5rem',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              border: theme === 'theme-violet' ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(239, 68, 68, 0.25)', 
+              background: theme === 'theme-violet' ? '#FFFFFF' : '#0B0E17', 
+              padding: '1.25rem 1.5rem',
+              boxShadow: theme === 'theme-violet' ? '0 8px 24px rgba(239, 68, 68, 0.05)' : '0 8px 32px rgba(0, 0, 0, 0.3)',
               borderRadius: '16px'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.25rem' }}>
-              <AlertTriangle size={20} style={{ color: '#F87171' }} />
-              <h3 style={{ fontSize: '1.15rem', color: '#F87171', fontWeight: '600', margin: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.15rem' }}>
+              <AlertTriangle size={20} style={{ color: theme === 'theme-violet' ? '#DC2626' : '#F87171' }} />
+              <h3 style={{ fontSize: '1.15rem', color: theme === 'theme-violet' ? '#DC2626' : '#F87171', fontWeight: '700', margin: 0 }}>
                 งานเกินกำหนดส่งเร่งด่วน! (แจ้งเตือนงานล่าช้า)
               </h3>
-              <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#F87171', fontSize: '0.8rem', padding: '3px 8px', fontWeight: '600', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: '6px' }}>
+              <span className="badge" style={{ 
+                background: theme === 'theme-violet' ? 'rgba(220, 38, 38, 0.08)' : 'rgba(239, 68, 68, 0.12)', 
+                color: theme === 'theme-violet' ? '#DC2626' : '#F87171', 
+                fontSize: '0.8rem', 
+                padding: '3px 8px', 
+                fontWeight: '600', 
+                border: theme === 'theme-violet' ? '1px solid rgba(220, 38, 38, 0.15)' : '1px solid rgba(239, 68, 68, 0.25)', 
+                borderRadius: '6px' 
+              }}>
                 {overdueTasks.length} งาน
               </span>
             </div>
@@ -1744,12 +1752,12 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     className="glass" 
                     style={{ 
                       padding: '1.25rem', 
-                      background: '#0f2244', 
+                      background: theme === 'theme-violet' ? '#FFF5F5' : '#0f2244', 
                       borderLeft: '4px solid #EF4444',
-                      borderTop: '1px solid rgba(239, 68, 68, 0.2)',
-                      borderRight: '1px solid rgba(239, 68, 68, 0.2)',
-                      borderBottom: '1px solid rgba(239, 68, 68, 0.2)',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+                      borderTop: theme === 'theme-violet' ? '1px solid rgba(220, 38, 38, 0.12)' : '1px solid rgba(239, 68, 68, 0.2)',
+                      borderRight: theme === 'theme-violet' ? '1px solid rgba(220, 38, 38, 0.12)' : '1px solid rgba(239, 68, 68, 0.2)',
+                      borderBottom: theme === 'theme-violet' ? '1px solid rgba(220, 38, 38, 0.12)' : '1px solid rgba(239, 68, 68, 0.2)',
+                      boxShadow: theme === 'theme-violet' ? '0 4px 12px rgba(220, 38, 38, 0.05)' : '0 4px 20px rgba(0, 0, 0, 0.2)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
@@ -1763,8 +1771,8 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                   >
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <span style={{ color: '#F87171', fontWeight: 'bold', fontSize: '0.9rem' }}>{task.key}</span>
-                        <span style={{ fontSize: '0.75rem', background: 'rgba(255, 255, 255, 0.05)', padding: '3px 8px', borderRadius: '6px', color: 'var(--text-secondary)' }}>
+                        <span style={{ color: theme === 'theme-violet' ? '#DC2626' : '#F87171', fontWeight: 'bold', fontSize: '0.9rem' }}>{task.key}</span>
+                        <span style={{ fontSize: '0.75rem', background: theme === 'theme-violet' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.05)', padding: '3px 8px', borderRadius: '6px', color: 'var(--text-secondary)' }}>
                           {task.issuetype}
                         </span>
                       </div>
@@ -1773,9 +1781,17 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem', borderTop: '1px solid var(--surface-border-subtle)', paddingTop: '0.65rem', marginTop: '0.4rem' }}>
                       <span style={{ color: 'var(--text-secondary)' }}>
-                        ผู้รับผิดชอบ: <strong style={{ color: isUnassigned ? '#F59E0B' : 'var(--text-primary)' }}>{task.assignee || 'Unassigned'}</strong>
+                        ผู้รับผิดชอบ: <strong style={{ color: isUnassigned ? (theme === 'theme-violet' ? '#D97706' : '#F59E0B') : 'var(--text-primary)' }}>{task.assignee || 'Unassigned'}</strong>
                       </span>
-                      <span style={{ color: '#EF4444', background: 'rgba(239, 68, 68, 0.1)', fontSize: '0.75rem', fontWeight: 'bold', padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                      <span style={{ 
+                        color: theme === 'theme-violet' ? '#DC2626' : '#EF4444', 
+                        background: theme === 'theme-violet' ? 'rgba(220, 38, 38, 0.06)' : 'rgba(239, 68, 68, 0.1)', 
+                        fontSize: '0.75rem', 
+                        fontWeight: 'bold', 
+                        padding: '4px 10px', 
+                        borderRadius: '6px', 
+                        border: theme === 'theme-violet' ? '1px solid rgba(220, 38, 38, 0.15)' : '1px solid rgba(239, 68, 68, 0.2)' 
+                      }}>
                         เกินกำหนด {daysOverdue} วัน
                       </span>
                     </div>

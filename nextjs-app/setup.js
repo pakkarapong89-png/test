@@ -97,7 +97,13 @@ async function main() {
   console.log('┌───────────────────────────────────────────────────────────┐');
   console.log('│  1. ตั้งค่าฐานข้อมูล Supabase (Database Configuration)     │');
   console.log('└───────────────────────────────────────────────────────────┘');
-  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Supabase Dashboard เพื่อให้ท่านก๊อปปี้ลิงก์...');
+  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Supabase Dashboard ให้โดยอัตโนมัติ...');
+  console.log('   📌 วิธีเอาค่า:');
+  console.log('     1. กดสร้างโปรเจกต์ใหม่ หรือคลิกเข้าโปรเจกต์เดิมของคุณ');
+  console.log('     2. ไปที่เมนู Settings (รูปฟันเฟืองซ้ายล่าง) -> เลือกหัวข้อ Database');
+  console.log('     3. เลื่อนลงมาหาหัวข้อ Connection string -> เลือกแท็บ URI');
+  console.log('     4. คัดลอกลิงก์ที่ขึ้นต้นด้วย postgres://... แล้วนำมาวางด้านล่าง');
+  console.log('     *(อย่าลืมแทนที่ [YOUR-PASSWORD] ด้วยรหัสผ่านจริงของคุณนะครับ)*\n');
   openUrl('https://supabase.com/dashboard/projects');
   
   const databaseUrl = await ask('ลิงก์ Supabase URI (DATABASE_URL)', 'DATABASE_URL');
@@ -220,7 +226,12 @@ async function main() {
   const jiraDomain = await ask('โดเมนหลัก Jira ของบริษัท (เช่น mycompany.atlassian.net)', 'JIRA_DOMAIN');
   const jiraEmail = await ask('อีเมลของแอดมินที่ผูกคีย์สิทธิ์', 'JIRA_EMAIL');
   
-  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Atlassian Security เพื่อให้ท่านสร้าง API Token...');
+  console.log('\n   🔄 ระบบกำลังเปิดหน้าเว็บ Atlassian Security ให้โดยอัตโนมัติ...');
+  console.log('   📌 วิธีเอาค่า:');
+  console.log('     1. คลิกปุ่ม "Create API token"');
+  console.log('     2. ตั้งชื่อป้ายกำกับ (เช่น Jira-Bot) แล้วกด Create');
+  console.log('     3. กด Copy รหัสผ่าน Token ที่ขึ้นต้นด้วย ATATT... มาวางด้านล่าง');
+  console.log('     *(คำเตือน: รหัสจะแสดงแค่ครั้งเดียวเท่านั้น ควรจดบันทึกไว้ด้วยครับ)*\n');
   openUrl('https://id.atlassian.com/manage-profile/security/api-tokens');
   
   const jiraApiToken = await ask('รหัส Jira API Token ของคุณ', 'JIRA_API_TOKEN');
@@ -229,19 +240,29 @@ async function main() {
   // ---------------------------------------------------------
   // ส่วนที่ 3: ตั้งค่าสัญญาณ Google Chat
   // ---------------------------------------------------------
-  console.log('\n┌───────────────────────────────────────────────────────────┐');
+  console.log('┌───────────────────────────────────────────────────────────┐');
   console.log('│  3. ตั้งค่าการส่งสัญญาณแจ้งเตือนเข้า Google Chat            │');
   console.log('└───────────────────────────────────────────────────────────┘');
+  console.log('   📌 วิธีเอาค่า:');
+  console.log('     1. เปิด Google Chat และเข้าไปในห้องแชท (Space) ของทีม');
+  console.log('     2. คลิกที่ชื่อห้องแชทด้านบนสุด -> เลือก Apps & integrations -> เลือก Webhooks');
+  console.log('     3. กด Add webhook ตั้งชื่อตามต้องการ แล้วกด Save');
+  console.log('     4. คัดลอกลิงก์ที่ขึ้นต้นด้วย https://chat.googleapis.com/... มาวางด้านล่าง\n');
   
   const chatWebhook = await ask('ลิงก์ Google Chat Webhook URL (ลิงก์ส่งสัญญาณเข้าห้องกลุ่ม)', 'GOOGLE_CHAT_WEBHOOK_URL');
 
   // ---------------------------------------------------------
   // ส่วนที่ 4: ตั้งค่า AI (Gemini)
   // ---------------------------------------------------------
-  console.log('\n┌───────────────────────────────────────────────────────────┐');
+  console.log('┌───────────────────────────────────────────────────────────┐');
   console.log('│  4. ตั้งค่าสมองกลปัญญาประดิษฐ์ AI (Google Gemini)           │');
   console.log('└───────────────────────────────────────────────────────────┘');
-  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Google AI Studio เพื่อให้ท่านสร้าง Gemini API Key...');
+  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Google AI Studio ให้โดยอัตโนมัติ...');
+  console.log('   📌 วิธีเอาค่า:');
+  console.log('     1. คลิกปุ่ม "Get API key" (ไอคอนรูปกุญแจด้านซ้ายบน)');
+  console.log('     2. คลิกปุ่ม "Create API key" สีน้ำเงิน');
+  console.log('     3. เลือกโปรเจกต์ หรือสร้างในโปรเจกต์ใหม่ แล้วกดสร้างคีย์');
+  console.log('     4. คัดลอกรหัส API Key ที่ขึ้นต้นด้วย AQ. หรือ AL. มาวางด้านล่าง\n');
   openUrl('https://aistudio.google.com/');
   
   const geminiKey = await ask('รหัส Google Gemini API Key', 'GEMINI_API_KEY');

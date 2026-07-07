@@ -1962,10 +1962,10 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
     const priorityCounts = getPriorityCounts();
 
     return (
-      <div className="glass" style={{ padding: '1.5rem', marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', alignItems: 'center', width: '100%' }}>
-          <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
-            <Search size={24} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+      <div className="glass" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', alignItems: 'center', width: '100%' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
             <input 
               type="text" 
               placeholder="ค้นหา Key, ชื่องาน หรือผู้รับผิดชอบ..."
@@ -1973,32 +1973,32 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ 
                 width: '100%', 
-                padding: '0.9rem 1.5rem 0.9rem 3.2rem', 
+                padding: '0.55rem 1rem 0.55rem 2.6rem', 
                 background: 'var(--bg-color)', 
                 border: '1px solid var(--surface-border)', 
-                borderRadius: '10px', 
+                borderRadius: '8px', 
                 color: 'var(--text-primary)',
-                fontSize: '1.08rem'
+                fontSize: '0.925rem'
               }}
             />
           </div>
           
           {/* Sorting Dropdown Selection */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <span style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', fontWeight: '600', whiteSpace: 'nowrap' }}>เรียงตาม:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: '600', whiteSpace: 'nowrap' }}>เรียงตาม:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               style={{
-                padding: '0.9rem 1.5rem',
+                padding: '0.55rem 1rem',
                 background: 'var(--bg-color)',
                 border: '1px solid var(--surface-border)',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 color: 'var(--text-primary)',
-                fontSize: '1.02rem',
+                fontSize: '0.9rem',
                 outline: 'none',
                 cursor: 'pointer',
-                minWidth: '200px'
+                minWidth: '170px'
               }}
             >
               <option value="priority" style={{ background: 'var(--bg-color)', color: 'var(--text-primary)' }}>ความสำคัญ (Priority)</option>
@@ -2007,86 +2007,86 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
             </select>
           </div>
           
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button 
               className={`btn ${filterStatus === 'all' ? 'btn-primary' : ''}`} 
               onClick={() => setFilterStatus('all')}
-              style={{ width: 'auto', padding: '0.95rem 2rem', fontSize: '1.1rem', margin: 0 }}
+              style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.9rem', margin: 0 }}
             >
               ทั้งหมด
             </button>
             <button 
               className={`btn ${filterStatus === 'todo' ? 'btn-primary' : ''}`} 
               onClick={() => setFilterStatus('todo')}
-              style={{ width: 'auto', padding: '0.95rem 2rem', fontSize: '1.1rem', margin: 0 }}
+              style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.9rem', margin: 0 }}
             >
               รอทำ
             </button>
             <button 
               className={`btn ${filterStatus === 'progress' ? 'btn-primary' : ''}`} 
               onClick={() => setFilterStatus('progress')}
-              style={{ width: 'auto', padding: '0.95rem 2rem', fontSize: '1.1rem', margin: 0 }}
+              style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.9rem', margin: 0 }}
             >
               กำลังทำ
             </button>
             <button 
               className={`btn ${filterStatus === 'review' ? 'btn-primary' : ''}`} 
               onClick={() => setFilterStatus('review')}
-              style={{ width: 'auto', padding: '0.95rem 2rem', fontSize: '1.1rem', margin: 0 }}
+              style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.9rem', margin: 0 }}
             >
               รอตรวจ
             </button>
             <button 
               className={`btn ${filterStatus === 'done' ? 'btn-primary' : ''}`} 
               onClick={() => setFilterStatus('done')}
-              style={{ width: 'auto', padding: '0.95rem 2rem', fontSize: '1.1rem', margin: 0 }}
+              style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.9rem', margin: 0 }}
             >
               เสร็จแล้ว
             </button>
             <button 
               className="btn" 
               onClick={fetchTickets}
-              style={{ width: 'auto', padding: '0.95rem 1.5rem', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 'auto', padding: '0.55rem 0.95rem', margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="รีเฟรชข้อมูล"
             >
-              <RefreshCw size={22} />
+              <RefreshCw size={16} />
             </button>
           </div>
         </div>
 
         {/* Priority Filter Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', borderTop: '1px solid var(--surface-border)', paddingTop: '1.1rem', marginTop: '0.2rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', borderTop: '1px solid var(--surface-border)', paddingTop: '0.85rem', marginTop: '0.1rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setShowMyTasksOnly(!showMyTasksOnly)}
             style={{
-              padding: '0.45rem 1.1rem',
+              padding: '0.35rem 0.95rem',
               borderRadius: '999px',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               cursor: 'pointer',
               border: '1px solid',
               transition: 'all 0.2s ease',
-              background: showMyTasksOnly ? 'rgba(139, 92, 246, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+              background: showMyTasksOnly ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255, 255, 255, 0.04)',
               color: showMyTasksOnly ? '#A78BFA' : 'var(--text-secondary)',
-              borderColor: showMyTasksOnly ? '#8B5CF6' : 'rgba(255, 255, 255, 0.08)',
+              borderColor: showMyTasksOnly ? '#8B5CF6' : 'rgba(255, 255, 255, 0.06)',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.45rem',
-              marginRight: '1rem'
+              gap: '0.35rem',
+              marginRight: '0.75rem'
             }}
           >
-            <User size={14} />
+            <User size={12} />
             เฉพาะงานของฉัน
           </button>
           
-          <span style={{ fontSize: '0.925rem', color: 'var(--text-secondary)', fontWeight: '600', marginRight: '0.5rem' }}>ระดับความสำคัญ (Priority):</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '600', marginRight: '0.25rem' }}>ระดับความสำคัญ:</span>
           
           <button
             onClick={() => setFilterPriority('all')}
             style={{
-              padding: '0.45rem 1.1rem',
+              padding: '0.35rem 0.95rem',
               borderRadius: '999px',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               cursor: 'pointer',
               border: '1px solid',
@@ -2102,66 +2102,66 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
           <button
             onClick={() => setFilterPriority('high')}
             style={{
-              padding: '0.45rem 1.1rem',
+              padding: '0.35rem 0.95rem',
               borderRadius: '999px',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               cursor: 'pointer',
               border: '1px solid',
               transition: 'all 0.2s ease',
-              background: filterPriority === 'high' ? 'rgba(239, 68, 68, 0.18)' : 'rgba(239, 68, 68, 0.05)',
+              background: filterPriority === 'high' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.04)',
               color: '#F87171',
               borderColor: filterPriority === 'high' ? '#EF4444' : 'transparent',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.45rem'
+              gap: '0.35rem'
             }}
           >
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444' }}></span>
+            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#EF4444' }}></span>
             สูงมาก / สูง ({priorityCounts.high})
           </button>
 
           <button
             onClick={() => setFilterPriority('medium')}
             style={{
-              padding: '0.45rem 1.1rem',
+              padding: '0.35rem 0.95rem',
               borderRadius: '999px',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               cursor: 'pointer',
               border: '1px solid',
               transition: 'all 0.2s ease',
-              background: filterPriority === 'medium' ? 'rgba(245, 158, 11, 0.18)' : 'rgba(245, 158, 11, 0.05)',
+              background: filterPriority === 'medium' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(245, 158, 11, 0.04)',
               color: '#FBBF24',
               borderColor: filterPriority === 'medium' ? '#F59E0B' : 'transparent',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.45rem'
+              gap: '0.35rem'
             }}
           >
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B' }}></span>
+            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#F59E0B' }}></span>
             ปานกลาง ({priorityCounts.medium})
           </button>
 
           <button
             onClick={() => setFilterPriority('low')}
             style={{
-              padding: '0.45rem 1.1rem',
+              padding: '0.35rem 0.95rem',
               borderRadius: '999px',
-              fontSize: '0.875rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               cursor: 'pointer',
               border: '1px solid',
               transition: 'all 0.2s ease',
-              background: filterPriority === 'low' ? 'rgba(59, 130, 246, 0.18)' : 'rgba(59, 130, 246, 0.05)',
+              background: filterPriority === 'low' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.04)',
               color: '#60A5FA',
               borderColor: filterPriority === 'low' ? '#3B82F6' : 'transparent',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.45rem'
+              gap: '0.35rem'
             }}
           >
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#3B82F6' }}></span>
+            <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#3B82F6' }}></span>
             ต่ำ / ต่ำสุด ({priorityCounts.low})
           </button>
         </div>

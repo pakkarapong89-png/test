@@ -328,9 +328,9 @@ body {
 }
 
 .btn-primary:hover {
-  opacity: 0.85;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 /* Header Navbar style */
@@ -338,15 +338,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5rem;
-  padding: 1.75rem 2.5rem; /* Expanded padding */
+  margin-bottom: 2rem;
+  padding: 1.1rem 1.75rem;
   border: 1px solid var(--surface-border);
   background: var(--surface);
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .header h1 {
-  font-size: 1.95rem; /* Increased size */
+  font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text-primary);
@@ -355,8 +355,8 @@ body {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  font-size: 1.05rem; /* Increased size */
+  gap: 1.25rem;
+  font-size: 0.95rem;
 }
 
 .user-info strong {
@@ -364,9 +364,9 @@ body {
 }
 
 .badge {
-  padding: 0.3rem 0.8rem; /* Expanded padding */
+  padding: 0.25rem 0.65rem;
   border-radius: 6px;
-  font-size: 0.8rem; /* Increased size */
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -377,13 +377,13 @@ body {
 /* Stats Cards */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem; /* Expanded gap */
-  margin-bottom: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .stat-card {
-  padding: 2rem 2.25rem; /* Expanded padding */
+  padding: 1.25rem 1.5rem;
   background: var(--surface);
   border-radius: 12px;
   border: 1px solid var(--surface-border);
@@ -391,52 +391,52 @@ body {
 
 .stat-card:hover {
   border-color: var(--surface-border-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .stat-title {
   color: var(--text-secondary);
-  font-size: 0.95rem; /* Increased size */
+  font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
 }
 
 .stat-value {
-  font-size: 3.5rem; /* Expanded size from 3rem */
+  font-size: 2.25rem;
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
   color: var(--text-primary);
 }
 
 /* Charts Grid */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-  gap: 1.5rem; /* Expanded gap */
-  margin-bottom: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .chart-card {
-  padding: 2rem; /* Expanded padding */
-  height: 440px; /* Expanded height from 380px */
+  padding: 1.5rem;
+  height: 400px;
   background: var(--surface);
 }
 
 .chart-card h3 {
-  font-size: 1.25rem; /* Increased size */
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 /* Elegant Minimalist Table */
 .table-container {
-  padding: 1.5rem 1.75rem; /* Expanded padding */
+  padding: 1.25rem 1.5rem;
   background: var(--surface);
   border-radius: 12px;
   border: 1px solid var(--surface-border);
@@ -450,17 +450,17 @@ table {
 th {
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.95rem; /* Increased size */
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 1.4rem 1.65rem; /* Expanded padding */
+  padding: 0.9rem 1.1rem;
   border-bottom: 1px solid var(--surface-border);
   text-align: left;
 }
 
 td {
-  padding: 1.4rem 1.65rem; /* Expanded padding */
-  font-size: 1.05rem; /* Increased size */
+  padding: 0.9rem 1.1rem;
+  font-size: 0.925rem;
   border-bottom: 1px solid var(--surface-border-subtle);
   color: var(--text-primary);
   transition: all 0.15s ease;
@@ -474,13 +474,13 @@ tr:hover td {
 /* Tree Nested Row Accents */
 .tree-row-hover:hover {
   background: var(--surface-hover-bg) !important;
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 /* Minimal Dot Badges */
 .status-badge {
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
   font-size: 0.725rem;
   font-weight: 600;
   display: inline-flex;
@@ -537,8 +537,8 @@ tr:hover td {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.5rem; /* Expanded gap */
-  padding: 0.5rem; /* Expanded padding */
+  gap: 0.35rem;
+  padding: 0.35rem;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--surface-border);
   border-radius: 30px;
@@ -548,15 +548,15 @@ tr:hover td {
   border: none !important;
   background: transparent !important;
   color: var(--text-secondary);
-  font-size: 1.15rem; /* Increased font size */
+  font-size: 0.95rem;
   font-weight: 600;
-  padding: 0.9rem 2.2rem; /* Expanded padding */
+  padding: 0.55rem 1.35rem;
   border-radius: 9999px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   outline: none;
   user-select: none;
   width: auto;
@@ -571,7 +571,7 @@ tr:hover td {
 .pm-tab-selector button.active {
   background: var(--primary) !important;
   color: #FFFFFF !important;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 /* Animations */

@@ -299,12 +299,21 @@
 
       <div class="guide-card">
         <div class="badge badge-primary">ขั้นตอนที่ 1.2</div>
-        <div class="guide-card-title">🔑 รหัส Jira API Token</div>
-        <p>เมื่อโปรแกรมถามข้อนี้ และเด้งเปิดหน้าเว็บความปลอดภัยของ Atlassian ขึ้นมาให้:</p>
+        <div class="guide-card-title">🔑 ข้อมูลการเชื่อมต่อ Jira Cloud (รวม 4 ค่าสำคัญ)</div>
+        <p>เมื่อโปรแกรมถามข้อนี้ และเด้งเปิดหน้าความปลอดภัย ให้กรอกข้อมูลสำคัญตามนี้ครับ:</p>
         <ol>
-          <li>คลิกปุ่มสีน้ำเงินคำว่า <strong>"Create API token"</strong></li>
-          <li>ตั้งชื่อกำกับอะไรก็ได้ เช่น <code>Jira-Bot</code> แล้วกด Create</li>
-          <li>กดปุ่ม <strong>Copy</strong> รหัสที่ขึ้นต้นด้วย <code>ATATT...</code> นำมาวางลงในช่องถามในหน้าจอ CMD แล้วกด Enter</li>
+          <li><strong>โดเมนหลักของ Jira (JIRA_DOMAIN):</strong> 
+            <br>คัดลอกท่อนโดเมนของเบราว์เซอร์คุณ เช่น <code>company-name.atlassian.net</code> (ห้ามใส่ <code>https://</code> หรือทับ <code>/</code> ต่อท้าย)
+          </li>
+          <li><strong>อีเมลผู้ดูแลระบบ (JIRA_EMAIL):</strong> 
+            <br>อีเมลที่ใช้ล็อกอินเข้าใช้ระบบ Jira
+          </li>
+          <li><strong>รหัสผ่านพิเศษ Jira API Token (JIRA_API_TOKEN):</strong>
+            <br>ในหน้าเว็บความปลอดภัยที่เด้งขึ้นมา ให้กดปุ่ม <strong>"Create API token"</strong> -> ตั้งชื่อบอต -> กด Copy รหัสยาวๆ ที่ขึ้นต้นด้วย <code>ATATT...</code> มาวาง
+          </li>
+          <li><strong>รหัสย่อของโปรเจกต์งาน (JIRA_PROJECT_KEY):</strong> 
+            <br>ดูรหัสย่อหน้าเลขตั๋วในระบบ Jira เช่น ถ้าตั๋วงานชื่อ <code>DEV-154</code> ตัวย่อคือ <strong><code>DEV</code></strong> (พิมพ์ตัวพิมพ์ใหญ่ทั้งหมด)
+          </li>
         </ol>
       </div>
 
@@ -362,18 +371,36 @@
       <p>นำที่อยู่ลิงก์เว็บ Vercel ของคุณไปแจ้งให้ฝั่ง Jira และ Google Chat ได้รับรู้เพื่อส่งสัญญาณข้อมูลหากัน:</p>
       
       <div class="guide-card">
-        <div class="guide-card-title">3.1 ผูกสัญญาณกับ Jira Cloud</div>
+        <div class="guide-card-title">3.1 ผูกสัญญาณกับ Jira Cloud (เวลามีการอัปเดตตั๋วงาน)</div>
         <ol>
-          <li>เปิดเบราว์เซอร์แล้วเข้าที่อยู่ลิงก์นี้: <code>https://[ชื่อโดเมน_Jira_ของคุณ]/plugins/servlet/webhooks</code></li>
+          <li><strong>วิธีเข้าไปหน้าตั้งค่า:</strong> 
+            <br>ล็อกอินเข้าเว็บ Jira ของคุณด้วยบัญชีแอดมิน -> คลิกรูป <strong>ฟันเฟือง (Jira Settings) ขวาบน</strong> -> เลือกหัวข้อ <strong>System</strong> -> เลื่อนหาแถบเมนูด้านซ้ายล่างสุด คลิกเลือก <strong>Webhooks</strong>
+            <br>*(หรือเปิดลิงก์นี้โดยตรง: <code>https://[ชื่อโดเมน_Jira_ของคุณ]/plugins/servlet/webhooks</code>)*
+          </li>
           <li>คลิกปุ่มมุมขวาบนคำว่า <strong>"Create a Webhook"</strong></li>
           <li>กรอกข้อมูลตั้งค่าดังนี้:
             <ul>
-              <li><strong>Name:</strong> ตั้งชื่อตามชอบ เช่น <code>Sync to Dashboard</code></li>
+              <li><strong>Name:</strong> ตั้งชื่อตามชอบ เช่น <code>Sync to Tasky Dashboard</code></li>
+              <li><strong>Status:</strong> เลือกตัวเลือก <code>Enabled</code></li>
               <li><strong>URL:</strong> วางลิงก์เว็บ Vercel ของคุณ และพิมพ์คำว่า <code>/api/jira/webhook</code> ต่อท้าย (เช่น <code>https://jira-googlechat-bot.vercel.app/api/jira/webhook</code>)</li>
-              <li><strong>Events:</strong> เลื่อนลงไปหาหมวดหมู่ที่ชื่อ **Issue** แล้วติ๊กถูกในช่อง **Created**, **Updated**, และ **Deleted**</li>
+              <li><strong>JQL Filter:</strong> ในช่อง JQL ให้ระบุคำสั่ง <code>project = "คีย์โปรเจกต์ย่อของคุณ"</code> (เช่น <code>project = "DEV"</code>)
+                <br><span class="badge badge-warning">⚠️ สำคัญมาก:</span> เพื่อจำกัดให้ส่งข้อมูลเฉพาะตั๋วงานของโปรเจกต์คุณเท่านั้น ป้องกันบอร์ดอื่นไหลปนครับ
+              </li>
+              <li><strong>Events:</strong> เลื่อนลงไปหาหมวดหมู่ที่ชื่อ <strong>Issue</strong> แล้วติ๊กถูกในช่อง <strong>Created</strong>, <strong>Updated</strong>, และ <strong>Deleted</strong></li>
             </ul>
           </li>
           <li>เลื่อนลงล่างสุด คลิกปุ่มสีน้ำเงินคำว่า <strong>"Create"</strong></li>
+        </ol>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title">👥 การจับคู่รายชื่อสมาชิกทีม (Team Member Mapping) เพื่อส่งแจ้งเตือน</div>
+        <p>ขั้นตอนที่จะช่วยให้บอตใน Google Chat รู้จักตัวตนของสมาชิกแต่ละคนใน Jira ได้ถูกต้อง:</p>
+        <ol>
+          <li>เปิดเว็บไซต์ Dashboard ของคุณหลังจากติดตั้งขึ้น Vercel เสร็จเรียบร้อยแล้ว</li>
+          <li>ล็อกอินเข้าสู่ระบบด้วยบัญชีแอดมินที่สร้างไว้ในด่านที่ 1</li>
+          <li>ไปที่เมนู <strong>Team Settings</strong> ที่แถบเมนูด้านซ้ายมือ</li>
+          <li>คลิกเพิ่มชื่อสมาชิกในทีม โดยในช่อง <strong>Jira Display Name</strong> จะต้องกรอกสะกดให้ตรงกับชื่อผู้รับผิดชอบงานบนระบบ Jira เป๊ะๆ (เช่น <code>Somsak Jaidee</code>) เพื่อให้ระบบแผนผังและบอตเชื่อมต่อข้อมูลและส่งแท็กชื่อตามตัวคนมาทำงานในห้องแชทได้ถูกต้องครับ!</li>
         </ol>
       </div>
 

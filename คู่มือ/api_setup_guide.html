@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คู่มือการขอค่า API และการตั้งค่าระบบบอต (เข้าใจง่ายที่สุด)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --border: #E2E8F0;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', 'Sarabun', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      box-shadow: var(--card-shadow);
+    }
+    
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+    
+    .toc {
+      background: #F1F5F9;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    
+    .toc-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .toc ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .toc a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    
+    .toc a:hover {
+      text-decoration: underline;
+      color: var(--primary-hover);
+    }
+    
+    .section {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .section:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 1.25rem 0 0.75rem 0;
+      color: var(--text-main);
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      font-size: 0.975rem;
+    }
+    
+    ol, ul {
+      margin-bottom: 1.25rem;
+      padding-left: 1.5rem;
+    }
+    
+    li {
+      margin-bottom: 0.65rem;
+      color: var(--text-muted);
+      font-size: 0.975rem;
+    }
+    
+    .highlight-box {
+      background: #EFF6FF;
+      border-left: 4px solid #3B82F6;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 1.25rem 0;
+      font-size: 0.925rem;
+    }
+    
+    .highlight-box strong {
+      color: #1D4ED8;
+    }
+    
+    .code-block {
+      background: #0F172A;
+      color: #F8FAFC;
+      font-family: monospace;
+      padding: 1.25rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.875rem;
+      margin: 1.25rem 0;
+      line-height: 1.5;
+    }
+    
+    .code-block span.comment {
+      color: #64748B;
+    }
+    
+    strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    
+    a.link-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    a.link-btn:hover {
+      text-decoration: underline;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #F1F5F9;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+    
+    .badge-primary {
+      background: #EEF2FF;
+      color: var(--primary);
+      border-color: #E0E7FF;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>คู่มือการขอค่า API และการตั้งค่าระบบบอต</h1>
+    <div class="subtitle">ฉบับอัปเดตล่าสุดปี 2026 — เรียบง่าย อ่านแล้วทำตามได้ทันที ไม่สับสน</div>
+    
+    <div class="toc">
+      <div class="toc-title">📌 สารบัญขั้นตอนการตั้งค่า</div>
+      <ul>
+        <li><a href="#gemini">1. การขอ Google Gemini API Key (คีย์สมอง AI)</a></li>
+        <li><a href="#jira">2. การขอข้อมูลและเชื่อมต่อฝั่ง Jira Cloud</a></li>
+        <li><a href="#gchat">3. การกำหนดค่าในห้องแชท Google Chat (Webhook & Chat App)</a></li>
+        <li><a href="#supabase">4. การสร้างและดึงค่า Supabase Database URL</a></li>
+        <li><a href="#env">5. สรุปการนำค่าไปใส่ในไฟล์ตั้งค่าระบบ (.env & Vercel)</a></li>
+      </ul>
+    </div>
+    
+    <!-- Section 1: Gemini -->
+    <div id="gemini" class="section">
+      <h2>1. วิธีขอ Google Gemini API Key (สมองของบอต)</h2>
+      <p>คีย์นี้จะช่วยเชื่อมระบบบอตเข้ากับโมเดลปัญญาประดิษฐ์ เพื่อช่วยแปลงภาษาพูดของคนในแชทให้เป็นคำสั่งจัดการงานใน Jira ได้</p>
+      
+      <ol>
+        <li>เปิดหน้าเว็บเบราว์เซอร์แล้วเข้าสู่ลิงก์: <strong><a href="https://aistudio.google.com/" target="_blank" class="link-btn">Google AI Studio</a></strong></li>
+        <li>ล็อกอินด้วยบัญชี Google ของคุณให้เรียบร้อย</li>
+        <li>มองหาปุ่มเมนูทางซ้ายมือ แล้วคลิกหัวข้อ <strong>"Get API key"</strong> (ไอคอนรูปกุญแจ)</li>
+        <li>คลิกปุ่มสีน้ำเงินที่เขียนว่า <strong>"Create API key"</strong></li>
+        <li>ระบบจะให้คุณเลือกโปรเจกต์:
+          <ul>
+            <li>หากพึ่งเคยใช้งานเป็นครั้งแรก ให้คลิกปุ่ม <strong>"Create API key in new project"</strong></li>
+            <li>หากมีโปรเจกต์ที่สร้างไว้แล้วในเครื่อง ให้คลิกเลือกโปรเจกต์นั้น แล้วกดดำเนินการต่อ</li>
+          </ul>
+        </li>
+        <li>เมื่อระบบสร้างคีย์สำเร็จ จะแสดงแถบยาวๆ ขึ้นมา ให้คลิกปุ่ม <strong>"Copy"</strong> เพื่อบันทึกค่าไว้ในเครื่องทันที</li>
+      </ol>
+      
+      <div class="highlight-box">
+        <strong>💡 อัปเดตข้อมูลเรื่องคีย์ Gemini แบบใหม่ (ปี 2026):</strong><br>
+        ปัจจุบัน Google เปลี่ยนรูปแบบการออกคีย์ใหม่ เพื่อให้ปลอดภัยขึ้น คีย์ของท่านจะขึ้นต้นด้วยตัวอักษร <strong>"AQ."</strong> หรือ <strong>"AL."</strong> เสมอ (เช่น <code class="badge">AQ.Ab8RN6LEI...</code>) ท่านสามารถคัดลอกค่านี้ไปใช้ได้ทันที ไม่ต้องตกใจว่าทำไมรูปแบบคีย์ถึงต่างจากเดิมครับ
+      </div>
+    </div>
+    
+    <!-- Section 2: Jira -->
+    <div id="jira" class="section">
+      <h2>2. วิธีขอข้อมูลและคีย์ฝั่ง Jira Cloud</h2>
+      <p>เพื่อให้ระบบบอตของคุณสามารถเข้าไปอัปเดตงาน เพิ่มงาน หรือดึงข้อมูลงานในบอร์ด Jira มาแสดงผลได้ เราจำเป็นต้องเตรียมค่า 4 ตัวนี้:</p>
+      
+      <h3>2.1 หาค่า JIRA_DOMAIN (ที่อยู่เว็บบอร์ด Jira)</h3>
+      <ul>
+        <li>ให้ไปที่หน้าเว็บ Jira ที่คุณทำงานตามปกติ แล้วสังเกตช่องใส่ URL ด้านบนสุดของเบราว์เซอร์</li>
+        <li>คัดลอกเอาเฉพาะชื่อ Domain หลักเท่านั้น <strong>(ห้ามใส่ https:// และห้ามใส่เครื่องหมายสแลช / ต่อท้าย)</strong></li>
+        <li><em>ตัวอย่าง URL จริง:</em> <code>https://mycompany.atlassian.net/jira/your-board</code></li>
+        <li><em>ค่าที่ต้องคัดลอกมาใช้:</em> <strong><code>mycompany.atlassian.net</code></strong></li>
+      </ul>
+      
+      <h3>2.2 หาค่า JIRA_EMAIL</h3>
+      <ul>
+        <li>คือที่อยู่อีเมลจริงที่คุณใช้สมัครหรือล็อกอินเข้าใช้บอร์ดงาน Jira ดังกล่าว (เช่น <code>admin@mycompany.com</code>)</li>
+      </ul>
+      
+      <h3>2.3 วิธีสร้าง JIRA_API_TOKEN</h3>
+      <ol>
+        <li>ล็อกอินและเข้าหน้าตั้งค่าความปลอดภัยของ Atlassian ผ่านลิงก์นี้: <strong><a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" class="link-btn">Atlassian API Tokens</a></strong></li>
+        <li>คลิกปุ่มสีน้ำเงิน <strong>"Create API token"</strong></li>
+        <li>ตั้งชื่อป้ายกำกับเพื่อกันลืม (เช่น <code>Jira-GoogleChat-Bot</code>) จากนั้นกดปุ่ม <strong>"Create"</strong></li>
+        <li>ระบบจะแสดงรหัส Token ยาวๆ ขึ้นต้นด้วยตัวอักษร <strong>"ATATT..."</strong></li>
+        <li>ให้กดปุ่ม <strong>"Copy"</strong> แล้วรีบนำไปจดบันทึกไว้ในที่ปลอดภัยทันที
+          <br><strong style="color: #DC2626;">*ข้อควรระวัง: รหัสนี้จะแสดงให้ดูเพียงแค่ครั้งเดียวตอนสร้างเสร็จเท่านั้น หากปิดหน้าต่างนี้ไปจะไม่สามารถกลับมาเปิดดูคีย์เดิมซ้ำได้อีก*</strong>
+        </li>
+      </ol>
+      
+      <h3>2.4 หาค่า JIRA_PROJECT_KEY</h3>
+      <ul>
+        <li>ให้เปิดดูตั๋วงานในบอร์ด Jira ของทีมคุณ</li>
+        <li>ค่านี้คือตัวอักษรย่อภาษาอังกฤษที่อยู่ด้านหน้ารหัสตั๋วงาน เช่น ถ้างานในบอร์ดคือ <code>TES-154</code>, <code>TES-155</code> รหัสโปรเจกต์ของคุณคือ <strong><code>TES</code></strong> (พิมพ์ด้วยตัวพิมพ์ใหญ่ทั้งหมด)</li>
+      </ul>
+    </div>
+    
+    <!-- Section 3: Google Chat -->
+    <div id="gchat" class="section">
+      <h2>3. วิธีการกำหนดค่าและตั้งค่าใน Google Chat</h2>
+      <p>เพื่อให้แชทของทีมส่งสัญญาณและพูดคุยโต้ตอบกับบอตได้ จะแบ่งออกเป็น 2 ขา ดังนี้:</p>
+      
+      <h3>3.1 การแจ้งเตือนขาออก (Google Chat Webhook URL)</h3>
+      <p>ใช้สำหรับให้บอตสามารถส่งข้อความแจ้งสรุปงานประจำวัน (Daily Summary) หรือยิงข้อความเตือนเมื่อมีตั๋วงานค้างเข้าห้องแชทเองอัตโนมัติ</p>
+      <ol>
+        <li>เปิดโปรแกรม <strong>Google Chat</strong> หรือ Google Chat ใน Gmail</li>
+        <li>เข้าไปที่ห้องแชทของทีม (Space) ที่ต้องการให้บอตส่งข้อความเข้ามา</li>
+        <li>คลิกที่แถบ **ชื่อห้องแชท** ด้านบนสุด เพื่อเปิดแถบเมนูเสริม</li>
+        <li>เลือกเมนู **"Apps & integrations" (แอปและการบูรณาการ)** -> คลิกหัวข้อ **"Webhooks" (เว็บฮุค)**</li>
+        <li>คลิกเลือกปุ่ม **"Add webhook" (เพิ่มเว็บฮุค)**</li>
+        <li>ตั้งชื่อเว็บฮุค (เช่น <code>Tasky Alert Bot</code>) และใส่ภาพโปรไฟล์ของบอตที่คุณชื่นชอบ</li>
+        <li>กดปุ่ม **"Save" (บันทึก)** จากนั้นระบบจะสร้างลิงก์ให้ ให้กดคลิก **คัดลอกค่าลิงก์ URL** ยาวๆ ที่ได้รับมาเก็บไว้ใช้งาน</li>
+      </ol>
+      
+      <h3>3.2 การรับคำสั่งขาเข้า (Google Chat App)</h3>
+      <p>ใช้สำหรับการตั้งค่าแอปพลิเคชัน เพื่อให้คนในองค์กรพิมพ์ @ชื่อบอต แล้วส่งข้อความคุยกับบอตได้โดยตรง</p>
+      <ol>
+        <li>ล็อกอินเข้าใช้งานที่เว็บ <strong><a href="https://console.cloud.google.com/" target="_blank" class="link-btn">Google Cloud Console</a></strong></li>
+        <li>เลือกโปรเจกต์ระบบบอตของคุณที่แถบเมนูด้านบนสุด</li>
+        <li>ค้นหาบริการคำว่า <strong>"Google Chat API"</strong> ในช่องค้นหาด้านบน และคลิกเข้าไปกดปุ่ม <strong>"Enable"</strong> (เปิดใช้งาน)</li>
+        <li>เมื่อเปิดเสร็จแล้ว ให้คลิกที่หัวข้อ <strong>"Configuration" (การกำหนดค่า)</strong> ที่แถบเมนูด้านซ้าย</li>
+        <li>กรอกรายละเอียดข้อมูลบอตดังนี้:
+          <ul>
+            <li><strong>App name:</strong> ชื่อบอตของคุณ เช่น <code>TaskyBot</code></li>
+            <li><strong>Avatar URL:</strong> ลิงก์รูปภาพสัญลักษณ์ของบอต</li>
+            <li><strong>Description:</strong> รายละเอียดบอต เช่น "บอตช่วยจัดการบอร์ดงาน Jira และแจ้งเตือนทีม"</li>
+          </ul>
+        </li>
+        <li>เลื่อนลงมาตรงหัวข้อ **Interactive Connection Settings** ให้คลิกเปิด **"Connection settings"**</li>
+        <li>คลิกเลือกที่หัวข้อ **"Webhook URL" (หรือ HTTPS Endpoint)**</li>
+        <li>นำลิงก์แอปพลิเคชันหลังบ้านของคุณที่ Deploy บน **Vercel** มากอกลงไป โดยลงท้ายลิงก์ด้วยคำว่า <code>/api/webhook</code> เสมอ
+          <br><em>ตัวอย่างการกรอก:</em> <code class="badge badge-primary">https://your-app.vercel.app/api/webhook</code>
+        </li>
+        <li>ส่วนล่างสุดหัวข้อ **Visibility** ให้เลือกติ๊ก <strong>"Only people and groups in my domain..."</strong> เพื่อจำกัดการเข้าใช้งานเฉพาะในบริษัท</li>
+        <li>กด **"Save" (บันทึก)** ข้อมูลทั้งหมดเป็นอันเสร็จเรียบร้อย</li>
+      </ol>
+    </div>
+    
+    <!-- Section 4: Supabase -->
+    <div id="supabase" class="section">
+      <h2>4. วิธีดึงค่า Supabase Database URL (ฐานข้อมูลระบบ)</h2>
+      <p>ระบบนี้ต้องการฐานข้อมูลสำหรับเก็บบันทึกประวัติ รายชื่อเล่นทีม และสถานะของตั๋วงานเพื่อนำไปแสดงผลบน Dashboard</p>
+      <ol>
+        <li>เข้าสู่ระบบที่ <strong><a href="https://supabase.com/" target="_blank" class="link-btn">Supabase.com</a></strong></li>
+        <li>คลิกเปิดโปรเจกต์ของคุณขึ้นมา (หากยังไม่มี ให้กดสร้าง New Project)</li>
+        <li>คลิกที่ไอคอน **Settings (รูปฟันเฟือง)** ที่แถบด้านซ้ายล่างสุด -> เลือกหัวข้อ **"Database"**</li>
+        <li>เลื่อนหน้าจอลงมาหาหัวข้อ **Connection string** จากนั้นคลิกแท็บ **"URI"**</li>
+        <li>คัดลอกตัวหนังสือที่ขึ้นต้นด้วย <code>postgres://...</code></li>
+        <li>ให้แก้ไขเปลี่ยนข้อความตรงตัวหนังสือ <code>[YOUR-PASSWORD]</code> ให้เป็นรหัสผ่านฐานข้อมูลจริงที่คุณกำหนดไว้ตอนสร้างโปรเจกต์</li>
+      </ol>
+    </div>
+    
+    <!-- Section 5: Env Summary -->
+    <div id="env" class="section">
+      <h2>5. สรุปตัวแปรทั้งหมดที่ต้องกรอก (.env)</h2>
+      <p>เมื่อรวบรวมค่าคีย์ต่างๆ จาก 4 ขั้นตอนด้านบนมาได้แล้ว ให้นำมากรอกใส่ในไฟล์ <code>.env</code> หรือใส่ในหน้า <strong>Environment Variables</strong> บนหน้า Vercel เพื่อใช้รันระบบจริง ดังนี้ครับ:</p>
+      
+      <div class="code-block">
+<span class="comment"># 1. ลิงก์ฐานข้อมูล Supabase</span>
+DATABASE_URL="postgres://postgres.abc:Password123@aws-region.pooler.supabase.com:6543/postgres"
+
+<span class="comment"># 2. ข้อมูลการเข้าใช้งาน Jira</span>
+JIRA_DOMAIN="mycompany.atlassian.net"
+JIRA_EMAIL="your-email@company.com"
+JIRA_API_TOKEN="ATATT..."
+JIRA_PROJECT_KEY="TES"
+
+<span class="comment"># 3. ลิงก์แจ้งเตือนเข้าห้อง Google Chat</span>
+GOOGLE_CHAT_WEBHOOK_URL="https://chat.googleapis.com/v1/spaces/..."
+
+<span class="comment"># 4. ตั้งค่าบริการปัญญาประดิษฐ์ Google Gemini</span>
+LLM_PROVIDER="gemini"
+GEMINI_API_KEY="AQ.xxxxxxx"
+GEMINI_MODEL="gemini-3.5-flash"
+BOT_NAME="TaskyBot"
+
+<span class="comment"># 5. รหัสลับสำหรับระบบความปลอดภัย (สุ่มตัวอักษรอะไรก็ได้ยาวๆ)</span>
+SESSION_SECRET="random_session_key_here_12345"
+CRON_SECRET="random_cron_key_here_12345"
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -83,11 +83,20 @@ export async function GET() {
   const overallStatus = allOk ? 'ready' : 'needs_attention';
 
   return NextResponse.json({
+    status: allOk ? 'ok' : 'error',
     overall: overallStatus,
     message: allOk
       ? '🎉 ระบบพร้อมใช้งานครบทุกส่วนแล้ว!'
       : '⚠️ ระบบมีบางส่วนที่ต้องตั้งค่าเพิ่มเติม กรุณาดูรายละเอียดด้านล่าง',
     checks: results,
     sync_url_hint: `เรียก /api/cron/sync-tickets?secret=${process.env.CRON_SECRET || '[CRON_SECRET]'} เพื่อซิงค์ข้อมูลตั๋วงานครั้งแรก`,
+    
+    // Compatibility fields for Dashboard
+    JIRA_DOMAIN: process.env.JIRA_DOMAIN || 'Not Configured',
+    JIRA_PROJECT_KEY: process.env.JIRA_PROJECT_KEY || 'Not Configured',
+    JIRA_EMAIL: process.env.JIRA_EMAIL || 'Not Configured',
+    HAS_TOKEN: !!process.env.JIRA_API_TOKEN,
+    TOKEN_LENGTH: process.env.JIRA_API_TOKEN ? process.env.JIRA_API_TOKEN.length : 0,
+    LLM_PROVIDER: process.env.LLM_PROVIDER || 'gemini',
   }, { status: 200 });
 }

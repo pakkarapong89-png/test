@@ -3018,15 +3018,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
               onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
             />
           </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Webhook URL (กรณีส่งแชทส่วนตัว):</label>
-            <input 
-              type="text" 
-              placeholder="https://chat.googleapis.com/..." 
-              value={newMember.webhookUrl}
-              onChange={(e) => setNewMember({ ...newMember, webhookUrl: e.target.value })}
-            />
-          </div>
+
           <button type="submit" className="btn btn-primary" style={{ margin: 0, padding: '0.65rem 1.5rem', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}>
             <Plus size={16} /> เพิ่มสมาชิก
           </button>
@@ -3046,10 +3038,9 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
             <table>
               <thead>
                 <tr>
-                  <th style={{ width: '15%' }}>ชื่อเล่น (ใช้สั่งงาน)</th>
-                  <th style={{ width: '25%' }}>ชื่อในระบบ Jira (Display Name)</th>
-                  <th style={{ width: '25%' }}>อีเมล Google Workspace</th>
-                  <th style={{ width: '25%' }}>Webhook URL (แชทส่วนตัว)</th>
+                  <th style={{ width: '20%' }}>ชื่อเล่น (ใช้สั่งงาน)</th>
+                  <th style={{ width: '35%' }}>ชื่อในระบบ Jira (Display Name)</th>
+                  <th style={{ width: '35%' }}>อีเมล Google Workspace</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>จัดการ</th>
                 </tr>
               </thead>
@@ -3059,9 +3050,6 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     <td style={{ fontWeight: 'bold' }}>{member.nickname}</td>
                     <td>{member.jiraDisplayName}</td>
                     <td>{member.email || '-'}</td>
-                    <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }} title={member.webhookUrl}>
-                      {member.webhookUrl || '-'}
-                    </td>
                     <td style={{ textAlign: 'center' }}>
                       <button 
                         onClick={() => handleDeleteMember(index)}

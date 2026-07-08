@@ -27,4 +27,6 @@ Thumbs.db
 # Vercel
 .vercel
 
-.vercel
+# Google Cloud Service Account
+service-account.json
+service-account*.json

@@ -17,6 +17,15 @@
 ## 🔑 สเต็ปที่ 1: การขอข้อมูลและคีย์ API สำคัญ (ทีละขั้นตอนอย่างละเอียด)
 ให้เปิดล็อกอิน (Login) บัญชีผู้ใช้งานค้างไว้ในเว็บเบราว์เซอร์ และคัดลอกค่ารหัสต่างๆ ด้านล่างนี้ไปจดลงในโปรแกรม Notepad บนเครื่องคอมพิวเตอร์ของคุณเตรียมไว้ครับ:
 
+> [!IMPORTANT]
+> **📌 คำแนะนำเรื่องบัญชีสำหรับใช้ลงทะเบียน (Recommended Platform Accounts):**
+> เพื่อความปลอดภัยสูงสุดและไม่ให้การทำงานของระบบบอตหยุดชะงักในอนาคต ขอแนะนำให้คุณล็อกอินด้วยบัญชีประเภทต่อไปนี้ในการตั้งค่าแต่ละแพลตฟอร์ม:
+> - **1. บัญชี Jira (Atlassian):** ต้องใช้บัญชีระดับ **Jira Administrator** หรือบัญชีตัวแทนระบบบอต (Service Account) ที่มีสิทธิ์เข้าถึง (Read/Write) โปรเจกต์ที่ต้องการดึงตั๋วงาน เพื่อความสามารถในการสร้าง API Token และเปิดใช้งาน Webhook ได้
+> - **2. บัญชี GitHub:** ควรใช้บัญชีทีมไอทีส่วนกลางของบริษัท (Corporate Shared Account) หรือบัญชี Developer หลักขององค์กร เพื่อเป็นที่จัดเก็บซอร์สโค้ดในรูปแบบ Private Repository และใช้เชื่อมต่อระบบ Build อัตโนมัติกับ Vercel
+> - **3. บัญชี Google Cloud Console:** **ต้อง** ใช้บัญชีอีเมลบริษัทที่เป็นสมาชิกของ **Google Workspace** หรือมีสิทธิ์เป็น **Google Workspace Admin** ขององค์กร (ห้ามใช้บัญชีส่วนตัว @gmail.com เด็ดขาด) เพื่อความปลอดภัยและการจำกัดสิทธิ์ให้ใช้งานได้เฉพาะคนในองค์กร
+> - **4. บัญชี Google Chat:** บัญชีผู้ใช้ที่เข้าไปกดสร้าง Webhook URL ในห้องแชท (Space) จะต้องเป็นผู้ที่มีบทบาทเป็น **Space Manager (ผู้จัดการพื้นที่ทำงาน)** หรือสมาชิกที่ได้รับอนุญาตให้จัดการแอปพลิเคชันภายนอก (Apps & Integrations) ในห้องแชทนั้นๆ
+> - **5. บัญชี Vercel / Supabase (Hosting & DB):** แนะนำให้สมัครและผูกข้อมูลผ่านบัญชีผู้ดูแลระบบไอที (IT Admin) หรือบัญชีอีเมลส่วนกลางของบริษัทเพื่อไม่ให้มีปัญหาเมื่อมีพนักงานลาออก
+
 ### 1.1 ลิงก์เชื่อมฐานข้อมูล Supabase (`DATABASE_URL`)
 *จุดประสงค์: ใช้เพื่อให้บอตสามารถเชื่อมต่อและเก็บบันทึกประวัติตั๋วงานทั้งหมดได้*
 1. เข้าเว็บไซต์ **[Supabase.com](https://supabase.com/)** -> คลิกปุ่มสีเขียว **"Start your project"** หรือสมัครสมาชิกผ่านบัญชี GitHub ให้เรียบร้อย
@@ -66,82 +75,107 @@
 
 ---
 
+## ⚡ ทางเลือกในการติดตั้ง: ใช้ตัวช่วยติดตั้งอัตโนมัติผ่าน CMD (รันทีเดียวจบสเต็ปที่ 2 และ 3)
+หากคุณไม่อยากก๊อปปี้คำสั่ง SQL ไปรันเองใน Supabase (สเต็ปที่ 2) และไม่อยากนั่งสร้าง/เขียนไฟล์ `.env` ด้วยมือเอง (สเต็ปที่ 3) ทางผู้พัฒนาได้เตรียมสคริปต์หน้าต่างคำสั่งอัจฉริยะ (CMD) ไว้ช่วยคุณทำทุกอย่างแบบอัตโนมัติแล้วครับ:
+
+### วิธีใช้งานสคริปต์ช่วยติดตั้งผ่าน CMD:
+1. **ดับเบิลคลิกเปิดไฟล์ `setup.bat`** (หรือ `setup-assistant.bat` ในโฟลเดอร์ส่งมอบนอกสุด)
+2. หน้าจอสีดำ (CMD) จะเปิดขึ้นมาและตรวจสอบโปรแกรม Node.js ในเครื่องคอมพิวเตอร์ของคุณ พร้อมติดตั้งไลบรารีที่จำเป็นให้โดยอัตโนมัติ
+3. ระบบจะถามคุณเป็นภาษาไทยเป็นข้อแรก:
+   > `คุณต้องการให้ระบบช่วยเปิดหน้าเว็บขอกุญแจ/คีย์อัตโนมัติหรือไม่? (Y/N)`
+   * **หากคุณก๊อปปี้คีย์ทั้งหมดเตรียมไว้แล้ว:** ให้พิมพ์ `N` แล้วกด Enter (หน้าจอเบราว์เซอร์จะไม่ป๊อปอัปเด้งกวนใจ)
+   * **หากคุณยังไม่มีคีย์:** ให้กด Enter หรือพิมพ์ `Y` เพื่อให้บอตช่วยเปิดหน้าเว็บตามลิงก์ที่แนะนำให้อัตโนมัติในสเต็ปถัดๆ ไป
+4. พิมพ์กรอกค่าต่าง ๆ ตามขั้นตอนที่ถามบนหน้าจอทีละสเต็ป (เช่น ลิงก์ฐานข้อมูล Supabase URI, โดเมน Jira, ลิงก์ Google Chat Webhook และรหัส Gemini API Key)
+5. **รอรับผลลัพธ์:** เมื่อกรอกข้อมูลครบ สคริปต์จะทำการ:
+   * เชื่อมต่อฐานข้อมูลและ **สร้างตารางฐานข้อมูล 7 ตารางให้คุณทันทีโดยไม่ต้องเข้า SQL Editor**
+   * ให้คุณตั้งบัญชีแอดมิน Dashboard (ถ้าเป็นฐานข้อมูลใหม่)
+   * **สุ่มสร้างรหัสลับความปลอดภัย** สำหรับใช้งานระบบล็อกอินและระบบซิงก์ดึงตั๋วงานขึ้นมาให้โดยอัตโนมัติ
+   * บันทึกค่าทั้งหมดลงในไฟล์ค่าคอนฟิก **`nextjs-app/.env`** ให้เองทันที!
+6. เมื่อสคริปต์แจ้งการตั้งค่าสำเร็จ คุณจะเห็น **ตารางสรุปตัวแปรทั้งหมด** บนหน้าจอ ให้คุณคัดลอกค่าเหล่านั้นเก็บไว้เพื่อนำไปใช้ในขั้นตอนอัปโหลดขึ้นเว็บจริง (สเต็ปที่ 4) ถัดไปได้ทันทีครับ!
+
+> [!TIP]
+> เมื่อรันสคริปต์ CMD ตัวช่วยติดตั้งนี้สำเร็จแล้ว **คุณสามารถข้าม "สเต็ปที่ 2" และ "สเต็ปที่ 3" ในคู่มือนี้ ไปเริ่มทำที่ "สเต็ปที่ 4 (Vercel Deployment)" ได้ทันทีเลยครับ!**
+
+---
+
 ## 🗄️ สเต็ปที่ 2: การสร้างตารางฐานข้อมูลใน Supabase (Database Setup)
 เนื่องจากเราทำรายการแบบปกติ เราจะสร้างตารางจัดเก็บข้อมูลโดยใช้การรันคำสั่ง SQL ผ่านหน้าจอเว็บโดยตรงครับ:
 
-1. เปิดหน้าโครงการของคุณใน **[Supabase.com](https://supabase.com/)**
-2. มองหาแถบเครื่องมือเมนูด้านซ้าย คลิกเลือกที่เมนู **"SQL Editor"** (ไอคอนรูปกล่องคำสั่ง SQL `>_`)
-3. คลิกปุ่ม **"New Query"** เพื่อสร้างหน้าเอกสารเปล่าใหม่
-4. คัดลอกคำสั่งสร้างตาราง SQL ด้านล่างนี้ไปวางลงในช่องพิมพ์ข้อความ:
+1. เปิดเว็บควบคุม Supabase ไปที่โครงการของคุณ
+2. สังเกตแถบเมนูด้านซ้ายมือ คลิกเลือกที่รูปไอคอนกล่องข้อความที่มีเครื่องหมายสายฟ้า เขียนว่า **"SQL Editor"**
+3. คลิกปุ่มสีเขียว **"New query"** (หรือดับเบิลคลิกเพื่อสร้างแท็บเขียนคำสั่งใหม่)
+4. คัดลอกโค้ด SQL สร้างโครงสร้างตารางข้อมูลทั้ง 7 ตารางด้านล่างนี้ไปวางในกล่องข้อความ:
+   ```sql
+   -- 1. ตารางเก็บรายชื่อทีมและการแมปผู้ใช้
+   CREATE TABLE IF NOT EXISTS team_members (
+     jira_username VARCHAR(255) PRIMARY KEY,
+     google_chat_name VARCHAR(255) NOT NULL,
+     role VARCHAR(100) DEFAULT 'Developer',
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
 
-```sql
-CREATE TABLE IF NOT EXISTS team_members (
-  id SERIAL PRIMARY KEY,
-  nickname VARCHAR(100) UNIQUE NOT NULL,
-  jira_display_name VARCHAR(255) UNIQUE NOT NULL,
-  email VARCHAR(255),
-  webhook_url TEXT
-);
+   -- 2. ตารางเก็บบันทึกประวัติการกระทำของบอต
+   CREATE TABLE IF NOT EXISTS activity_logs (
+     id SERIAL PRIMARY KEY,
+     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+     event_type VARCHAR(100) NOT NULL,
+     details TEXT,
+     status VARCHAR(50) DEFAULT 'success'
+   );
 
-CREATE TABLE IF NOT EXISTS activity_logs (
-  id SERIAL PRIMARY KEY,
-  timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  username VARCHAR(100) NOT NULL,
-  role VARCHAR(100) NOT NULL,
-  action VARCHAR(100) NOT NULL,
-  ticket_key VARCHAR(100),
-  details TEXT
-);
+   -- 3. ตารางแคชประวัติสถานะตั๋วงาน
+   CREATE TABLE IF NOT EXISTS ticket_status_cache (
+     ticket_key VARCHAR(100) PRIMARY KEY,
+     last_status VARCHAR(100) NOT NULL,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
 
-CREATE TABLE IF NOT EXISTS ticket_status_cache (
-  ticket_key VARCHAR(100) PRIMARY KEY,
-  status VARCHAR(100) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+   -- 4. ตารางกำหนดห้องแชทแยกตามผู้ใช้
+   CREATE TABLE IF NOT EXISTS user_spaces_map (
+     email VARCHAR(255) PRIMARY KEY,
+     space_name VARCHAR(255) NOT NULL,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
 
-CREATE TABLE IF NOT EXISTS user_spaces_map (
-  nickname VARCHAR(100) PRIMARY KEY,
-  space_name TEXT NOT NULL
-);
+   -- 5. ตารางเก็บข้อมูลบัญชีผู้ใช้งานระบบแดชบอร์ด
+   CREATE TABLE IF NOT EXISTS users (
+     id SERIAL PRIMARY KEY,
+     username VARCHAR(100) UNIQUE NOT NULL,
+     password_hash VARCHAR(255) NOT NULL,
+     salt VARCHAR(255) NOT NULL,
+     name VARCHAR(255) NOT NULL,
+     email VARCHAR(255) UNIQUE NOT NULL,
+     role VARCHAR(50) DEFAULT 'Viewer',
+     is_approved BOOLEAN DEFAULT false,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
 
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(100) UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  salt VARCHAR(200) NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255),
-  role VARCHAR(100) NOT NULL DEFAULT 'Admin',
-  is_approved BOOLEAN NOT NULL DEFAULT TRUE,
-  jira_display_name VARCHAR(255),
-  jira_account_id VARCHAR(255),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+   -- 6. ตารางจัดเก็บตั๋วงานทั้งหมดจาก Jira
+   CREATE TABLE IF NOT EXISTS tickets (
+     key VARCHAR(100) PRIMARY KEY,
+     summary VARCHAR(255) NOT NULL,
+     status VARCHAR(100) NOT NULL,
+     issuetype VARCHAR(100) NOT NULL,
+     priority VARCHAR(100) NOT NULL,
+     assignee VARCHAR(255),
+     reporter VARCHAR(255),
+     created TIMESTAMP WITH TIME ZONE,
+     duedate DATE,
+     resolved TIMESTAMP WITH TIME ZONE,
+     parent VARCHAR(100),
+     description TEXT,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
 
-CREATE TABLE IF NOT EXISTS tickets (
-  key VARCHAR(100) PRIMARY KEY,
-  summary VARCHAR(255) NOT NULL,
-  status VARCHAR(100) NOT NULL,
-  issuetype VARCHAR(100) NOT NULL,
-  priority VARCHAR(100) NOT NULL,
-  assignee VARCHAR(255),
-  reporter VARCHAR(255),
-  created TIMESTAMP WITH TIME ZONE,
-  duedate DATE,
-  resolved TIMESTAMP WITH TIME ZONE,
-  parent VARCHAR(100),
-  description TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS action_sources (
-  ticket_key VARCHAR(100) PRIMARY KEY,
-  source VARCHAR(100) NOT NULL,
-  actor VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
-
+   -- 7. ตารางเก็บที่มาของการกระทำ (Action Sources)
+   CREATE TABLE IF NOT EXISTS action_sources (
+     ticket_key VARCHAR(100) PRIMARY KEY,
+     source VARCHAR(100) NOT NULL,
+     actor VARCHAR(255) NOT NULL,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
+   ```
 5. คลิกปุ่มสีเขียว **"Run"** ที่มุมล่างขวา (หรือกดปุ่ม `Ctrl + Enter` บนคีย์บอร์ด) เพื่อประมวลผลคำสั่งสร้างตารางทั้งหมด
 6. **สร้างบัญชีผู้ดูแลระบบหลัก (Admin User):**
    * ลบโค้ดเก่าในกล่อง SQL Editor ออกทั้งหมด
@@ -195,24 +229,65 @@ LLM_PROVIDER="gemini"
 GEMINI_API_KEY="คีย์ขึ้นต้นด้วย AQ. หรือ AL. ที่ได้จากข้อ 1.4"
 GEMINI_MODEL="gemini-3.5-flash"
 
-# รหัสตั้งค่าระบบความปลอดภัย (สุ่มตัวอักษรและตัวเลขความยาว 32 ตัวอักษรขึ้นไป)
-SESSION_SECRET="สุ่มตัวอักษรและตัวเลขความยาวเพื่อความปลอดภัยล็อกอิน"
-CRON_SECRET="สุ่มตัวอักษรและตัวเลขสำหรับใช้เป็นรหัสยิง Sync"
+# รหัสลับระบบ (ดูวิธีสร้างด้านล่าง)
+SESSION_SECRET="ใส่รหัสลับยาว 32 ตัวอักษร (ดูวิธีสร้างข้างล่าง)"
+CRON_SECRET="ใส่รหัสลับสั้น 16 ตัวอักษร (ดูวิธีสร้างข้างล่าง)"
 
 # ข้อมูลบอต
 BOT_NAME="TaskyBot"
 ```
 
+6. **วิธีสร้างรหัสลับ SESSION_SECRET และ CRON_SECRET:**
+   * รหัสเหล่านี้ **ไม่ได้มาจากเว็บไหน** คุณต้อง **คิดขึ้นมาเอง** หรือใช้เครื่องมือช่วยสุ่มให้ โดยมีวัตถุประสงค์เพื่อให้ระบบใช้เป็นกุญแจเข้ารหัสข้อมูลภายใน ซึ่งมีวิธีสร้างง่ายๆ 2 ทางดังนี้:
+   
+   **วิธีที่ 1: พิมพ์ขึ้นมาเองด้วยมือ (ง่ายที่สุด)** 
+   เปิด Notepad แล้วพิมพ์ตัวอักษรภาษาอังกฤษ (a-z, A-Z) ผสมตัวเลข (0-9) แบบสุ่มๆ ไม่ต้องเป็นคำศัพท์จริง ตัวอย่าง:
+   * `SESSION_SECRET` ควรยาว **32 ตัวขึ้นไป** เช่น: `Xt9kWmPq2rBv5nLz8cFj3hYd6gAs1eUo`
+   * `CRON_SECRET` ควรยาว **16 ตัวขึ้นไป** เช่น: `Sync2024SecretXY`
+   
+   **วิธีที่ 2: ใช้เว็บสุ่มรหัสอัตโนมัติ (ปลอดภัยกว่า)**
+   1. เปิดเว็บ **[RandomKeygen.com](https://randomkeygen.com/)**
+   2. เลื่อนลงมาหาหัวข้อ **"CodeIgniter Encryption Keys"** หรือ **"256-bit WEP Keys"**
+   3. เลือกก๊อปปี้รหัสสุ่มยาวๆ ตัวใดก็ได้มาวางเป็นค่า `SESSION_SECRET`
+   4. เลือกก๊อปปี้รหัสอีกตัวมาใช้เป็นค่า `CRON_SECRET`
+   
+   > ⚠️ **ข้อควรจำ:** รหัสทั้ง 2 ตัวนี้ต้อง **ไม่ซ้ำกัน** และ **ห้ามแชร์ให้คนอื่น** เพราะเป็นกุญแจรักษาความปลอดภัยของระบบเว็บทั้งหมดของคุณครับ
+
 ---
 
 ## 🚀 สเต็ปที่ 4: การ Deploy ขึ้นระบบเว็บจริงบน Vercel (Production Deployment)
-1. นำไฟล์ซอร์สโค้ดโปรเจกต์ทั้งหมดอัปโหลดขึ้น GitHub Repository ส่วนตัว (Private Repository) ของคุณ
-2. ล็อกอินเข้าเว็บ **Vercel.com** -> คลิกปุ่ม **"Add New"** -> เลือก **"Project"**
-3. คลิกปุ่ม **"Import"** หน้าตัว Repository โปรเจกต์ดังกล่าว
-4. เลื่อนหน้าจอลงมาหาหัวข้อ **Environment Variables**
-5. ก๊อปปี้ชื่อตัวแปรและข้อมูลจากไฟล์ `.env` ที่เราเพิ่งเขียนในข้อที่ 3 มาเพิ่มลงไปทีละคู่จนครบถ้วน
-6. คลิกปุ่มสีน้ำเงินคำว่า **"Deploy"**
-7. รอการประมวลผลประมาณ 1-2 นาที คุณจะได้ลิงก์หน้าเว็บหลักระบบบอตมา (ตัวอย่างลิงก์: `https://my-jira-bot.vercel.app`) ให้ก๊อปปี้ไว้ใช้ผูกเว็บฮุคในสเต็ปถัดไปครับ
+*จุดประสงค์: นำซอร์สโค้ดของโปรเจกต์ขึ้นเซิร์ฟเวอร์คลาวด์ เพื่อให้ระบบบอตและหน้าเว็บแดชบอร์ดสามารถเข้าถึงได้ตลอด 24 ชม.*
+
+### 4.1 อัปโหลดโค้ดขึ้น GitHub
+1. ล็อกอินเข้าเว็บ **[GitHub.com](https://github.com/)** ด้วยบัญชีของคุณ
+2. คลิกปุ่ม **"+"** ที่มุมขวาบนสุด -> เลือก **"New repository"**
+3. กรอกรายละเอียด:
+   * **Repository name:** ตั้งชื่อตามชอบ เช่น `tasky-jira-bot`
+   * **Visibility:** เลือก **"Private"** (เพื่อไม่ให้คนอื่นเห็นรหัสลับ)
+4. คลิกปุ่มสีเขียว **"Create repository"**
+5. ทำตามคำสั่ง Git ที่ GitHub แสดงให้ เพื่ออัปโหลดไฟล์โค้ดทั้งหมดของโปรเจกต์ขึ้นไป หรือหากยังไม่เคยใช้ Git สามารถคลิกปุ่ม **"uploading an existing file"** แล้วลากไฟล์ทั้งหมดของโปรเจกต์มาวางในหน้าต่างได้เลย
+
+### 4.2 เชื่อมต่อ Vercel กับ GitHub
+1. เปิดเว็บ **[Vercel.com](https://vercel.com/)** -> คลิกปุ่ม **"Sign Up"** หรือ **"Log In"** ด้วยบัญชี GitHub (เลือก "Continue with GitHub")
+2. เมื่อเข้ามาหน้าแรกของ Vercel แล้ว คลิกปุ่มสีดำ **"Add New..."** ที่มุมขวาบน -> เลือก **"Project"**
+3. ระบบจะแสดงรายชื่อ Repository ของคุณ มองหาชื่อ Repository ที่เพิ่งสร้าง แล้วคลิกปุ่ม **"Import"** ด้านขวามือ
+
+### 4.3 กรอกค่า Environment Variables
+1. หลังจากกด Import แล้ว **อย่าเพิ่งกด Deploy** ให้เลื่อนหน้าจอลงมาก่อน
+2. มองหาหัวข้อ **"Environment Variables"** (ตัวแปรสภาพแวดล้อม)
+3. นำค่าคีย์ที่เราเตรียมไว้ในไฟล์ `.env` จากสเต็ปที่ 3 มากรอกใส่ **ทีละคู่** โดย:
+   * ช่อง **"Key"** (ชื่อตัวแปร): พิมพ์ชื่อเช่น `DATABASE_URL`
+   * ช่อง **"Value"** (ค่า): วางค่าจริงที่จดไว้ เช่น `postgres://postgres.abc:MyRealPassword123@...`
+   * คลิกปุ่ม **"Add"** เพื่อเพิ่มคู่ตัวแปรนี้
+4. ทำซ้ำจนครบทุกตัวแปร (**DATABASE_URL**, **JIRA_DOMAIN**, **JIRA_EMAIL**, **JIRA_API_TOKEN**, **JIRA_PROJECT_KEY**, **GOOGLE_CHAT_WEBHOOK_URL**, **LLM_PROVIDER**, **GEMINI_API_KEY**, **GEMINI_MODEL**, **SESSION_SECRET**, **CRON_SECRET**, **BOT_NAME**)
+   > 💡 **เคล็ดลับ:** ตรวจสอบให้แน่ใจว่ากรอกครบทุกตัว เพราะหากขาดตัวใดตัวหนึ่ง ระบบจะไม่สามารถรันได้ตรงนั้นครับ
+
+### 4.4 กด Deploy
+1. เมื่อกรอก Environment Variables ครบทุกตัวแล้ว คลิกปุ่มสีดำ/น้ำเงินคำว่า **"Deploy"** ด้านล่างสุด
+2. รอระบบ Build ประมวลผลประมาณ 1-3 นาที (สังเกตหน้าจอจะแสดง Log ของการ Build ขึ้นมาเรื่อยๆ)
+3. เมื่อขึ้นข้อความ **"Congratulations!"** พร้อมหน้าจอตัวอย่างเว็บไซต์ แสดงว่า Deploy สำเร็จ!
+4. คลิกปุ่ม **"Continue to Dashboard"** -> มองหาหัวข้อ **"Domains"** แล้วก๊อปปี้ลิงก์เว็บไซต์ของคุณเก็บไว้ (ตัวอย่าง: `https://tasky-jira-bot.vercel.app`)
+   > ⚠️ **สำคัญ:** ลิงก์เว็บนี้จะต้องนำไปใช้ในสเต็ปที่ 5 และ 6 ต่อไป ห้ามลืมก๊อปปี้เก็บไว้ครับ
 
 ---
 
@@ -231,19 +306,75 @@ BOT_NAME="TaskyBot"
    * **Events:** เลื่อนลงไปหาหมวดหมู่ที่ชื่อ **Issue** ติ๊กถูกในช่อง **Created**, **Updated**, และ **Deleted**
 5. เลื่อนลงไปด้านล่างสุด แล้วคลิกปุ่ม **"Create"**
 
-### 5.2 ตั้งค่าเว็บฮุคฝั่ง Google Chat App (เวลาคนพิมพ์ตอบรับบอต)
-1. เปิดเข้าหน้าเว็บ **[Google Cloud Console](https://console.cloud.google.com/)** เลือกโปรเจกต์ของงานคุณ
-2. ค้นหาเปิดบริการที่ชื่อ **"Google Chat API"** แล้วคลิกเปิดใช้งาน (**Enable**)
-3. คลิกเมนูการกำหนดค่า **"Configuration"** ด้านซ้ายมือ กรอกชื่อบอตและรูปภาพโปรไฟล์ตามชอบ
-4. เลื่อนลงมาหาหัวข้อตั้งค่า **Connection settings** ติ๊กเลือกที่หัวข้อ **"Webhook URL"**
-5. นำลิงก์แอป Vercel ของคุณมากรอก และพิมพ์คำว่า `/api/webhook` ต่อท้าย (เช่น `https://my-jira-bot.vercel.app/api/webhook`)
-6. คลิกปุ่ม **"Save" (บันทึก)** ด้านล่างสุด
+### 5.2 ตั้งค่าเว็บฮุคฝั่ง Google Chat App (เพื่อให้บอตตอบรับคำสั่งจากคนในทีมได้)
+*จุดประสงค์: เมื่อมีคนพิมพ์ข้อความหาบอตในห้องแชท ระบบจะส่งข้อความนั้นมาที่เว็บ Vercel ของเราเพื่อประมวลผลตอบกลับ*
+
+1. เปิดเว็บ **[Google Cloud Console](https://console.cloud.google.com/)** แล้วล็อกอินด้วย **บัญชี Google Workspace ของบริษัท (บัญชีอีเมลองค์กรเดียวกันกับที่ใช้เล่น Google Chat ในที่ทำงาน)**
+2. **สร้างหรือเลือกโปรเจกต์:** 
+   * หากยังไม่มีโปรเจกต์ ให้คลิกที่ชื่อโปรเจกต์ด้านบนสุด (ข้าง Logo Google Cloud) -> คลิกปุ่ม **"NEW PROJECT"** -> ตั้งชื่อเช่น `Tasky Chat Bot` -> คลิก **"Create"**
+   * หากมีโปรเจกต์อยู่แล้ว ให้เลือกโปรเจกต์ที่ต้องการใช้
+3. **เปิดใช้งาน Google Chat API:**
+   * คลิกที่ช่องค้นหาด้านบน พิมพ์คำว่า **`Google Chat API`** แล้วกด Enter
+   * คลิกเลือกผลลัพธ์ที่ชื่อ **"Google Chat API"** (ไอคอนสีเขียว)
+   * คลิกปุ่มสีน้ำเงิน **"Enable" (เปิดใช้งาน)** -> รอจนระบบเปิดใช้เสร็จ
+4. **ตั้งค่าโปรไฟล์บอต:**
+   * หลังกด Enable แล้ว จะเข้ามาหน้าจัดการ API -> คลิกเมนู **"Configuration"** ที่แถบเมนูด้านซ้าย
+   * กรอกข้อมูลโปรไฟล์บอตดังนี้:
+     * **App name:** ตั้งชื่อบอตเช่น `TaskyBot`
+     * **Avatar URL:** ใส่ลิงก์รูปภาพโปรไฟล์ตามชอบ (หรือเว้นว่างไว้ก็ได้)
+     * **Description:** พิมพ์คำอธิบายสั้นๆ เช่น `Jira ticket tracking bot`
+5. **ตั้งค่าการเชื่อมต่อ:**
+   * เลื่อนลงมาหาหัวข้อ **"Connection settings"**
+   * ติ๊กเลือกที่ตัวเลือก **"App URL"** (หรือ **"HTTP endpoint URL"** ขึ้นกับเวอร์ชัน)
+   * ในช่องกรอก URL ให้ **วางลิงก์เว็บ Vercel ของคุณ** แล้ว **พิมพ์ต่อท้าย** ด้วย `/api/webhook`
+   * ตัวอย่างค่าที่กรอก: `https://tasky-jira-bot.vercel.app/api/webhook`
+6. **ตั้งค่าสิทธิ์การมองเห็น:**
+   * เลื่อนลงมาหาหัวข้อ **"Visibility"** -> ติ๊กเลือก **"Make this Chat app available to specific people and groups in [ชื่อองค์กร]"** หรือเลือกตามความเหมาะสม
+7. คลิกปุ่ม **"Save" (บันทึก)** ด้านล่างสุดของหน้าจอ
+8. **ทดสอบเบื้องต้น:** กลับไปที่ Google Chat -> เปิดห้อง Space ของทีม -> พิมพ์ `@TaskyBot สรุปงาน` หากบอตตอบกลับมาได้ แสดงว่าตั้งค่าถูกต้องครับ
 
 ---
 
 ## 🏁 สเต็ปที่ 6: การเริ่มระบบดึงประวัติครั้งแรก (First Sync)
-1. เปิดเบราว์เซอร์ใหม่ขึ้นมา
-2. เรียกใช้ URL คำสั่งซิงก์ข้อมูลดังนี้:
-   `https://[ลิงก์_Vercel_ของคุณ]/api/cron/sync-tickets?secret=[รหัส_CRON_SECRET_ที่คุณตั้งไว้ในข้อ_3]`
-   *(ตัวอย่าง: `https://my-jira-bot.vercel.app/api/cron/sync-tickets?secret=my_custom_secret_123`)*
-3. เมื่อขึ้นข้อความระบุว่า `sync success` บนหน้าจอ แปลว่าการซิงก์ดึงตั๋วงานเริ่มต้นขึ้นสมบูรณ์แบบ แดชบอร์ดพร้อมทำงานตอบกลับได้เรียบร้อยครับ! 🎉
+*จุดประสงค์: ระบบจะดึงข้อมูลตั๋วงานทั้งหมดจาก Jira มาเก็บในฐานข้อมูลของเรา เพื่อให้หน้าแดชบอร์ดมีข้อมูลแสดงผลตั้งแต่เริ่มต้น*
+
+### 6.1 สร้างลิงก์คำสั่ง Sync
+เราจะประกอบลิงก์ URL สั่งดึงข้อมูลจาก 2 ส่วนที่คุณมีอยู่แล้ว:
+
+| ส่วนประกอบ | มาจากไหน | ตัวอย่าง |
+|---|---|---|
+| ลิงก์เว็บ Vercel ของคุณ | ก๊อปมาจากสเต็ปที่ 4.4 | `https://tasky-jira-bot.vercel.app` |
+| รหัส CRON_SECRET | รหัสที่คุณสร้างขึ้นเองในสเต็ปที่ 3 ข้อ 6 | `Sync2024SecretXY` |
+
+**วิธีประกอบลิงก์:** นำ 2 ส่วนข้างบนมาต่อกันตามรูปแบบนี้:
+```
+ลิงก์เว็บ Vercel + /api/cron/sync-tickets?secret= + รหัส CRON_SECRET
+```
+
+**ตัวอย่างลิงก์ที่ได้:**
+```
+https://tasky-jira-bot.vercel.app/api/cron/sync-tickets?secret=Sync2024SecretXY
+```
+
+### 6.2 เรียกใช้งานลิงก์ Sync
+1. เปิดเว็บเบราว์เซอร์ (Chrome, Edge, Firefox ฯลฯ) ขึ้นมาใหม่
+2. คลิกที่แถบที่อยู่เว็บ (Address Bar) ด้านบนสุดของเบราว์เซอร์
+3. วางลิงก์ที่ประกอบเสร็จแล้วจากข้อ 6.1 ลงไป แล้วกดปุ่ม **Enter** บนแป้นพิมพ์
+4. รอประมาณ 10-30 วินาที (ขึ้นอยู่กับจำนวนตั๋วงานในโปรเจกต์)
+
+### 6.3 ตรวจสอบผลลัพธ์
+* ✅ **สำเร็จ:** หน้าจอเบราว์เซอร์แสดงข้อความ `{"message":"sync success"}` หรือข้อความคล้ายกัน
+* ❌ **ไม่สำเร็จ:** หากขึ้นข้อความ Error ให้ตรวจสอบ:
+  * ลิงก์เว็บ Vercel ถูกต้องหรือไม่? (ลองเปิดลิงก์เว็บ Vercel เปล่าๆ ดูก่อน ต้องขึ้นหน้าเว็บได้)
+  * ค่า CRON_SECRET ตรงกับที่กรอกใน Vercel Environment Variables หรือไม่?
+  * ค่า JIRA_DOMAIN, JIRA_EMAIL, JIRA_API_TOKEN ถูกต้องหรือไม่?
+
+### 6.4 ทดสอบหน้าแดชบอร์ด
+1. เปิดเบราว์เซอร์แท็บใหม่
+2. พิมพ์ลิงก์เว็บ Vercel ของคุณต่อท้ายด้วย `/login` เช่น `https://tasky-jira-bot.vercel.app/login`
+3. กรอกข้อมูลเข้าสู่ระบบ:
+   * **Username:** `admin`
+   * **Password:** `admin123` (รหัสเริ่มต้นจากสเต็ปที่ 2 ข้อ 6)
+4. หากเข้ามาเห็นหน้า Dashboard พร้อมรายการตั๋วงาน แสดงว่า **ระบบติดตั้งเสร็จสมบูรณ์** 🎉
+
+> 💡 **สิ่งที่ควรทำถัดไป:** เข้าไปเปลี่ยนรหัสผ่าน Admin จาก `admin123` เป็นรหัสผ่านใหม่ที่ปลอดภัยกว่า โดยไปที่เมนูตั้งค่าในหน้า Dashboard ครับ

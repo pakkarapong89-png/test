@@ -5,9 +5,9 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-function openUrl(url) {
-  const start = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
-  exec(`${start} ${url}`);
+function openUrl(url, shouldOpen = false) {
+  // ฟังก์ชันนี้ถูกปิดการใช้งานเพื่อไม่ให้เด้งเปิดหน้าเว็บเบราว์เซอร์กวนใจผู้ติดตั้งตามคำขอ
+  return;
 }
 
 const rl = readline.createInterface({
@@ -91,20 +91,25 @@ async function main() {
   console.log(' * หากมีข้อมูลเดิมอยู่แล้ว สามารถกด [Enter] เพื่อผ่านไปข้อถัดไปได้เลย');
   console.log('=============================================================\n');
 
+  const shouldOpenWebsites = false;
+
   // ---------------------------------------------------------
   // ส่วนที่ 1: ตั้งค่าฐานข้อมูล
   // ---------------------------------------------------------
-  console.log('┌───────────────────────────────────────────────────────────┐');
+  console.log('\n┌───────────────────────────────────────────────────────────┐');
   console.log('│  1. ตั้งค่าฐานข้อมูล Supabase (Database Configuration)     │');
   console.log('└───────────────────────────────────────────────────────────┘');
-  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Supabase Dashboard ให้โดยอัตโนมัติ...');
+  if (shouldOpenWebsites) {
+    console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Supabase Dashboard ให้โดยอัตโนมัติ...');
+  }
   console.log('   📌 วิธีเอาค่า:');
-  console.log('     1. กดสร้างโปรเจกต์ใหม่ หรือคลิกเข้าโปรเจกต์เดิมของคุณ');
-  console.log('     2. ไปที่เมนู Settings (รูปฟันเฟืองซ้ายล่าง) -> เลือกหัวข้อ Database');
-  console.log('     3. เลื่อนลงมาหาหัวข้อ Connection string -> เลือกแท็บ URI');
-  console.log('     4. คัดลอกลิงก์ที่ขึ้นต้นด้วย postgres://... แล้วนำมาวางด้านล่าง');
+  console.log('     1. คลิกปุ่มสีเขียว "Connect" ที่อยู่แถบเมนูด้านบนสุดของโปรเจกต์');
+  console.log('     2. ในหน้าต่างที่เด้งขึ้นมา ให้คลิกเลือกแท็บ "Direct" ด้านบนสุด');
+  console.log('     3. สังเกตที่ Connection Method ให้เลือกเป็น "Transaction pooler"');
+  console.log('     4. ที่ช่อง Type ให้เลือกเป็น "URI"');
+  console.log('     5. คัดลอกลิงก์ที่ขึ้นต้นด้วย postgres://... แล้วนำมาวางด้านล่าง');
   console.log('     *(อย่าลืมแทนที่ [YOUR-PASSWORD] ด้วยรหัสผ่านจริงของคุณนะครับ)*\n');
-  openUrl('https://supabase.com/dashboard/projects');
+  openUrl('https://supabase.com/dashboard/projects', shouldOpenWebsites);
   
   const databaseUrl = await ask('ลิงก์ Supabase URI (DATABASE_URL)', 'DATABASE_URL');
   if (!databaseUrl) {
@@ -226,13 +231,15 @@ async function main() {
   const jiraDomain = await ask('โดเมนหลัก Jira ของบริษัท (เช่น mycompany.atlassian.net)', 'JIRA_DOMAIN');
   const jiraEmail = await ask('อีเมลของแอดมินที่ผูกคีย์สิทธิ์', 'JIRA_EMAIL');
   
-  console.log('\n   🔄 ระบบกำลังเปิดหน้าเว็บ Atlassian Security ให้โดยอัตโนมัติ...');
+  if (shouldOpenWebsites) {
+    console.log('\n   🔄 ระบบกำลังเปิดหน้าเว็บ Atlassian Security ให้โดยอัตโนมัติ...');
+  }
   console.log('   📌 วิธีเอาค่า:');
   console.log('     1. คลิกปุ่ม "Create API token"');
   console.log('     2. ตั้งชื่อป้ายกำกับ (เช่น Jira-Bot) แล้วกด Create');
   console.log('     3. กด Copy รหัสผ่าน Token ที่ขึ้นต้นด้วย ATATT... มาวางด้านล่าง');
   console.log('     *(คำเตือน: รหัสจะแสดงแค่ครั้งเดียวเท่านั้น ควรจดบันทึกไว้ด้วยครับ)*\n');
-  openUrl('https://id.atlassian.com/manage-profile/security/api-tokens');
+  openUrl('https://id.atlassian.com/manage-profile/security/api-tokens', shouldOpenWebsites);
   
   const jiraApiToken = await ask('รหัส Jira API Token ของคุณ', 'JIRA_API_TOKEN');
   const jiraProjectKey = await ask('คีย์โครงการ Jira ย่อ (เช่น DEV, TES)', 'JIRA_PROJECT_KEY');
@@ -257,13 +264,15 @@ async function main() {
   console.log('┌───────────────────────────────────────────────────────────┐');
   console.log('│  4. ตั้งค่าสมองกลปัญญาประดิษฐ์ AI (Google Gemini)           │');
   console.log('└───────────────────────────────────────────────────────────┘');
-  console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Google AI Studio ให้โดยอัตโนมัติ...');
+  if (shouldOpenWebsites) {
+    console.log('   🔄 ระบบกำลังเปิดหน้าเว็บ Google AI Studio ให้โดยอัตโนมัติ...');
+  }
   console.log('   📌 วิธีเอาค่า:');
   console.log('     1. คลิกปุ่ม "Get API key" (ไอคอนรูปกุญแจด้านซ้ายบน)');
   console.log('     2. คลิกปุ่ม "Create API key" สีน้ำเงิน');
   console.log('     3. เลือกโปรเจกต์ หรือสร้างในโปรเจกต์ใหม่ แล้วกดสร้างคีย์');
   console.log('     4. คัดลอกรหัส API Key ที่ขึ้นต้นด้วย AQ. หรือ AL. มาวางด้านล่าง\n');
-  openUrl('https://aistudio.google.com/');
+  openUrl('https://aistudio.google.com/', shouldOpenWebsites);
   
   const geminiKey = await ask('รหัส Google Gemini API Key', 'GEMINI_API_KEY');
   const geminiModel = await ask('รหัสรุ่นโมเดลหลัก (แนะนำ: gemini-3.5-flash)', 'GEMINI_MODEL', 'gemini-3.5-flash');

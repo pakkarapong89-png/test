@@ -42,6 +42,7 @@ function getGuideText() {
 
 function buildChatResponse(text) {
   return NextResponse.json({
+    text,
     hostAppDataAction: {
       chatDataAction: {
         createMessageAction: {

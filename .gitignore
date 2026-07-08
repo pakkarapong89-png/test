@@ -8,3 +8,5 @@ node_modules/
 .vercel/project.json
 .DS_Store
 Thumbs.db
+service-account.json
+service-account*.json

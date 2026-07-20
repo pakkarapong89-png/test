@@ -7,7 +7,35 @@ const themes = [
   { id: 'theme-violet', name: 'Light Mode', color: '#FFFFFF' }
 ];
 
-function Login({ onLogin, theme, onChangeTheme, isElderMode, onChangeElderMode }) {
+const MessageBanner = ({ msg }) => {
+  if (!msg) return null;
+  const config = {
+    error: { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', color: '#F87171', icon: <AlertCircle size={16} /> },
+    success: { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', color: '#34D399', icon: <CheckCircle size={16} /> },
+    pending: { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', color: '#FBBF24', icon: <Clock size={16} /> }
+  };
+  const c = config[msg.type] || config.error;
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: '0.6rem',
+      background: c.bg,
+      border: `1px solid ${c.border}`,
+      borderRadius: '10px',
+      padding: '0.75rem 1rem',
+      marginBottom: '1.25rem',
+      color: c.color,
+      fontSize: '0.88rem',
+      lineHeight: 1.5
+    }}>
+      <span style={{ flexShrink: 0, marginTop: '1px' }}>{c.icon}</span>
+      <span>{msg.text}</span>
+    </div>
+  );
+};
+
+function Login({ onLogin, theme, onChangeTheme, isElderMode, onChangeElderMode, onSwitchToUat }) {
   const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,34 +142,6 @@ function Login({ onLogin, theme, onChangeTheme, isElderMode, onChangeElderMode }
     display: 'block',
     marginBottom: '0.4rem',
     letterSpacing: '0.03em'
-  };
-
-  const MessageBanner = ({ msg }) => {
-    if (!msg) return null;
-    const config = {
-      error: { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', color: '#F87171', icon: <AlertCircle size={16} /> },
-      success: { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', color: '#34D399', icon: <CheckCircle size={16} /> },
-      pending: { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', color: '#FBBF24', icon: <Clock size={16} /> }
-    };
-    const c = config[msg.type] || config.error;
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '0.6rem',
-        background: c.bg,
-        border: `1px solid ${c.border}`,
-        borderRadius: '10px',
-        padding: '0.75rem 1rem',
-        marginBottom: '1.25rem',
-        color: c.color,
-        fontSize: '0.88rem',
-        lineHeight: 1.5
-      }}>
-        <span style={{ flexShrink: 0, marginTop: '1px' }}>{c.icon}</span>
-        <span>{msg.text}</span>
-      </div>
-    );
   };
 
   return (
@@ -464,6 +464,28 @@ function Login({ onLogin, theme, onChangeTheme, isElderMode, onChangeElderMode }
               )}
             </button>
           </form>
+        )}
+        {onSwitchToUat && (
+          <div style={{ marginTop: '1.25rem', textAlign: 'center', borderTop: '1px solid var(--surface-border)', paddingTop: '1rem' }}>
+            <button
+              type="button"
+              onClick={onSwitchToUat}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              🔍 เข้าใช้งานโหมด UAT (สำหรับผู้ทดสอบ)
+            </button>
+          </div>
         )}
       </div>
     </div>

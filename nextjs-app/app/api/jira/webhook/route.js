@@ -6,6 +6,18 @@ import axios from 'axios';
 
 export async function POST(request) {
   try {
+    // Webhook secret token validation for security
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get('secret');
+    const expectedSecret = process.env.JIRA_WEBHOOK_SECRET;
+
+    if (!expectedSecret) {
+      console.warn('⚠️ JIRA_WEBHOOK_SECRET is not set in environment variables. Webhook is running in insecure mode.');
+    } else if (secret !== expectedSecret) {
+      console.warn('[Jira Webhook] 401 Unauthorized - Invalid secret token');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const payload = await request.json();
     const event = payload.webhookEvent;
     

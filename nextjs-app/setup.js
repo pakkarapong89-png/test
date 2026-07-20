@@ -275,8 +275,8 @@ async function main() {
   openUrl('https://aistudio.google.com/', shouldOpenWebsites);
   
   const geminiKey = await ask('รหัส Google Gemini API Key', 'GEMINI_API_KEY');
-  const geminiModel = await ask('รหัสรุ่นโมเดลหลัก (แนะนำ: gemini-3.5-flash)', 'GEMINI_MODEL', 'gemini-3.5-flash');
-  const botName = await ask('ชื่อแสดงผลของบอทใน Google Chat (เช่น taskyapp)', 'BOT_NAME', 'taskyapp');
+  const geminiModel = existingEnv['GEMINI_MODEL'] || 'gemini-3.5-flash';
+  const botName = existingEnv['BOT_NAME'] || 'taskyapp';
 
   // ---------------------------------------------------------
   // ส่วนที่ 5: บันทึกการตั้งค่า
@@ -287,6 +287,8 @@ async function main() {
   
   const sessionSecret = existingEnv['SESSION_SECRET'] || generateSecret(32);
   const cronSecret = existingEnv['CRON_SECRET'] || generateSecret(16);
+  const chatWebhookSecret = existingEnv['CHAT_WEBHOOK_SECRET'] || generateSecret(16);
+  const jiraWebhookSecret = existingEnv['JIRA_WEBHOOK_SECRET'] || generateSecret(16);
 
   const envContent = `# ----------------------------------------------------
 # ไฟล์กำหนดค่าระบบอัตโนมัติ (สร้างขึ้นโดยสคริปต์ setup.js)
@@ -308,12 +310,15 @@ BOT_NAME="${botName}"
 
 SESSION_SECRET="${sessionSecret}"
 CRON_SECRET="${cronSecret}"
+
+CHAT_WEBHOOK_SECRET="${chatWebhookSecret}"
+JIRA_WEBHOOK_SECRET="${jiraWebhookSecret}"
 `;
 
   const envPath = path.join(__dirname, '.env');
   fs.writeFileSync(envPath, envContent, 'utf-8');
   
-  console.log('   ✅ สุ่มคีย์ความปลอดภัย SESSION_SECRET และ CRON_SECRET เรียบร้อย!');
+  console.log('   ✅ สุ่มคีย์ความปลอดภัยเรียบร้อย!');
   console.log(`   ✅ บันทึกไฟล์ตั้งค่าเสร็จสิ้นที่: ${envPath}`);
 
   console.log('\n🎉 =============================================================');
@@ -337,6 +342,15 @@ CRON_SECRET="${cronSecret}"
   console.log(` BOT_NAME                = ${botName}`);
   console.log(` SESSION_SECRET          = ${sessionSecret}`);
   console.log(` CRON_SECRET             = ${cronSecret}`);
+  console.log(` CHAT_WEBHOOK_SECRET     = ${chatWebhookSecret}`);
+  console.log(` JIRA_WEBHOOK_SECRET     = ${jiraWebhookSecret}`);
+  console.log('-------------------------------------------------------------');
+  console.log(' 🚨 ความปลอดภัยของ Webhooks (Webhook Security URLs):');
+  console.log('-------------------------------------------------------------');
+  console.log(` Google Chat Connection URL:`);
+  console.log(`   https://[your-domain]/api/webhook?secret=${chatWebhookSecret}`);
+  console.log(` Jira System Webhook URL:`);
+  console.log(`   https://[your-domain]/api/jira/webhook?secret=${jiraWebhookSecret}`);
   console.log('=============================================================\n');
   
   rl.close();

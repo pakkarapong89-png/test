@@ -7,25 +7,23 @@ import { query } from '@/lib/db';
 export async function PUT(request, { params }) {
   const { key } = await params;
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('session')?.value;
+    const user = token ? parseSessionToken(token) : null;
+    if (!user) {
+      return NextResponse.json({ error: 'สิทธิ์การใช้งานหมดอายุ กรุณาเข้าสู่ระบบใหม่' }, { status: 401 });
+    }
+
+    // Check for read-only roles
+    if (['Sales', 'Deployment', 'CEO'].includes(user.role)) {
+      return NextResponse.json({ error: 'คุณไม่มีสิทธิ์ในการแก้ไขงาน (Read-only Role)' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { actorName, ...jiraUpdateFields } = body;
     
-    // Get logged-in user from session
-    let userName = actorName || 'ผู้ใช้งานผ่านแดชบอร์ด';
-    let userRole = 'ไม่ระบุบทบาท';
-    try {
-      const cookieStore = await cookies();
-      const token = cookieStore.get('session')?.value;
-      if (token) {
-        const user = parseSessionToken(token);
-        if (user) {
-          userName = user.name || user.username;
-          userRole = user.role;
-        }
-      }
-    } catch (cookieErr) {
-      console.warn('[Cache Update] Failed to parse session cookies:', cookieErr.message);
-    }
+    let userName = user.name || user.username;
+    let userRole = user.role;
 
     // Record action source
     try {

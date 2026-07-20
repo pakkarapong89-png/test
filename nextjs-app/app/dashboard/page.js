@@ -11,23 +11,27 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'theme-sapphire';
-    setTheme(savedTheme);
+    const init = async () => {
+      await Promise.resolve();
+      const savedTheme = localStorage.getItem('theme') || 'theme-sapphire';
+      setTheme(savedTheme);
 
-    const savedElderMode = localStorage.getItem('elderMode') === 'true';
-    setIsElderMode(savedElderMode);
+      const savedElderMode = localStorage.getItem('elderMode') === 'true';
+      setIsElderMode(savedElderMode);
 
-    let classNames = savedTheme;
-    if (savedElderMode) classNames += ' elder-mode';
-    document.documentElement.className = classNames;
+      let classNames = savedTheme;
+      if (savedElderMode) classNames += ' elder-mode';
+      document.documentElement.className = classNames;
 
-    // Read user from UAT role selection
-    const savedUser = sessionStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    } else {
-      router.push('/');
-    }
+      // Read user from UAT role selection
+      const savedUser = sessionStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      } else {
+        router.push('/');
+      }
+    };
+    init();
   }, [router]);
 
   const handleChangeTheme = (newTheme) => {

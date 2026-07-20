@@ -57,6 +57,18 @@ export async function POST(request) {
   const startTime = Date.now();
 
   try {
+    // Webhook secret token validation for security
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get('secret');
+    const expectedSecret = process.env.CHAT_WEBHOOK_SECRET;
+
+    if (!expectedSecret) {
+      console.warn('⚠️ CHAT_WEBHOOK_SECRET is not set in environment variables. Webhook is running in insecure mode.');
+    } else if (secret !== expectedSecret) {
+      console.warn('[Webhook Google Chat] 401 Unauthorized - Invalid secret token');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const event = await request.json();
     console.log('Incoming Request Body:', JSON.stringify(event, null, 2));
 

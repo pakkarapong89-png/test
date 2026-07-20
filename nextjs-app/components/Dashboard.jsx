@@ -119,22 +119,26 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   const currentRoleStyle = roleColors[effectiveRole] || { color: 'var(--text-primary)', bg: 'var(--surface-hover-bg)', border: 'var(--surface-border)' };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedFilter = localStorage.getItem('timeFilter');
-      if (storedFilter && storedFilter !== 'active-recent') {
-        setTimeFilter(storedFilter);
-      } else {
-        setTimeFilter('this-week');
-      }
-      const stored = localStorage.getItem('hiddenProjects');
-      if (stored) {
-        try {
-          setHiddenProjects(JSON.parse(stored));
-        } catch (e) {
-          console.error('Failed to load hiddenProjects:', e);
+    const init = async () => {
+      await Promise.resolve();
+      if (typeof window !== 'undefined') {
+        const storedFilter = localStorage.getItem('timeFilter');
+        if (storedFilter && storedFilter !== 'active-recent') {
+          setTimeFilter(storedFilter);
+        } else {
+          setTimeFilter('this-week');
+        }
+        const stored = localStorage.getItem('hiddenProjects');
+        if (stored) {
+          try {
+            setHiddenProjects(JSON.parse(stored));
+          } catch (e) {
+            console.error('Failed to load hiddenProjects:', e);
+          }
         }
       }
-    }
+    };
+    init();
   }, []);
 
   const toggleHideProject = (projectKey) => {
@@ -347,64 +351,67 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   };
 
   useEffect(() => {
-    fetchTickets();
-    fetchTeamMembers();
-    fetchHealthData();
+    const init = async () => {
+      await Promise.resolve();
+      fetchTickets();
+      fetchTeamMembers();
+      fetchHealthData();
+    };
+    init();
   }, []);
 
   useEffect(() => {
-    if (selectedTicketForDetail) {
-      // บันทึก Log การเปิดดูรายละเอียดตั๋ว (view only — ไม่ใช่ action)
-      axios.post('/api/logs', {
-        user: user.name,
-        role: user.role,
-        action: 'view',
-        ticketKey: selectedTicketForDetail.key,
-        details: `เปิดดูรายละเอียดงาน: "${selectedTicketForDetail.summary}"`
-      })
-      .then(() => fetchLogs())
-      .catch(err => console.error('Failed to send view log:', err));
-
-      // Load transitions and setup edit state
-      // (ไม่บันทึก log "view" เพราะแค่กดดูไม่ใช่ action จริง)
-      fetchAvailableTransitions(selectedTicketForDetail.key);
-      setIsEditingTicket(false);
-      setEditedTicket({ ...selectedTicketForDetail });
-    } else {
-      setIsEditingTicket(false);
-      setEditedTicket(null);
-      setAvailableTransitions([]);
-    }
-  }, [selectedTicketForDetail]);
-
-  useEffect(() => {
-    if (selectedTicketForDetail) {
-      setLoadingChangelog(true);
-      axios.get(`/api/tickets/${selectedTicketForDetail.key}/changelog`)
-        .then(res => {
-          setTicketChangelog(res.data);
-          setLoadingChangelog(false);
+    const init = async () => {
+      await Promise.resolve();
+      if (selectedTicketForDetail) {
+        // บันทึก Log การเปิดดูรายละเอียดตั๋ว (view only — ไม่ใช่ action)
+        axios.post('/api/logs', {
+          user: user.name,
+          role: user.role,
+          action: 'view',
+          ticketKey: selectedTicketForDetail.key,
+          details: `เปิดดูรายละเอียดงาน: "${selectedTicketForDetail.summary}"`
         })
-        .catch(err => {
-          console.error('Failed to fetch ticket changelog:', err);
-          setTicketChangelog([]);
-          setLoadingChangelog(false);
-        });
-    } else {
-      setTicketChangelog([]);
-    }
+        .then(() => fetchLogs())
+        .catch(err => console.error('Failed to send view log:', err));
+
+        // Load transitions and setup edit state
+        // (ไม่บันทึก log "view" เพราะแค่กดดูไม่ใช่ action จริง)
+        fetchAvailableTransitions(selectedTicketForDetail.key);
+        setIsEditingTicket(false);
+        setEditedTicket({ ...selectedTicketForDetail });
+      } else {
+        setIsEditingTicket(false);
+        setEditedTicket(null);
+        setAvailableTransitions([]);
+      }
+    };
+    init();
   }, [selectedTicketForDetail]);
 
   useEffect(() => {
-    if (pmTab === 'team') {
-      fetchTeamMembers();
-    }
-    if (pmTab === 'admin') {
-      fetchAdminUsers();
-    }
-  }, [pmTab]);
+    const init = async () => {
+      await Promise.resolve();
+      if (selectedTicketForDetail) {
+        setLoadingChangelog(true);
+        axios.get(`/api/tickets/${selectedTicketForDetail.key}/changelog`)
+          .then(res => {
+            setTicketChangelog(res.data);
+            setLoadingChangelog(false);
+          })
+          .catch(err => {
+            console.error('Failed to fetch ticket changelog:', err);
+            setTicketChangelog([]);
+            setLoadingChangelog(false);
+          });
+      } else {
+        setTicketChangelog([]);
+      }
+    };
+    init();
+  }, [selectedTicketForDetail]);
 
-  const fetchAdminUsers = async () => {
+  async function fetchAdminUsers() {
     setLoadingAdminUsers(true);
     setAdminError(null);
     try {
@@ -421,7 +428,20 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
     } finally {
       setLoadingAdminUsers(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      await Promise.resolve();
+      if (pmTab === 'team') {
+        fetchTeamMembers();
+      }
+      if (pmTab === 'admin') {
+        fetchAdminUsers();
+      }
+    };
+    init();
+  }, [pmTab]);
 
   const handleAdminAction = async (userId, action, role) => {
     setAdminActionLoading(prev => ({ ...prev, [userId]: true }));
@@ -767,13 +787,17 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   }, [showSuccessNotification]);
 
   useEffect(() => {
-    if (effectiveRole === 'CEO') {
-      setPmTab('ceo');
-    } else if (effectiveRole === 'Admin') {
-      setPmTab('admin');
-    } else {
-      setPmTab('overview');
-    }
+    const init = async () => {
+      await Promise.resolve();
+      if (effectiveRole === 'CEO') {
+        setPmTab('ceo');
+      } else if (effectiveRole === 'Admin') {
+        setPmTab('admin');
+      } else {
+        setPmTab('overview');
+      }
+    };
+    init();
   }, [effectiveRole]);
 
 
@@ -3018,7 +3042,15 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
               onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
             />
           </div>
-
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Webhook URL (กรณีส่งแชทส่วนตัว):</label>
+            <input 
+              type="text" 
+              placeholder="https://chat.googleapis.com/..." 
+              value={newMember.webhookUrl}
+              onChange={(e) => setNewMember({ ...newMember, webhookUrl: e.target.value })}
+            />
+          </div>
           <button type="submit" className="btn btn-primary" style={{ margin: 0, padding: '0.65rem 1.5rem', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}>
             <Plus size={16} /> เพิ่มสมาชิก
           </button>
@@ -3038,9 +3070,10 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
             <table>
               <thead>
                 <tr>
-                  <th style={{ width: '20%' }}>ชื่อเล่น (ใช้สั่งงาน)</th>
-                  <th style={{ width: '35%' }}>ชื่อในระบบ Jira (Display Name)</th>
-                  <th style={{ width: '35%' }}>อีเมล Google Workspace</th>
+                  <th style={{ width: '15%' }}>ชื่อเล่น (ใช้สั่งงาน)</th>
+                  <th style={{ width: '25%' }}>ชื่อในระบบ Jira (Display Name)</th>
+                  <th style={{ width: '25%' }}>อีเมล Google Workspace</th>
+                  <th style={{ width: '25%' }}>Webhook URL (แชทส่วนตัว)</th>
                   <th style={{ width: '10%', textAlign: 'center' }}>จัดการ</th>
                 </tr>
               </thead>
@@ -3050,6 +3083,9 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                     <td style={{ fontWeight: 'bold' }}>{member.nickname}</td>
                     <td>{member.jiraDisplayName}</td>
                     <td>{member.email || '-'}</td>
+                    <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }} title={member.webhookUrl}>
+                      {member.webhookUrl || '-'}
+                    </td>
                     <td style={{ textAlign: 'center' }}>
                       <button 
                         onClick={() => handleDeleteMember(index)}
@@ -4569,7 +4605,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                             background: 'var(--text-secondary)'
                           }}></div>
                           <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.8rem', marginBottom: '0.1rem' }}>
-                            เปลี่ยนสถานะเป็น "{change.to}" (ย้ายจาก "{change.from}")
+                            เปลี่ยนสถานะเป็น &quot;{change.to}&quot; (ย้ายจาก &quot;{change.from}&quot;)
                           </span>
                           <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>
                             โดย <strong style={{ color: 'var(--text-primary)' }}>{change.author}</strong> เมื่อ {formatDateTime(change.created)}

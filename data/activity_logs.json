@@ -1,0 +1,90 @@
+[
+  {
+    "timestamp": "2026-06-11T07:31:58.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Jira User",
+    "action": "transition",
+    "ticketKey": "TES-117",
+    "details": "เปลี่ยนสถานะจาก \"To Do\" เป็น \"Done\""
+  },
+  {
+    "timestamp": "2026-06-11T07:31:58.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Jira User",
+    "action": "transition",
+    "ticketKey": "TES-119",
+    "details": "เปลี่ยนสถานะจาก \"To Do\" เป็น \"Done\""
+  },
+  {
+    "timestamp": "2026-06-11T07:31:58.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Jira User",
+    "action": "transition",
+    "ticketKey": "TES-120",
+    "details": "เปลี่ยนสถานะจาก \"To Do\" เป็น \"Done\""
+  },
+  {
+    "timestamp": "2026-06-11T07:31:57.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Jira User",
+    "action": "transition",
+    "ticketKey": "TES-122",
+    "details": "เปลี่ยนสถานะจาก \"To Do\" เป็น \"Done\""
+  },
+  {
+    "timestamp": "2026-06-11T07:21:09.000Z",
+    "user": "สมหญิง (Manager / PM)",
+    "role": "Manager",
+    "action": "update",
+    "ticketKey": "TES-114",
+    "details": "อัปเดตข้อมูลตั๋วผ่านแดชบอร์ด: \"ออกแบบแบนเนอร์หน้าแรก\""
+  },
+  {
+    "timestamp": "2026-06-11T07:21:08.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Jira User",
+    "action": "transition",
+    "ticketKey": "TES-114",
+    "details": "เปลี่ยนสถานะจาก \"To Do\" เป็น \"In Review\""
+  },
+  {
+    "timestamp": "2026-06-11T07:21:07.000Z",
+    "user": "สมหญิง (Manager / PM)",
+    "role": "Manager",
+    "action": "update",
+    "ticketKey": "TES-114",
+    "details": "อัปเดตข้อมูลตั๋วผ่านแดชบอร์ด: \"ออกแบบแบนเนอร์หน้าแรก\""
+  },
+  {
+    "timestamp": "2026-06-11T07:20:57.000Z",
+    "user": "สมหญิง (Manager / PM)",
+    "role": "Manager",
+    "action": "view",
+    "ticketKey": "TES-114",
+    "details": "เปิดดูรายละเอียดงาน: \"ออกแบบแบนเนอร์หน้าแรก\""
+  },
+  {
+    "timestamp": "2026-06-11T07:15:46.000Z",
+    "user": "สมหญิง (Manager / PM)",
+    "role": "Manager",
+    "action": "view",
+    "ticketKey": "TES-119",
+    "details": "เปิดดูรายละเอียดงาน: \"วาดรูป\""
+  },
+  {
+    "timestamp": "2026-06-11T07:14:15.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Chatbot",
+    "action": "create",
+    "ticketKey": "TES-122",
+    "details": "สร้างงานใหม่ผ่าน Chatbot: \"ออกแบบlogo v.3\" (Task)"
+  },
+  {
+    "timestamp": "2026-06-11T07:10:56.000Z",
+    "user": "Pakkarapong GULSUWAN",
+    "role": "Chatbot",
+    "action": "create",
+    "ticketKey": "TES-121",
+    "details": "สร้างงานใหม่ผ่าน Chatbot: \"ออกแบบlogo v.2\" (Epic)"
+  }
+]

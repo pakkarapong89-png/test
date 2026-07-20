@@ -3,26 +3,49 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShieldCheck, Moon, Sun } from 'lucide-react';
+import Login from '@/components/Login';
 
 export default function HomePage() {
   const [theme, setTheme] = useState('theme-sapphire');
   const [isElderMode, setIsElderMode] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
+  const [isUatView, setIsUatView] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'theme-sapphire';
-    setTheme(savedTheme);
+    const init = async () => {
+      await Promise.resolve();
+      const savedTheme = localStorage.getItem('theme') || 'theme-sapphire';
+      setTheme(savedTheme);
 
-    const savedElderMode = localStorage.getItem('elderMode') === 'true';
-    setIsElderMode(savedElderMode);
+      const savedElderMode = localStorage.getItem('elderMode') === 'true';
+      setIsElderMode(savedElderMode);
 
-    let classNames = savedTheme;
-    if (savedElderMode) classNames += ' elder-mode';
-    document.documentElement.className = classNames;
+      let classNames = savedTheme;
+      if (savedElderMode) classNames += ' elder-mode';
+      document.documentElement.className = classNames;
 
-    setCheckingSession(false);
-  }, []);
+      if (process.env.NEXT_PUBLIC_UAT_MODE === 'true') {
+        setIsUatView(true);
+      }
+
+      // Check if there is an active session
+      fetch('/api/auth/session')
+        .then(res => res.json())
+        .then(data => {
+          if (data.authenticated && data.user) {
+            sessionStorage.setItem('user', JSON.stringify(data.user));
+            router.push('/dashboard');
+          } else {
+            setCheckingSession(false);
+          }
+        })
+        .catch(() => {
+          setCheckingSession(false);
+        });
+    };
+    init();
+  }, [router]);
 
   const handleChangeTheme = (newTheme) => {
     setTheme(newTheme);
@@ -43,17 +66,23 @@ export default function HomePage() {
     }
   };
 
-  const handleSelectRole = (role, name) => {
-    const mockUser = {
-      id: 999,
-      username: role.toLowerCase(),
-      name: name,
-      role: role,
-      jiraDisplayName: name,
-      is_approved: true
-    };
-    sessionStorage.setItem('user', JSON.stringify(mockUser));
-    router.push('/dashboard');
+  const handleSelectRole = async (role, name) => {
+    try {
+      const res = await fetch('/api/auth/login-uat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role, name: name.split(' ')[0] })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+        router.push('/dashboard');
+      } else {
+        alert('เข้าสู่ระบบ UAT ล้มเหลว: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message);
+    }
   };
 
   if (checkingSession) {
@@ -90,6 +119,22 @@ export default function HomePage() {
     { role: 'Deployment', name: 'Deployment (ฝ่ายติดตั้ง)', desc: 'ติดตามตั๋วงานที่มีการอัปเดต เตรียมอัปโหลดขึ้นเซิร์ฟเวอร์', color: '#60A5FA', isRead: true },
     { role: 'IT_Sub', name: 'IT Sub (ฝ่ายไอทีสนับสนุน)', desc: 'ติดตามรายงานปัญหาและขอสิทธิ์ช่วยเหลือลูกค้า', color: '#F472B6', isRead: true }
   ];
+
+  if (!isUatView) {
+    return (
+      <Login
+        onLogin={(user) => {
+          sessionStorage.setItem('user', JSON.stringify(user));
+          router.push('/dashboard');
+        }}
+        theme={theme}
+        onChangeTheme={handleChangeTheme}
+        isElderMode={isElderMode}
+        onChangeElderMode={handleChangeElderMode}
+        onSwitchToUat={() => setIsUatView(true)}
+      />
+    );
+  }
 
   return (
     <div style={{
@@ -263,6 +308,23 @@ export default function HomePage() {
             />
             โหมดตัวอักษรใหญ่ (Accessibility)
           </label>
+        </div>
+        <hr style={{ border: 'none', borderTop: '1px solid var(--surface-border)', margin: '24px 0' }} />
+        <div style={{ textAlign: 'center' }}>
+          <button
+            onClick={() => setIsUatView(false)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary)',
+              fontSize: '0.88rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              fontWeight: 600
+            }}
+          >
+            🔑 สลับไปหน้าเข้าสู่ระบบปกติ (Login Screen)
+          </button>
         </div>
       </div>
     </div>

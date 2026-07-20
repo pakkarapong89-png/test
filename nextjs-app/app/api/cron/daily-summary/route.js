@@ -14,6 +14,7 @@ function convertMarkdownToCardHtml(md) {
 async function sendDailySummaryCard(webhookUrl, summaryText) {
   const cardHtml = convertMarkdownToCardHtml(summaryText);
   const cardPayload = {
+    text: '☀️ รายงานสรุปงานประจำวัน (Daily Summary)',
     cardsV2: [
       {
         cardId: 'dailySummaryCard',

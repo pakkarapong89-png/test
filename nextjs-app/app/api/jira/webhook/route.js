@@ -86,6 +86,7 @@ async function sendGoogleChatCard(webhookUrl, notificationText) {
     const cardDetails = `${prominentTitle}<br><br>${detailLines.join('<br>')}`;
 
     const cardPayload = {
+      text: cardTitle,
       cardsV2: [
         {
           cardId: 'jiraNotificationCard',

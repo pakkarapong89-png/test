@@ -4,6 +4,18 @@ import { query } from '@/lib/db';
 import { addActivityLog } from '@/lib/logs';
 import axios from 'axios';
 
+async function logWebhookCall(endpoint, status, details, error = null) {
+  try {
+    await query(
+      `INSERT INTO webhook_logs (endpoint, status, details, error)
+       VALUES ($1, $2, $3, $4)`,
+      [endpoint, status, details, error]
+    );
+  } catch (err) {
+    console.error(`[logWebhookCall] Failed to insert log:`, err.message);
+  }
+}
+
 export async function POST(request) {
   try {
     // Webhook secret token validation for security
@@ -15,6 +27,7 @@ export async function POST(request) {
       console.warn('⚠️ JIRA_WEBHOOK_SECRET is not set in environment variables. Webhook is running in insecure mode.');
     } else if (secret !== expectedSecret) {
       console.warn('[Jira Webhook] 401 Unauthorized - Invalid secret token');
+      await logWebhookCall('/api/jira/webhook', 401, 'Unauthorized: Invalid secret token', 'InvalidSecret');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -93,6 +106,7 @@ export async function POST(request) {
         }
       }
 
+      await logWebhookCall('/api/jira/webhook', 200, `Delete success - Issue Key: ${issueKey}, Summary: "${issueSummary}"`);
       return NextResponse.json({ success: true, action: 'deleted', key: issueKey });
     }
 
@@ -264,16 +278,20 @@ export async function POST(request) {
           }
         }
 
+        await logWebhookCall('/api/jira/webhook', 200, `Sync success - Issue Key: ${issueKey}, Summary: "${issueSummary}", Event: ${event}`);
         return NextResponse.json({ success: true, action: 'synced', key: issueKey });
       } catch (syncErr) {
         console.error(`[Jira Webhook] Failed to fetch and sync issue ${issueKey}:`, syncErr.message);
+        await logWebhookCall('/api/jira/webhook', 500, `Sync error for issue ${issueKey}`, syncErr.message);
         return NextResponse.json({ success: false, error: syncErr.message }, { status: 500 });
       }
     }
 
+    await logWebhookCall('/api/jira/webhook', 200, `Ignored event: ${event}`);
     return NextResponse.json({ success: true, message: `Event "${event}" ignored` });
   } catch (err) {
     console.error('[Jira Webhook] Error processing webhook:', err.message);
+    await logWebhookCall('/api/jira/webhook', 500, `Outer error processing webhook`, err.message);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

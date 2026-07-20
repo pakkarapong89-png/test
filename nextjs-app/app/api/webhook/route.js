@@ -40,13 +40,64 @@ function getGuideText() {
     `ลองพิมพ์สั่งงานมาได้เลยครับ! 🚀`;
 }
 
+async function logWebhookCall(endpoint, status, details, error = null) {
+  try {
+    await query(
+      `INSERT INTO webhook_logs (endpoint, status, details, error)
+       VALUES ($1, $2, $3, $4)`,
+      [endpoint, status, details, error]
+    );
+  } catch (err) {
+    console.error(`[logWebhookCall] Failed to insert log:`, err.message);
+  }
+}
+
+function convertMarkdownToCardHtml(md) {
+  if (!md) return '';
+  // Replace bold markers **text** or *text* with <b>text</b>
+  let html = md
+    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+    .replace(/\*(.*?)\*/g, '<b>$1</b>');
+  // Replace newlines with <br>
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
+
 function buildChatResponse(text) {
+  const cardHtml = convertMarkdownToCardHtml(text);
+  const cardPayload = {
+    cardId: 'taskyCard',
+    card: {
+      header: {
+        title: 'TaskyBot Jira Integration',
+        subtitle: 'รายงานการทำงานของระบบ',
+        imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&h=128&fit=crop',
+        imageType: 'CIRCLE'
+      },
+      sections: [
+        {
+          widgets: [
+            {
+              textParagraph: {
+                text: cardHtml
+              }
+            }
+          ]
+        }
+      ]
+    }
+  };
+
   return NextResponse.json({
     text,
+    cardsV2: [cardPayload],
     hostAppDataAction: {
       chatDataAction: {
         createMessageAction: {
-          message: { text },
+          message: {
+            text,
+            cardsV2: [cardPayload]
+          },
         },
       },
     },
@@ -66,6 +117,7 @@ export async function POST(request) {
       console.warn('⚠️ CHAT_WEBHOOK_SECRET is not set in environment variables. Webhook is running in insecure mode.');
     } else if (secret !== expectedSecret) {
       console.warn('[Webhook Google Chat] 401 Unauthorized - Invalid secret token');
+      await logWebhookCall('/api/webhook', 401, 'Unauthorized: Invalid secret token', 'InvalidSecret');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -511,11 +563,15 @@ export async function POST(request) {
 
     const duration = Date.now() - startTime;
     console.log(`[${duration}ms] Request completed successfully.`);
+    const truncatedMsg = userMessage ? (userMessage.substring(0, 70) + (userMessage.length > 70 ? '...' : '')) : 'No Message';
+    await logWebhookCall('/api/webhook', 200, `Success - Intent: ${structuredData.intent || 'Unknown'}, Sender: ${senderName}, Message: "${truncatedMsg}"`);
     return buildChatResponse(responseText);
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
     console.error(`[${duration}ms] Error handling webhook:`, errorDetails);
+
+    await logWebhookCall('/api/webhook', 500, `Error: ${error.message}`, errorDetails);
 
     let userErrorMessage = `❌ เกิดข้อผิดพลาดในการประมวลผล:\n\`\`\`${errorDetails}\`\`\``;
 

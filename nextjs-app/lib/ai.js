@@ -124,7 +124,10 @@ Make sure your response contains ONLY the valid JSON block without any markdown 
  */
 export async function parseMessageWithGemini(messageText, senderName) {
   const apiKey = process.env.GEMINI_API_KEY;
-  const modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+  let modelName = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+  if (!modelName || modelName.includes('1.5')) {
+    modelName = 'gemini-3.5-flash';
+  }
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
   // Disable thinking budget for 3.5 or thinking models to prevent Vercel 10s Serverless timeout

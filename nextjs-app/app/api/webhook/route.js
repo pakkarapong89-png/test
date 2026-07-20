@@ -433,7 +433,7 @@ export async function POST(request) {
           }
 
           if (!parentType) {
-            parentType = await getJiraIssueType(resolvedParentKey);
+            parentType = 'Epic';
           }
 
           if (parentType === 'Epic') issue.issuetype = 'Task';
@@ -476,7 +476,7 @@ export async function POST(request) {
             }
 
             if (!parentSummary) {
-              parentSummary = await getJiraIssueSummary(issue.parentKey);
+              parentSummary = issue.parentKey;
             }
           }
           const parentText = parentSummary ? `[${issue.parentKey}] ${parentSummary}` : issue.parentKey;

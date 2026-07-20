@@ -57,15 +57,6 @@ async function logWebhookCall(endpoint, status, details, error = null) {
 function buildChatResponse(text) {
   return NextResponse.json({
     text,
-    hostAppDataAction: {
-      chatDataAction: {
-        createMessageAction: {
-          message: {
-            text,
-          },
-        },
-      },
-    },
   });
 }
 

@@ -79,7 +79,7 @@ async function sendGoogleChatCard(webhookUrl, notificationText) {
 
     // Extract ticket key if present for the header
     const keyMatch = cardTitle.match(/\[(.*?)\]/);
-    const headerTitle = keyMatch ? `<b>Jira: ${keyMatch[1]}</b>` : '<b>Jira Notification</b>';
+    const headerTitle = keyMatch ? `Jira: ${keyMatch[1]}` : 'Jira Notification';
 
     // Format the prominent body title
     const prominentTitle = `<b><font color="${titleColor}">${cardTitle}</font></b>`;

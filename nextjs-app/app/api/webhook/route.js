@@ -69,7 +69,7 @@ function buildChatResponse(text) {
     cardId: 'taskyCard',
     card: {
       header: {
-        title: '<b>TaskyBot Jira Integration</b>',
+        title: 'TaskyBot Jira Integration',
         subtitle: 'รายงานการทำงานของระบบ',
         imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&h=128&fit=crop',
         imageType: 'CIRCLE'

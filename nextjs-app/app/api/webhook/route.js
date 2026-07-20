@@ -14,6 +14,7 @@ import { addActivityLog } from '@/lib/logs';
 import { readSpacesMap, writeSpacesMap } from '@/lib/team';
 import { query } from '@/lib/db';
 
+
 const JIRA_DOMAIN = process.env.JIRA_DOMAIN;
 
 function getGuideText() {
@@ -39,34 +40,33 @@ function getGuideText() {
     `ลองพิมพ์สั่งงานมาได้เลยครับ! 🚀`;
 }
 
-async function logWebhookCall(endpoint, status, details, error = null) {
-  try {
-    await query(
-      `INSERT INTO webhook_logs (endpoint, status, details, error)
-       VALUES ($1, $2, $3, $4)`,
-      [endpoint, status, details, error]
-    );
-  } catch (err) {
-    console.error('[logWebhookCall] Failed to insert log:', err.message);
-  }
-}
-
 function buildChatResponse(text) {
-  return NextResponse.json({ text });
+  return NextResponse.json({
+    text,
+    hostAppDataAction: {
+      chatDataAction: {
+        createMessageAction: {
+          message: { text },
+        },
+      },
+    },
+  });
 }
 
 export async function POST(request) {
   const startTime = Date.now();
 
   try {
+    // Webhook secret token validation for security
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get('secret');
     const expectedSecret = process.env.CHAT_WEBHOOK_SECRET;
 
     if (!expectedSecret) {
-      console.warn('⚠️ CHAT_WEBHOOK_SECRET is not set in environment variables.');
-    } else if (secret && expectedSecret && secret !== expectedSecret) {
-      console.warn('[Webhook Google Chat] Secret mismatch warning:', secret);
+      console.warn('⚠️ CHAT_WEBHOOK_SECRET is not set in environment variables. Webhook is running in insecure mode.');
+    } else if (secret !== expectedSecret) {
+      console.warn('[Webhook Google Chat] 401 Unauthorized - Invalid secret token');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const event = await request.json();
@@ -189,16 +189,17 @@ export async function POST(request) {
       }
     }
 
-    // Direct synchronous processing (< 3.0 seconds total, perfectly below 5.0s timeout limit)
+    // Parse with LLM
     const structuredData = await parseMessageWithLLM(userMessage, senderName);
     console.log('LLM Parsed Data:', structuredData);
 
+    // Clean assigneeName if it contains relative date terms or slang (safety guard)
     const cleanAssigneeName = (name) => {
       if (!name) return '';
       const clean = name.trim();
       const lower = clean.toLowerCase();
       const dateIndicators = [
-        'พน', 'พน.', 'พรุ่งนี้', 'วันนี้', 'มะรืน', 'มะรืนนี้',
+        'พน', 'พน.', 'พรุ่งนี้', 'วันนี้', 'มะรืน', 'มะรืนนี้', 
         'ส่ง พน', 'ส่ง พรุ่งนี้', 'ส่งวันนี้', 'ส่งมะรืนนี้', 'ส่ง พน.',
         'วันพรุ่งนี้', 'วันมะรืน', 'วันมะรืนนี้', 'ส่งงาน', 'ส่งงาน พน',
         'ส่งงาน พรุ่งนี้', 'ส่งงานวันนี้', 'ส่งงานมะรืนนี้', 'ส่งงาน พน.'
@@ -265,12 +266,15 @@ export async function POST(request) {
         }
 
         try {
+          // Record action source
           query(
             `INSERT INTO action_sources (ticket_key, source, actor)
              VALUES ($1, $2, $3)
              ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
             [targetKey, process.env.BOT_NAME || 'taskyapp', senderName]
-          ).catch(() => {});
+          ).catch(dbErr => {
+            console.error('[Bot Update Cache] Failed to record action source:', dbErr.message);
+          });
 
           await updateJiraIssue(targetKey, issue);
           addActivityLog(senderName, 'Chatbot', 'update', targetKey, `แก้ไขข้อมูลงานผ่าน Chatbot`).catch(() => {});
@@ -338,7 +342,7 @@ export async function POST(request) {
         }
 
         try {
-          const transitions = await getIssueTransitions(targetKey).catch(() => []);
+          const transitions = await getIssueTransitions(targetKey);
           if (!transitions || transitions.length === 0) {
             responseText += `❌ **ตั๋ว ${targetKey}: ไม่สามารถดึงข้อมูลรายการสถานะที่เป็นไปได้**\n\n`;
             continue;
@@ -363,12 +367,15 @@ export async function POST(request) {
             continue;
           }
 
+          // Record action source
           query(
             `INSERT INTO action_sources (ticket_key, source, actor)
              VALUES ($1, $2, $3)
              ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
             [targetKey, process.env.BOT_NAME || 'taskyapp', senderName]
-          ).catch(() => {});
+          ).catch(dbErr => {
+            console.error('[Bot Transition Cache] Failed to record action source:', dbErr.message);
+          });
 
           await transitionIssue(targetKey, match.id);
           addActivityLog(senderName, 'Chatbot', 'transition', targetKey, `เปลี่ยนสถานะเป็น "${match.name}" ผ่าน Chatbot`).catch(() => {});
@@ -402,8 +409,8 @@ export async function POST(request) {
         if (!resolvedParentKey && issue.parentSummary) {
           try {
             const dbFound = await query(
-              'SELECT "key" FROM tickets WHERE summary ILIKE $1 ORDER BY "key" DESC LIMIT 1',
-              ['%' + issue.parentSummary.trim() + '%']
+              'SELECT key FROM tickets WHERE LOWER(TRIM(summary)) = $1 ORDER BY created DESC LIMIT 1',
+              [issue.parentSummary.trim().toLowerCase()]
             );
             if (dbFound.rows.length > 0) {
               resolvedParentKey = dbFound.rows[0].key;
@@ -441,58 +448,61 @@ export async function POST(request) {
 
           if (parentType === 'Epic') issue.issuetype = 'Task';
           else if (parentType === 'Project') issue.issuetype = 'Epic';
-          else if (parentType === 'Task' || parentType === 'Story') issue.issuetype = 'Sub-task';
         }
       }
 
       try {
         const jiraResult = await createJiraIssue(issue);
+        
+        // Record action source
         if (jiraResult && jiraResult.key) {
           query(
             `INSERT INTO action_sources (ticket_key, source, actor)
              VALUES ($1, $2, $3)
              ON CONFLICT (ticket_key) DO UPDATE SET source = EXCLUDED.source, actor = EXCLUDED.actor, created_at = CURRENT_TIMESTAMP`,
             [jiraResult.key, process.env.BOT_NAME || 'taskyapp', senderName]
-          ).catch(() => {});
-
-          addActivityLog(senderName, 'Chatbot', 'create', jiraResult.key, `สร้างงานใหม่ผ่าน Chatbot: "${issue.summary}" (${issue.issuetype})`).catch(() => {});
-
-          responseText += `📌 *[${jiraResult.key}] สร้างงานใหม่สำเร็จ*\n` +
-                          `• 📝 *หัวข้องาน:* *${issue.summary}*\n` +
-                          `• 🏷️ *ประเภท:* *${issue.issuetype}*\n` +
-                          `• 👤 *ผู้รับผิดชอบ:* *${issue.assigneeName || 'ยังไม่มีผู้รับผิดชอบ'}*\n`;
-          
-          if (issue.parentKey) {
-            let parentSummary = issue.parentSummary || null;
-            if (!parentSummary) {
-              try {
-                const dbParentSummary = await query('SELECT summary FROM tickets WHERE key = $1', [issue.parentKey]);
-                if (dbParentSummary.rows.length > 0) {
-                  parentSummary = dbParentSummary.rows[0].summary;
-                }
-              } catch (dbErr) {
-                console.warn('[Webhook Parent Summary Local] DB query failed:', dbErr.message);
-              }
-
-              if (!parentSummary) {
-                parentSummary = await getJiraIssueSummary(issue.parentKey);
-              }
-            }
-            const parentText = parentSummary ? `[${issue.parentKey}] ${parentSummary}` : issue.parentKey;
-            responseText += `• 🔗 *เชื่อมโยงงานแม่:* *${parentText}*\n`;
-          }
-          
-          if (issue.dueDate) responseText += `• 📅 *กำหนดส่ง:* *${issue.dueDate}*\n`;
-          
-          responseText += `• ✍️ *ผู้สร้าง:* *${senderName}*\n` +
-                          `• 🌐 *ดำเนินการจาก:* *${process.env.BOT_NAME || 'taskyapp'}*\n` +
-                          `• 🔗 *ลิงก์งาน:* https://${JIRA_DOMAIN}/browse/${jiraResult.key}\n`;
-          
-          if (issue.parentUnresolved) {
-            responseText += `• ⚠️ หมายเหตุ: ตรวจไม่พบงานหลักชื่อ "${issue.parentSummary || ''}" ในระบบ จึงสร้างโดยไม่ได้เชื่อมโยงงานแม่\n`;
-          }
-          responseText += `\n`;
+          ).catch(dbErr => {
+            console.error('[Bot Create Cache] Failed to record action source:', dbErr.message);
+          });
         }
+
+        addActivityLog(senderName, 'Chatbot', 'create', jiraResult.key, `สร้างงานใหม่ผ่าน Chatbot: "${issue.summary}" (${issue.issuetype})`).catch(() => {});
+
+        responseText += `📌 *[${jiraResult.key}] สร้างงานใหม่สำเร็จ*\n` +
+                        `• 📝 *หัวข้องาน:* *${issue.summary}*\n` +
+                        `• 🏷️ *ประเภท:* *${issue.issuetype}*\n` +
+                        `• 👤 *ผู้รับผิดชอบ:* *${issue.assigneeName || 'ยังไม่มีผู้รับผิดชอบ'}*\n`;
+        
+        if (issue.parentKey) {
+          let parentSummary = issue.parentSummary || null;
+          if (!parentSummary) {
+            try {
+              const dbParentSummary = await query('SELECT summary FROM tickets WHERE key = $1', [issue.parentKey]);
+              if (dbParentSummary.rows.length > 0) {
+                parentSummary = dbParentSummary.rows[0].summary;
+              }
+            } catch (dbErr) {
+              console.warn('[Webhook Parent Summary Local] DB query failed:', dbErr.message);
+            }
+
+            if (!parentSummary) {
+              parentSummary = await getJiraIssueSummary(issue.parentKey);
+            }
+          }
+          const parentText = parentSummary ? `[${issue.parentKey}] ${parentSummary}` : issue.parentKey;
+          responseText += `• 🔗 *เชื่อมโยงงานแม่:* *${parentText}*\n`;
+        }
+        
+        if (issue.dueDate) responseText += `• 📅 *กำหนดส่ง:* *${issue.dueDate}*\n`;
+        
+        responseText += `• ✍️ *ผู้สร้าง:* *${senderName}*\n` +
+                        `• 🌐 *ดำเนินการจาก:* *${process.env.BOT_NAME || 'taskyapp'}*\n` +
+                        `• 🔗 *ลิงก์งาน:* https://${JIRA_DOMAIN}/browse/${jiraResult.key}\n`;
+        
+        if (issue.parentUnresolved) {
+          responseText += `• ⚠️ หมายเหตุ: ตรวจไม่พบงานหลักชื่อ "${issue.parentSummary || ''}" ในระบบ จึงสร้างโดยไม่ได้เชื่อมโยงงานแม่\n`;
+        }
+        responseText += `\n`;
       } catch (createErr) {
         const errDetail = createErr.response?.data ? JSON.stringify(createErr.response.data) : createErr.message;
         responseText += `❌ **เกิดข้อผิดพลาดในการสร้างงาน "${issue.summary || 'ไม่ระบุชื่อ'}":** ${errDetail}\n\n`;
@@ -501,17 +511,31 @@ export async function POST(request) {
 
     const duration = Date.now() - startTime;
     console.log(`[${duration}ms] Request completed successfully.`);
-    logWebhookCall('/api/webhook', 200, `Success (${duration}ms) - Sender: ${senderName}, Message: "${userMessage ? userMessage.substring(0, 50) : ''}"`).catch(() => {});
     return buildChatResponse(responseText);
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
     console.error(`[${duration}ms] Error handling webhook:`, errorDetails);
-    logWebhookCall('/api/webhook', 500, `Error (${duration}ms): ${error.message}`, errorDetails).catch(() => {});
-    return buildChatResponse(`❌ เกิดข้อผิดพลาดในการประมวลผล:\n\`\`\`${errorDetails}\`\`\``);
+
+    let userErrorMessage = `❌ เกิดข้อผิดพลาดในการประมวลผล:\n\`\`\`${errorDetails}\`\`\``;
+
+    if (errorDetails.includes('You must specify a summary') || errorDetails.includes('Summary is required')) {
+      userErrorMessage =
+        `❌ *คำสั่งไม่สมบูรณ์: ไม่พบชื่อหัวข้องานครับ!*\n` +
+        `ระบบ Jira จำเป็นต้องมี "ชื่อหัวข้องาน" (Summary) เสมอครับ\n\n` +
+        `💡 *ตัวอย่าง:*\n` +
+        `• "ช่วยสร้างงาน ล้างแก้วน้ำ กำหนดส่งพรุ่งนี้"\n` +
+        `• "สร้างงานย่อย ล้างจาน ในงาน ล้างแก้วน้ำ"\n\n` +
+        `ลองพิมพ์รายละเอียดเข้ามาใหม่อีกรอบนะครับ! ✌️`;
+    } else if (error.response?.status === 429) {
+      userErrorMessage = `❌ *ระบบ AI เกินโควต้าการใช้งานแล้วครับ*\nกรุณาเปลี่ยนไปใช้ LLM ตัวอื่นใน .env.local`;
+    }
+
+    return buildChatResponse(userErrorMessage);
   }
 }
 
+// Also handle POST on root path for compatibility with Google Chat App routing
 export async function GET() {
   return NextResponse.json({ status: 'Webhook endpoint active. Use POST to send messages.' });
 }

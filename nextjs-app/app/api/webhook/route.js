@@ -39,6 +39,18 @@ function getGuideText() {
     `ลองพิมพ์สั่งงานมาได้เลยครับ! 🚀`;
 }
 
+async function logWebhookCall(endpoint, status, details, error = null) {
+  try {
+    await query(
+      `INSERT INTO webhook_logs (endpoint, status, details, error)
+       VALUES ($1, $2, $3, $4)`,
+      [endpoint, status, details, error]
+    );
+  } catch (err) {
+    console.error('[logWebhookCall] Failed to insert log:', err.message);
+  }
+}
+
 function buildChatResponse(text) {
   return NextResponse.json({ text });
 }
@@ -489,11 +501,13 @@ export async function POST(request) {
 
     const duration = Date.now() - startTime;
     console.log(`[${duration}ms] Request completed successfully.`);
+    logWebhookCall('/api/webhook', 200, `Success (${duration}ms) - Sender: ${senderName}, Message: "${userMessage ? userMessage.substring(0, 50) : ''}"`).catch(() => {});
     return buildChatResponse(responseText);
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
     console.error(`[${duration}ms] Error handling webhook:`, errorDetails);
+    logWebhookCall('/api/webhook', 500, `Error (${duration}ms): ${error.message}`, errorDetails).catch(() => {});
     return buildChatResponse(`❌ เกิดข้อผิดพลาดในการประมวลผล:\n\`\`\`${errorDetails}\`\`\``);
   }
 }

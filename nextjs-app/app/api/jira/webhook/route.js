@@ -75,7 +75,7 @@ async function sendGoogleChatCard(webhookUrl, notificationText) {
           cardId: 'jiraNotificationCard',
           card: {
             header: {
-              title: cardTitle,
+              title: `<b>${cardTitle}</b>`,
               subtitle: `ผู้ดำเนินการ: ${actor} | จาก: ${source}`,
               imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&h=128&fit=crop',
               imageType: 'CIRCLE'

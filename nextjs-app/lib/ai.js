@@ -130,8 +130,11 @@ export async function parseMessageWithGemini(messageText, senderName) {
   }
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-  // Disable thinking budget for 3.5 or thinking models to prevent Vercel 10s Serverless timeout
-  const generationConfig = { responseMimeType: 'application/json' };
+  const generationConfig = {
+    responseMimeType: 'application/json',
+    temperature: 0.0,
+    maxOutputTokens: 250,
+  };
   if (modelName.includes('3.5') || modelName.includes('thinking') || modelName.includes('reasoning')) {
     generationConfig.thinkingConfig = { thinkingBudget: 0 };
   }

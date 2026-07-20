@@ -16,6 +16,113 @@ async function logWebhookCall(endpoint, status, details, error = null) {
   }
 }
 
+async function sendGoogleChatCard(webhookUrl, notificationText) {
+  if (!webhookUrl) return;
+
+  try {
+    const lines = notificationText.split('\n');
+    const firstLine = lines[0] || '';
+    
+    // Extract title (strip * markers)
+    const cardTitle = firstLine.replace(/\*/g, '').trim();
+
+    // Parse lines to extract metadata and details
+    let actor = 'ผู้ดำเนินการ';
+    let source = 'Jira Cloud';
+    let issueLink = '';
+    const detailLines = [];
+
+    lines.slice(1).forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+
+      // Extract Link
+      if (trimmed.includes('ลิงก์งาน:')) {
+        const linkMatch = trimmed.match(/https?:\/\/[^\s]+/);
+        if (linkMatch) {
+          issueLink = linkMatch[0];
+        }
+        return; // Don't show raw link in text details
+      }
+
+      // Extract Actor
+      if (trimmed.includes('ผู้ดำเนินการ:') || trimmed.includes('ผู้สร้าง:')) {
+        const val = trimmed.substring(trimmed.indexOf(':') + 1).replace(/\*/g, '').trim();
+        actor = val;
+        return;
+      }
+
+      // Extract Source
+      if (trimmed.includes('ดำเนินการจาก:')) {
+        const val = trimmed.substring(trimmed.indexOf(':') + 1).replace(/\*/g, '').trim();
+        source = val;
+        return;
+      }
+
+      // Format detail lines to HTML
+      let htmlLine = trimmed;
+      // Convert Markdown bold *text* or **text** to HTML <b>text</b>
+      htmlLine = htmlLine.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+      htmlLine = htmlLine.replace(/\*(.*?)\*/g, '<b>$1</b>');
+      detailLines.push(htmlLine);
+    });
+
+    const cardDetails = detailLines.join('<br>');
+
+    const cardPayload = {
+      cardsV2: [
+        {
+          cardId: 'jiraNotificationCard',
+          card: {
+            header: {
+              title: cardTitle,
+              subtitle: `ผู้ดำเนินการ: ${actor} | จาก: ${source}`,
+              imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&h=128&fit=crop',
+              imageType: 'CIRCLE'
+            },
+            sections: [
+              {
+                widgets: [
+                  {
+                    textParagraph: {
+                      text: cardDetails
+                    }
+                  },
+                  ...(issueLink ? [
+                    {
+                      buttonList: {
+                        buttons: [
+                          {
+                            text: '🔗 เปิดดูบน Jira',
+                            onClick: {
+                              openLink: {
+                                url: issueLink
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ] : [])
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    };
+
+    await axios.post(webhookUrl, cardPayload);
+  } catch (err) {
+    console.error('[Google Chat Notification] Failed to send card, falling back to text...', err.message);
+    try {
+      await axios.post(webhookUrl, { text: notificationText });
+    } catch (fallbackErr) {
+      console.error('[Google Chat Notification] Fallback failed:', fallbackErr.message);
+    }
+  }
+}
+
 export async function POST(request) {
   try {
     // Webhook secret token validation for security
@@ -100,7 +207,7 @@ export async function POST(request) {
                            `• 👤 ผู้ดำเนินการ: **${actor}**\n` +
                            `• 🌐 ดำเนินการจาก: **${source}**`;
         try {
-          await axios.post(webhookUrl, { text: deleteText });
+          await sendGoogleChatCard(webhookUrl, deleteText);
         } catch (err) {
           console.error('[Jira Webhook Notification] Failed to post delete event to Google Chat:', err.message);
         }
@@ -270,7 +377,7 @@ export async function POST(request) {
 
           if (notificationText) {
             try {
-              await axios.post(webhookUrl, { text: notificationText });
+              await sendGoogleChatCard(webhookUrl, notificationText);
               console.log(`[Jira Webhook Notification] Sent notification to Google Chat for ${issueKey}`);
             } catch (webhookErr) {
               console.error('[Jira Webhook Notification] Failed to send to Google Chat:', webhookErr.message);

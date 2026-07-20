@@ -41,16 +41,7 @@ function getGuideText() {
 }
 
 function buildChatResponse(text) {
-  return NextResponse.json({
-    text,
-    hostAppDataAction: {
-      chatDataAction: {
-        createMessageAction: {
-          message: { text },
-        },
-      },
-    },
-  });
+  return NextResponse.json({ text });
 }
 
 export async function POST(request) {

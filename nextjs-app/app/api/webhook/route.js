@@ -52,51 +52,16 @@ async function logWebhookCall(endpoint, status, details, error = null) {
   }
 }
 
-function convertMarkdownToCardHtml(md) {
-  if (!md) return '';
-  // Replace bold markers **text** or *text* with <b>text</b>
-  let html = md
-    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-    .replace(/\*(.*?)\*/g, '<b>$1</b>');
-  // Replace newlines with <br>
-  html = html.replace(/\n/g, '<br>');
-  return html;
-}
+
 
 function buildChatResponse(text) {
-  const cardHtml = convertMarkdownToCardHtml(text);
-  const cardPayload = {
-    cardId: 'taskyCard',
-    card: {
-      header: {
-        title: 'TaskyBot Jira Integration',
-        subtitle: 'รายงานการทำงานของระบบ',
-        imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&h=128&fit=crop',
-        imageType: 'CIRCLE'
-      },
-      sections: [
-        {
-          widgets: [
-            {
-              textParagraph: {
-                text: cardHtml
-              }
-            }
-          ]
-        }
-      ]
-    }
-  };
-
   return NextResponse.json({
     text,
-    cardsV2: [cardPayload],
     hostAppDataAction: {
       chatDataAction: {
         createMessageAction: {
           message: {
             text,
-            cardsV2: [cardPayload]
           },
         },
       },

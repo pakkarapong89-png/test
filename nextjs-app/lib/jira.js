@@ -86,11 +86,13 @@ export async function createJiraIssue(data) {
     content: [{ type: 'paragraph', content: [{ type: 'text', text: data.description || 'No description provided.' }] }],
   };
 
+  const issueTypeId = await getIssueTypeId(JIRA_PROJECT_KEY, data.issuetype);
+
   const fields = {
     project: { key: JIRA_PROJECT_KEY },
     summary: data.summary,
     description: adfDescription,
-    issuetype: { name: data.issuetype || 'Task' },
+    issuetype: { id: issueTypeId },
     priority: { name: data.priority || 'Medium' },
   };
 

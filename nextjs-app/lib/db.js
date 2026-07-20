@@ -132,18 +132,6 @@ export async function initDb() {
         );
       `);
 
-      // 📡 webhook_logs table to audit chatbot and Jira webhook execution
-      await pool.query(`
-        CREATE TABLE IF NOT EXISTS webhook_logs (
-          id SERIAL PRIMARY KEY,
-          timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          endpoint VARCHAR(100) NOT NULL,
-          status INTEGER NOT NULL,
-          details TEXT,
-          error TEXT
-        );
-      `);
-
 
 
       // Run migrations for existing users table

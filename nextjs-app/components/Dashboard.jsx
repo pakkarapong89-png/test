@@ -32,8 +32,7 @@ import {
   Server,
   Menu,
   Eye,
-  EyeOff,
-  Activity
+  EyeOff
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
@@ -80,8 +79,6 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   const [activityLogs, setActivityLogs] = useState([]);
   const [ticketChangelog, setTicketChangelog] = useState([]);
   const [loadingChangelog, setLoadingChangelog] = useState(false);
-  const [webhookLogs, setWebhookLogs] = useState([]);
-  const [loadingWebhookLogs, setLoadingWebhookLogs] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [logActionFilter, setLogActionFilter] = useState('all');
 
@@ -339,18 +336,6 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
     }
   };
 
-  const fetchWebhookLogs = async () => {
-    setLoadingWebhookLogs(true);
-    try {
-      const response = await axios.get('/api/admin/webhook-logs');
-      setWebhookLogs(response.data);
-    } catch (err) {
-      console.error('Failed to fetch webhook logs:', err);
-    } finally {
-      setLoadingWebhookLogs(false);
-    }
-  };
-
   const fetchTickets = async () => {
     setLoading(true);
     try {
@@ -454,9 +439,6 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
       if (pmTab === 'admin') {
         fetchAdminUsers();
       }
-      if (pmTab === 'webhook_logs') {
-        fetchWebhookLogs();
-      }
     };
     init();
   }, [pmTab]);
@@ -474,153 +456,6 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
     } finally {
       setAdminActionLoading(prev => ({ ...prev, [userId]: false }));
     }
-  };
-
-  const renderWebhookLogsPanel = () => {
-    return (
-      <div className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'fadeIn 0.3s ease' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <Activity size={24} style={{ color: '#10B981' }} />
-              ประวัติการเชื่อมต่อระบบบอต (Webhook Logs)
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '0.25rem 0 0 0' }}>
-              ตรวจสอบความถูกต้อง ล็อกการเรียกเข้าของ Google Chat และ Jira webhook
-            </p>
-          </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = '/api/admin/backup';
-                link.download = 'taskyapp_database_backup.txt';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: 'rgba(59, 130, 246, 0.1)',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                color: '#60A5FA',
-                padding: '0.5rem 1rem',
-                borderRadius: '8px',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(59, 130, 246, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)';
-              }}
-            >
-              <Server size={16} />
-              สำรองข้อมูลฐานข้อมูล (Backup DB)
-            </button>
-            <button
-              onClick={fetchWebhookLogs}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: 'var(--surface-hover-bg)',
-                border: '1px solid var(--surface-border)',
-                color: 'var(--text-primary)',
-                padding: '0.5rem 1rem',
-                borderRadius: '8px',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <RefreshCw size={16} className={loadingWebhookLogs ? 'spin-anim' : ''} />
-              รีเฟรชข้อมูล
-            </button>
-          </div>
-        </div>
-
-        {loadingWebhookLogs ? (
-          <div style={{ padding: '4rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', background: 'var(--surface-bg)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-            <Loader2 size={32} className="spin-anim" style={{ color: '#10B981' }} />
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>กำลังโหลดประวัติเชื่อมต่อ...</span>
-          </div>
-        ) : webhookLogs.length === 0 ? (
-          <div style={{ padding: '4rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-bg)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-            <Activity size={40} style={{ color: 'var(--text-secondary)', opacity: 0.5 }} />
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 600 }}>ไม่พบประวัติการเชื่อมต่อ</span>
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>ข้อมูลจะแสดงผลเมื่อบอตเริ่มทำงานหรือได้รับความคืบหน้าจาก Jira Webhook</span>
-          </div>
-        ) : (
-          <div style={{ background: 'var(--surface-bg)', borderRadius: '12px', border: '1px solid var(--surface-border)', overflow: 'hidden' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th style={{ padding: '0.85rem 1.1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--surface-border)', background: 'rgba(255,255,255,0.015)' }}>เวลา (Timestamp)</th>
-                    <th style={{ padding: '0.85rem 1.1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--surface-border)', background: 'rgba(255,255,255,0.015)' }}>ปลายทาง (Endpoint)</th>
-                    <th style={{ padding: '0.85rem 1.1rem', textAlign: 'center', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--surface-border)', background: 'rgba(255,255,255,0.015)' }}>สถานะ (Status)</th>
-                    <th style={{ padding: '0.85rem 1.1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', borderBottom: '1px solid var(--surface-border)', background: 'rgba(255,255,255,0.015)' }}>รายละเอียดข้อมูล (Details)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {webhookLogs.map(log => {
-                    const dateStr = new Date(log.timestamp).toLocaleString('th-TH');
-                    const isSuccess = log.status === 200;
-                    const isUnauthorized = log.status === 401;
-                    
-                    let statusColor = '#EF4444';
-                    let statusBg = 'rgba(239, 68, 68, 0.1)';
-                    let statusBorder = 'rgba(239, 68, 68, 0.3)';
-                    let statusText = `${log.status} Error`;
-
-                    if (isSuccess) {
-                      statusColor = '#10B981';
-                      statusBg = 'rgba(16, 185, 129, 0.1)';
-                      statusBorder = 'rgba(16, 185, 129, 0.3)';
-                      statusText = '200 OK';
-                    } else if (isUnauthorized) {
-                      statusColor = '#F59E0B';
-                      statusBg = 'rgba(245, 158, 11, 0.1)';
-                      statusBorder = 'rgba(245, 158, 11, 0.3)';
-                      statusText = '401 Unauthorized';
-                    }
-
-                    return (
-                      <tr key={log.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.03)' }}>
-                        <td style={{ padding: '0.95rem 1.1rem', fontSize: '0.85rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{dateStr}</td>
-                        <td style={{ padding: '0.95rem 1.1rem', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
-                          <code>{log.endpoint}</code>
-                        </td>
-                        <td style={{ padding: '0.95rem 1.1rem', textAlign: 'center' }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', background: statusBg, border: `1px solid ${statusBorder}`, color: statusColor, borderRadius: '999px', padding: '0.22rem 0.75rem', fontSize: '0.75rem', fontWeight: 700 }}>
-                            {statusText}
-                          </span>
-                        </td>
-                        <td style={{ padding: '0.95rem 1.1rem', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
-                          <div>{log.details}</div>
-                          {log.error && (
-                            <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: '#EF4444', background: 'rgba(239, 68, 68, 0.05)', padding: '0.35rem 0.5rem', borderRadius: '4px', border: '1px solid rgba(239, 68, 68, 0.1)', fontFamily: 'monospace', overflowX: 'auto' }}>
-                              {log.error}
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
-    );
   };
 
   const renderAdminPanel = () => {
@@ -3794,10 +3629,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
               { id: 'workload', name: 'ภาระงานของทีม (Workloads)', icon: <BarChart2 size={22} /> },
               { id: 'activity', name: 'ประวัติกิจกรรมทีม (Activity Logs)', icon: <Clock size={22} /> },
               { id: 'team', name: 'จัดการรายชื่อทีม (Team Members)', icon: <User size={22} /> },
-              ...(effectiveRole === 'Admin' ? [
-                { id: 'admin', name: 'อนุมัติผู้ใช้งาน (Admin Panel)', icon: <Shield size={22} style={{ color: '#F59E0B' }} /> },
-                { id: 'webhook_logs', name: 'ประวัติเชื่อมต่อบอต (Webhook Logs)', icon: <Activity size={22} style={{ color: '#10B981' }} /> }
-              ] : [])
+              ...(effectiveRole === 'Admin' ? [{ id: 'admin', name: 'อนุมัติผู้ใช้งาน (Admin Panel)', icon: <Shield size={22} style={{ color: '#F59E0B' }} /> }] : [])
             ].map(tab => {
               const isActive = pmTab === tab.id;
               
@@ -4437,7 +4269,6 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
           {pmTab === 'team' && renderTeamMembersTab()}
 
           {pmTab === 'admin' && renderAdminPanel()}
-          {pmTab === 'webhook_logs' && renderWebhookLogsPanel()}
         </>
       ) : (
         <>

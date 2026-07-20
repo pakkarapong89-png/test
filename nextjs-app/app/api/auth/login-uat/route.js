@@ -9,8 +9,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'ข้อมูลไม่ครบถ้วน' }, { status: 400 });
     }
 
-    // อนุญาตให้ผ่าน UAT ได้โดยตรงเพื่อความสะดวกในการทดสอบระบบทุกสิทธิ์การใช้งาน
-
+    // ใน Production จะอนุญาตให้เข้าผ่าน UAT ได้ก็ต่อเมื่อกำหนด NEXT_PUBLIC_UAT_MODE='true' เท่านั้น
+    const isProd = process.env.NODE_ENV === 'production';
+    const uatEnabled = process.env.NEXT_PUBLIC_UAT_MODE === 'true';
+    if (isProd && !uatEnabled) {
+      return NextResponse.json({ error: 'UAT Login ถูกปิดใช้งานใน Production' }, { status: 403 });
+    }
 
     const mockUser = {
       id: 999,

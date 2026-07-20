@@ -67,7 +67,23 @@ async function sendGoogleChatCard(webhookUrl, notificationText) {
       detailLines.push(htmlLine);
     });
 
-    const cardDetails = detailLines.join('<br>');
+    // Detect action color and style
+    let titleColor = '#6B7280'; // Gray default
+    if (cardTitle.includes('สร้างงาน')) {
+      titleColor = '#10B981'; // Green
+    } else if (cardTitle.includes('อัปเดต')) {
+      titleColor = '#3B82F6'; // Blue
+    } else if (cardTitle.includes('ลบงาน')) {
+      titleColor = '#EF4444'; // Red
+    }
+
+    // Extract ticket key if present for the header
+    const keyMatch = cardTitle.match(/\[(.*?)\]/);
+    const headerTitle = keyMatch ? `<b>Jira: ${keyMatch[1]}</b>` : '<b>Jira Notification</b>';
+
+    // Format the prominent body title
+    const prominentTitle = `<b><font color="${titleColor}">${cardTitle}</font></b>`;
+    const cardDetails = `${prominentTitle}<br><br>${detailLines.join('<br>')}`;
 
     const cardPayload = {
       cardsV2: [
@@ -75,7 +91,7 @@ async function sendGoogleChatCard(webhookUrl, notificationText) {
           cardId: 'jiraNotificationCard',
           card: {
             header: {
-              title: `<b>${cardTitle}</b>`,
+              title: headerTitle,
               subtitle: `ผู้ดำเนินการ: ${actor} | จาก: ${source}`,
               imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=128&h=128&fit=crop',
               imageType: 'CIRCLE'

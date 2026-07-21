@@ -102,7 +102,7 @@ export async function POST(request) {
       event.message?.text?.trim();
 
     if (userMessage) {
-      userMessage = userMessage.replace(/^@\S+\s*/, '').trim();
+      userMessage = userMessage.replace(/^(?:@\S+|<users\/\S+?>)\s*/gi, '').trim();
     }
 
     const senderName =

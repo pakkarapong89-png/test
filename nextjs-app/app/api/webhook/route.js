@@ -53,7 +53,16 @@ async function logWebhookCall(endpoint, status, details, error = null) {
 }
 
 function buildChatResponse(text) {
-  return NextResponse.json({ text });
+  return NextResponse.json({
+    text,
+    hostAppDataAction: {
+      chatDataAction: {
+        createMessageAction: {
+          message: { text },
+        },
+      },
+    },
+  });
 }
 
 export async function POST(request) {
@@ -86,11 +95,15 @@ export async function POST(request) {
       return NextResponse.json({});
     }
 
-    const userMessage =
+    let userMessage =
       event.chat?.messagePayload?.message?.argumentText?.trim() ||
       event.chat?.messagePayload?.message?.text?.trim() ||
       event.message?.argumentText?.trim() ||
       event.message?.text?.trim();
+
+    if (userMessage) {
+      userMessage = userMessage.replace(/^@\S+\s*/, '').trim();
+    }
 
     const senderName =
       event.user?.displayName ||

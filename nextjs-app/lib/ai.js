@@ -57,8 +57,11 @@ export async function parseMessageWithGemini(messageText, senderName) {
   }
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-  // Disable thinking budget for 3.5 or thinking models to prevent Vercel 10s Serverless timeout
-  const generationConfig = { responseMimeType: 'application/json' };
+  const generationConfig = {
+    responseMimeType: 'application/json',
+    temperature: 0.0,
+    maxOutputTokens: 200,
+  };
   if (modelName.includes('3.5') || modelName.includes('thinking') || modelName.includes('reasoning')) {
     generationConfig.thinkingConfig = { thinkingBudget: 0 };
   }
@@ -71,7 +74,7 @@ export async function parseMessageWithGemini(messageText, senderName) {
 
   const response = await axios.post(url, payload, {
     headers: { 'Content-Type': 'application/json' },
-    timeout: 5000,
+    timeout: 8000,
   });
   const jsonText = response.data.candidates[0].content.parts[0].text;
   return JSON.parse(jsonText.trim());
@@ -127,10 +130,62 @@ export async function parseMessageWithGroq(messageText, senderName) {
   return JSON.parse(response.data.choices[0].message.content.trim());
 }
 
+export function parseFastPattern(messageText) {
+  if (!messageText) return null;
+  const cleanMsg = messageText.trim();
+  
+  // Pattern 1: เพิ่ม/สร้าง [ชื่องาน] ใน/ในงาน/ภายใต้/ของ [งานแม่]
+  const createInParentMatch = cleanMsg.match(/^(?:เพิ่ม|สร้าง|ช่วยสร้าง|สร้างงาน)\s+(.+?)\s+(?:ใน|ในงาน|ภายใต้|ของ)\s+(.+)$/i);
+  if (createInParentMatch) {
+    const summary = createInParentMatch[1].trim();
+    const parent = createInParentMatch[2].trim();
+    return {
+      intent: 'create',
+      isCommandValid: true,
+      issues: [{
+        summary: summary,
+        description: '',
+        priority: 'Medium',
+        issuetype: 'Task',
+        parentKey: parent.match(/^[A-Z]+-\d+$/i) ? parent.toUpperCase() : '',
+        parentSummary: parent.match(/^[A-Z]+-\d+$/i) ? '' : parent,
+        targetKey: '',
+        targetSummary: '',
+        targetStatus: '',
+        dueDate: '',
+        assigneeName: ''
+      }]
+    };
+  }
+
+  // Pattern 2: ปิด/ปิดงาน/เสร็จ [รหัสงานหรือชื่องาน]
+  const closeMatch = cleanMsg.match(/^(?:ปิด|ปิดงาน|เสร็จ|ทำเสร็จ)\s+(.+)$/i);
+  if (closeMatch) {
+    const target = closeMatch[1].trim();
+    return {
+      intent: 'transition',
+      isCommandValid: true,
+      issues: [{
+        targetKey: target.match(/^[A-Z]+-\d+$/i) ? target.toUpperCase() : '',
+        targetSummary: target.match(/^[A-Z]+-\d+$/i) ? '' : target,
+        targetStatus: 'Done'
+      }]
+    };
+  }
+
+  return null;
+}
+
 /**
  * Parse a message using the configured LLM provider, with automatic fallback
  */
 export async function parseMessageWithLLM(messageText, senderName) {
+  const fastResult = parseFastPattern(messageText);
+  if (fastResult) {
+    console.log('⚡ [FastPattern] Extracted instantly in 1ms:', fastResult);
+    return fastResult;
+  }
+
   const provider = (process.env.LLM_PROVIDER || 'gemini').toLowerCase();
 
   const tryParse = async (p) => {

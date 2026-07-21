@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import axios from 'axios';
 import { parseMessageWithLLM } from '@/lib/ai';
 import {
   createJiraIssue,

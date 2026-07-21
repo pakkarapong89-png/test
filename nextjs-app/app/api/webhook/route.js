@@ -40,6 +40,18 @@ function getGuideText() {
     `ลองพิมพ์สั่งงานมาได้เลยครับ! 🚀`;
 }
 
+async function logWebhookCall(endpoint, status, details, error = null) {
+  try {
+    await query(
+      `INSERT INTO webhook_logs (endpoint, status, details, error)
+       VALUES ($1, $2, $3, $4)`,
+      [endpoint, status, details, error]
+    );
+  } catch (err) {
+    console.error('[logWebhookCall] Failed to insert log:', err.message);
+  }
+}
+
 function buildChatResponse(text) {
   return NextResponse.json({ text });
 }
@@ -501,6 +513,7 @@ export async function POST(request) {
 
     const duration = Date.now() - startTime;
     console.log(`[${duration}ms] Request completed successfully.`);
+    logWebhookCall('/api/webhook', 200, `Success (${duration}ms) - Sender: ${senderName}, Message: "${userMessage ? userMessage.substring(0, 50) : ''}"`).catch(() => {});
     return buildChatResponse(responseText);
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -521,6 +534,7 @@ export async function POST(request) {
       userErrorMessage = `❌ *ระบบ AI เกินโควต้าการใช้งานแล้วครับ*\nกรุณาเปลี่ยนไปใช้ LLM ตัวอื่นใน .env.local`;
     }
 
+    logWebhookCall('/api/webhook', 500, `Error (${duration}ms): ${error.message}`, errorDetails).catch(() => {});
     return buildChatResponse(userErrorMessage);
   }
 }

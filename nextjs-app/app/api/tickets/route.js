@@ -3,8 +3,6 @@ import { fetchJiraTickets, createJiraIssue, fetchJiraTicketByKey } from '@/lib/j
 import { addActivityLog, readStatusCache, writeStatusCache } from '@/lib/logs';
 import { getRecentTransitionAuthor } from '@/lib/jira';
 import { query } from '@/lib/db';
-import { cookies } from 'next/headers';
-import { parseSessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,13 +53,6 @@ async function detectStatusChangesAndLog(newTickets) {
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const user = token ? parseSessionToken(token) : null;
-    if (!user) {
-      return NextResponse.json({ error: 'สิทธิ์การใช้งานหมดอายุ กรุณาเข้าสู่ระบบใหม่' }, { status: 401 });
-    }
-
     const res = await query('SELECT * FROM tickets ORDER BY created DESC');
     const tickets = res.rows.map(t => ({
       key: t.key,
@@ -88,18 +79,6 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const user = token ? parseSessionToken(token) : null;
-    if (!user) {
-      return NextResponse.json({ error: 'สิทธิ์การใช้งานหมดอายุ กรุณาเข้าสู่ระบบใหม่' }, { status: 401 });
-    }
-
-    // Check for read-only roles
-    if (['Sales', 'Deployment', 'CEO'].includes(user.role)) {
-      return NextResponse.json({ error: 'คุณไม่มีสิทธิ์ในการสร้างงาน (Read-only Role)' }, { status: 403 });
-    }
-
     const body = await request.json();
     const result = await createJiraIssue(body);
 

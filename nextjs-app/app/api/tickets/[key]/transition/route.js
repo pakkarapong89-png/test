@@ -9,19 +9,7 @@ import axios from 'axios';
 export async function POST(request, { params }) {
   const { key } = await params;
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('session')?.value;
-    const user = token ? parseSessionToken(token) : null;
-    if (!user) {
-      return NextResponse.json({ error: 'สิทธิ์การใช้งานหมดอายุ กรุณาเข้าสู่ระบบใหม่' }, { status: 401 });
-    }
-
-    // Check for read-only roles
-    if (['Sales', 'Deployment', 'CEO'].includes(user.role)) {
-      return NextResponse.json({ error: 'คุณไม่มีสิทธิ์ในการเปลี่ยนสถานะงาน (Read-only Role)' }, { status: 403 });
-    }
-
-    const { transitionId, transitionName } = await request.json();
+    const { transitionId, transitionName, actorName } = await request.json();
 
     let targetId = transitionId;
     let matchName = transitionName;
@@ -43,8 +31,22 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Invalid transition ID or Name' }, { status: 400 });
     }
 
-    let userName = user.name || user.username;
-    let userRole = user.role;
+    // Get current logged-in user details from session cookie
+    let userName = actorName || 'ผู้ใช้งานผ่านแดชบอร์ด';
+    let userRole = 'ไม่ระบุบทบาท';
+    try {
+      const cookieStore = await cookies();
+      const token = cookieStore.get('session')?.value;
+      if (token) {
+        const user = parseSessionToken(token);
+        if (user) {
+          userName = user.name || user.username;
+          userRole = user.role;
+        }
+      }
+    } catch (cookieErr) {
+      console.warn('[Transition Notification] Failed to parse session cookies:', cookieErr.message);
+    }
 
     // Fetch ticket summary first to enrich the message
     const summary = await getJiraIssueSummary(key) || 'ไม่สามารถดึงชื่อหัวข้องานได้';

@@ -48,7 +48,7 @@ export async function initDb() {
       // Perform a quick query to test connection first
       await pool.query('SELECT 1');
 
-      // 1. Create tables and migrations in a single batch query to minimize RTT latency
+      // 1. Create tables
       await pool.query(`
         CREATE TABLE IF NOT EXISTS team_members (
           id SERIAL PRIMARY KEY,
@@ -57,7 +57,9 @@ export async function initDb() {
           email VARCHAR(255),
           webhook_url TEXT
         );
+      `);
 
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS activity_logs (
           id SERIAL PRIMARY KEY,
           timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -67,18 +69,25 @@ export async function initDb() {
           ticket_key VARCHAR(100),
           details TEXT
         );
+      `);
 
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS ticket_status_cache (
           ticket_key VARCHAR(100) PRIMARY KEY,
           status VARCHAR(100) NOT NULL,
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
+      `);
 
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS user_spaces_map (
           nickname VARCHAR(100) PRIMARY KEY,
           space_name TEXT NOT NULL
         );
+      `);
 
+      // 🔐 Users table for authentication
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
           username VARCHAR(100) UNIQUE NOT NULL,
@@ -92,7 +101,10 @@ export async function initDb() {
           jira_account_id VARCHAR(255),
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
+      `);
 
+      // 🎟️ Tickets table for caching Jira tickets
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS tickets (
           key VARCHAR(100) PRIMARY KEY,
           summary VARCHAR(255) NOT NULL,
@@ -108,27 +120,24 @@ export async function initDb() {
           description TEXT,
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
+      `);
 
+      // 🔍 action_sources table to track operation source (Web, Chatbot, Jira)
+      await pool.query(`
         CREATE TABLE IF NOT EXISTS action_sources (
           ticket_key VARCHAR(100) PRIMARY KEY,
           source VARCHAR(100) NOT NULL,
           actor VARCHAR(255) NOT NULL,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
-
-        CREATE TABLE IF NOT EXISTS webhook_logs (
-          id SERIAL PRIMARY KEY,
-          timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          endpoint VARCHAR(100) NOT NULL,
-          status INTEGER NOT NULL,
-          details TEXT,
-          error TEXT
-        );
-
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS jira_display_name VARCHAR(255);
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS jira_account_id VARCHAR(255);
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255);
       `);
+
+
+
+      // Run migrations for existing users table
+      await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS jira_display_name VARCHAR(255);');
+      await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS jira_account_id VARCHAR(255);');
+      await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255);');
 
       // Seed default admin account if users table is empty
       const checkUsers = await pool.query('SELECT COUNT(*) FROM users');

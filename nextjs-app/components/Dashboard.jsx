@@ -119,26 +119,22 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   const currentRoleStyle = roleColors[effectiveRole] || { color: 'var(--text-primary)', bg: 'var(--surface-hover-bg)', border: 'var(--surface-border)' };
 
   useEffect(() => {
-    const init = async () => {
-      await Promise.resolve();
-      if (typeof window !== 'undefined') {
-        const storedFilter = localStorage.getItem('timeFilter');
-        if (storedFilter && storedFilter !== 'active-recent') {
-          setTimeFilter(storedFilter);
-        } else {
-          setTimeFilter('this-week');
-        }
-        const stored = localStorage.getItem('hiddenProjects');
-        if (stored) {
-          try {
-            setHiddenProjects(JSON.parse(stored));
-          } catch (e) {
-            console.error('Failed to load hiddenProjects:', e);
-          }
+    if (typeof window !== 'undefined') {
+      const storedFilter = localStorage.getItem('timeFilter');
+      if (storedFilter && storedFilter !== 'active-recent') {
+        setTimeFilter(storedFilter);
+      } else {
+        setTimeFilter('this-week');
+      }
+      const stored = localStorage.getItem('hiddenProjects');
+      if (stored) {
+        try {
+          setHiddenProjects(JSON.parse(stored));
+        } catch (e) {
+          console.error('Failed to load hiddenProjects:', e);
         }
       }
-    };
-    init();
+    }
   }, []);
 
   const toggleHideProject = (projectKey) => {
@@ -351,67 +347,64 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   };
 
   useEffect(() => {
-    const init = async () => {
-      await Promise.resolve();
-      fetchTickets();
-      fetchTeamMembers();
-      fetchHealthData();
-    };
-    init();
+    fetchTickets();
+    fetchTeamMembers();
+    fetchHealthData();
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      await Promise.resolve();
-      if (selectedTicketForDetail) {
-        // บันทึก Log การเปิดดูรายละเอียดตั๋ว (view only — ไม่ใช่ action)
-        axios.post('/api/logs', {
-          user: user.name,
-          role: user.role,
-          action: 'view',
-          ticketKey: selectedTicketForDetail.key,
-          details: `เปิดดูรายละเอียดงาน: "${selectedTicketForDetail.summary}"`
-        })
-        .then(() => fetchLogs())
-        .catch(err => console.error('Failed to send view log:', err));
+    if (selectedTicketForDetail) {
+      // บันทึก Log การเปิดดูรายละเอียดตั๋ว (view only — ไม่ใช่ action)
+      axios.post('/api/logs', {
+        user: user.name,
+        role: user.role,
+        action: 'view',
+        ticketKey: selectedTicketForDetail.key,
+        details: `เปิดดูรายละเอียดงาน: "${selectedTicketForDetail.summary}"`
+      })
+      .then(() => fetchLogs())
+      .catch(err => console.error('Failed to send view log:', err));
 
-        // Load transitions and setup edit state
-        // (ไม่บันทึก log "view" เพราะแค่กดดูไม่ใช่ action จริง)
-        fetchAvailableTransitions(selectedTicketForDetail.key);
-        setIsEditingTicket(false);
-        setEditedTicket({ ...selectedTicketForDetail });
-      } else {
-        setIsEditingTicket(false);
-        setEditedTicket(null);
-        setAvailableTransitions([]);
-      }
-    };
-    init();
+      // Load transitions and setup edit state
+      // (ไม่บันทึก log "view" เพราะแค่กดดูไม่ใช่ action จริง)
+      fetchAvailableTransitions(selectedTicketForDetail.key);
+      setIsEditingTicket(false);
+      setEditedTicket({ ...selectedTicketForDetail });
+    } else {
+      setIsEditingTicket(false);
+      setEditedTicket(null);
+      setAvailableTransitions([]);
+    }
   }, [selectedTicketForDetail]);
 
   useEffect(() => {
-    const init = async () => {
-      await Promise.resolve();
-      if (selectedTicketForDetail) {
-        setLoadingChangelog(true);
-        axios.get(`/api/tickets/${selectedTicketForDetail.key}/changelog`)
-          .then(res => {
-            setTicketChangelog(res.data);
-            setLoadingChangelog(false);
-          })
-          .catch(err => {
-            console.error('Failed to fetch ticket changelog:', err);
-            setTicketChangelog([]);
-            setLoadingChangelog(false);
-          });
-      } else {
-        setTicketChangelog([]);
-      }
-    };
-    init();
+    if (selectedTicketForDetail) {
+      setLoadingChangelog(true);
+      axios.get(`/api/tickets/${selectedTicketForDetail.key}/changelog`)
+        .then(res => {
+          setTicketChangelog(res.data);
+          setLoadingChangelog(false);
+        })
+        .catch(err => {
+          console.error('Failed to fetch ticket changelog:', err);
+          setTicketChangelog([]);
+          setLoadingChangelog(false);
+        });
+    } else {
+      setTicketChangelog([]);
+    }
   }, [selectedTicketForDetail]);
 
-  async function fetchAdminUsers() {
+  useEffect(() => {
+    if (pmTab === 'team') {
+      fetchTeamMembers();
+    }
+    if (pmTab === 'admin') {
+      fetchAdminUsers();
+    }
+  }, [pmTab]);
+
+  const fetchAdminUsers = async () => {
     setLoadingAdminUsers(true);
     setAdminError(null);
     try {
@@ -428,20 +421,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
     } finally {
       setLoadingAdminUsers(false);
     }
-  }
-
-  useEffect(() => {
-    const init = async () => {
-      await Promise.resolve();
-      if (pmTab === 'team') {
-        fetchTeamMembers();
-      }
-      if (pmTab === 'admin') {
-        fetchAdminUsers();
-      }
-    };
-    init();
-  }, [pmTab]);
+  };
 
   const handleAdminAction = async (userId, action, role) => {
     setAdminActionLoading(prev => ({ ...prev, [userId]: true }));
@@ -787,17 +767,13 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
   }, [showSuccessNotification]);
 
   useEffect(() => {
-    const init = async () => {
-      await Promise.resolve();
-      if (effectiveRole === 'CEO') {
-        setPmTab('ceo');
-      } else if (effectiveRole === 'Admin') {
-        setPmTab('admin');
-      } else {
-        setPmTab('overview');
-      }
-    };
-    init();
+    if (effectiveRole === 'CEO') {
+      setPmTab('ceo');
+    } else if (effectiveRole === 'Admin') {
+      setPmTab('admin');
+    } else {
+      setPmTab('overview');
+    }
   }, [effectiveRole]);
 
 
@@ -4605,7 +4581,7 @@ function Dashboard({ user, onLogout, theme, onChangeTheme, isElderMode, onChange
                             background: 'var(--text-secondary)'
                           }}></div>
                           <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.8rem', marginBottom: '0.1rem' }}>
-                            เปลี่ยนสถานะเป็น &quot;{change.to}&quot; (ย้ายจาก &quot;{change.from}&quot;)
+                            เปลี่ยนสถานะเป็น "{change.to}" (ย้ายจาก "{change.from}")
                           </span>
                           <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>
                             โดย <strong style={{ color: 'var(--text-primary)' }}>{change.author}</strong> เมื่อ {formatDateTime(change.created)}

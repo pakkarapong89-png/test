@@ -420,47 +420,41 @@ export async function POST(request) {
     for (const issue of issuesToCreate) {
       if (issue.parentKey || issue.parentSummary) {
         let resolvedParentKey = issue.parentKey ? issue.parentKey.trim().toUpperCase() : null;
+        let parentType = null;
+
+        try {
+          const dbTickets = await query('SELECT key, summary, issuetype FROM tickets');
+          if (dbTickets.rows && dbTickets.rows.length > 0) {
+            if (!resolvedParentKey && issue.parentSummary) {
+              const targetLower = issue.parentSummary.trim().toLowerCase();
+              const found = dbTickets.rows.find(t => t.summary && t.summary.trim().toLowerCase() === targetLower);
+              if (found) {
+                resolvedParentKey = found.key;
+                parentType = found.issuetype;
+              }
+            } else if (resolvedParentKey) {
+              const found = dbTickets.rows.find(t => t.key && t.key.trim().toUpperCase() === resolvedParentKey);
+              if (found) {
+                parentType = found.issuetype;
+              }
+            }
+          }
+        } catch (dbErr) {
+          console.warn('[Webhook Parent Search Local] DB query failed:', dbErr.message);
+        }
 
         if (!resolvedParentKey && issue.parentSummary) {
-          try {
-            const dbFound = await query(
-              'SELECT key FROM tickets WHERE LOWER(TRIM(summary)) = $1 ORDER BY created DESC LIMIT 1',
-              [issue.parentSummary.trim().toLowerCase()]
-            );
-            if (dbFound.rows.length > 0) {
-              resolvedParentKey = dbFound.rows[0].key;
-            }
-          } catch (dbErr) {
-            console.warn('[Webhook Parent Search Local] DB query failed:', dbErr.message);
-          }
-
-          if (!resolvedParentKey) {
-            const found = await searchJiraIssueBySummary(issue.parentSummary);
-            if (found) {
-              resolvedParentKey = found.key;
-            } else {
-              issue.parentUnresolved = true;
-            }
+          const found = await searchJiraIssueBySummary(issue.parentSummary);
+          if (found) {
+            resolvedParentKey = found.key;
+          } else {
+            issue.parentUnresolved = true;
           }
         }
 
         if (resolvedParentKey) {
           issue.parentKey = resolvedParentKey;
-          
-          let parentType = null;
-          try {
-            const dbParent = await query('SELECT issuetype FROM tickets WHERE key = $1', [resolvedParentKey]);
-            if (dbParent.rows.length > 0) {
-              parentType = dbParent.rows[0].issuetype;
-            }
-          } catch (dbErr) {
-            console.warn('[Webhook Parent Type Local] DB query failed:', dbErr.message);
-          }
-
-          if (!parentType) {
-            parentType = 'Epic';
-          }
-
+          if (!parentType) parentType = 'Epic';
           if (parentType === 'Epic') issue.issuetype = 'Task';
           else if (parentType === 'Project') issue.issuetype = 'Epic';
         }

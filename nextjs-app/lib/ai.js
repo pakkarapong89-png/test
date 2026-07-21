@@ -135,7 +135,7 @@ export function parseFastPattern(messageText) {
   const cleanMsg = messageText.trim();
   
   // Pattern 1: เพิ่ม/สร้าง [ชื่องาน] ใน/ในงาน/ภายใต้/ของ [งานแม่]
-  const createInParentMatch = cleanMsg.match(/^(?:เพิ่ม|สร้าง|ช่วยสร้าง|สร้างงาน)\s+(.+?)\s+(?:ใน|ในงาน|ภายใต้|ของ)\s+(.+)$/i);
+  const createInParentMatch = cleanMsg.match(/^(?:เพิ่ม|สร้าง|ช่วยสร้าง|สร้างงาน)\s*(.+?)\s*(?:ในงาน|ใน|ภายใต้|ของ)\s*(.+)$/i);
   if (createInParentMatch) {
     const summary = createInParentMatch[1].trim();
     const parent = createInParentMatch[2].trim();
